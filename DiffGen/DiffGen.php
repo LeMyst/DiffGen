@@ -6,14 +6,13 @@ require_once "Core/RObin.php";
 require_once "Core/func.php";
 include_directory("Patches");
 
+echo"                                                         ______ \n";
+echo"             _____  __   ___   ___ _______              |      |\n";
+echo"            |     \|__|.'  _|.'  _|     __|.-----.-----.|__    |\n";
+echo"            |  --  |  ||   _||   _|    |  ||  -__|     ||.   __|\n";
+echo"            |_____/|__||__|  |__| |_______||_____|__|__||______|\n\n";
 
-echo"             ________   __  _____  _____  ________                \n";
-echo"             \_   _  \ |__|/ ____\/ ____\/  _____/  ____   ____   \n";
-echo"              |  | \  \|  \   __\\   __\/    \  ___/ __ \ /    \  \n";
-echo"              |  |__\  \  ||  |   |  |  \    \_\  \  ___/|   |  \ \n";
-echo"             /_______  /__||__|   |__|   \______  /\___  >___|  / \n";
-echo"                     \/                         \/     \/     \/  \n";
-echo"                Adrilindozao - Diablo - Fabio - Myst - Yommy      \n\n";
+
 
 // lets add some ftp support [Yom]
 echo "0  : Local clients folder (can just press enter)\n";
@@ -41,7 +40,6 @@ if($localftp){
 		}
 	}
 	for($i=sizeof($filelist)-40; $i<sizeof($filelist); $i++){
-		if(strpos($filelist[$i] , "RagexeRE.rgz")){
 		$locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
 		if (file_exists($locfile)) {
 			echo "$i #: $filelist[$i]\n";
@@ -128,7 +126,7 @@ $clientdate2 = $src->clientdate();
 $clientdate = substr($clientdate2,0,4) . "-" . substr($clientdate2,4,2) . "-" . substr($clientdate2,6,2);
 
 $crc = "OCRC:" . substr(hexdec(sprintf("%x",crc32(file_get_contents($target )))), -8) . "\r\n";
-$diff = "$crc" . "BLURB:[ " . $clientdate . basename($target, ".exe") . " v1.0 - By Diff Team ]\r\n";
+$diff = "$crc" . "BLURB:[ $clientdate kRO  v1.0 - By Diff Team ]\r\n";
 echo "\nGenerating diff for: " . basename($target, ".exe") . "\r\n\r\n";
 
 include_once "Core/kRO.php";

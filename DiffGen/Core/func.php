@@ -82,12 +82,16 @@ function DiffAutos($src, $exe, $patch) {
 
 function include_directory($dir) {
 	$it = new RecursiveDirectoryIterator($dir);
+	$count = 0;
 	foreach(new RecursiveIteratorIterator($it) as $filename => $cur) {
 		if( preg_match('/.php$/', $filename) ) {
-			echo "Loaded $filename\n";
+			echo "Loaded $filename                        \r";
+			usleep(200000);
 			require_once($filename);
+			$count++;
 		}
 	}
+	echo "Loaded $count Patches                          \n\n";
 }
 
 function GetFTP() {
@@ -110,11 +114,7 @@ function GetFTP() {
 		}
 	}
 	for($i=sizeof($filelist)-40; $i<sizeof($filelist); $i++){
-		if(strpos($filelist[$i] , "RagexeRE.rgz")){
-			$locfile = "Clients/kRO/RagexeRE/" . substr($filelist[$i], 0, -4) . ".exe";
-		} elseif(strpos($filelist[$i] , "Ragexe.rgz")){
-			$locfile = "Clients/kRO/Ragexe/" . substr($filelist[$i], 0, -4) . ".exe";
-		}
+		$locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
 		if (file_exists($locfile)) {
 			echo "$i #: $filelist[$i]\n";
 		} else {
@@ -123,11 +123,7 @@ function GetFTP() {
 	}
 	fwrite(STDOUT, "\nGenerate Diff for: ");
 	$choice = trim(fgets(STDIN));
-	if(strpos($filelist[$choice] , "RagexeRE.rgz")){
-		$locfile = "Clients/kRO/RagexeRE/$filelist[$choice]";
-	} elseif(strpos($filelist[$choice] , "Ragexe.rgz")){
-		$locfile = "Clients/kRO/Ragexe/$filelist[$choice]";
-	}
+	$locfile = "Clients/$filelist[$choice]";
 	echo "############ DOWNLOADING.. #############\n";
 	$fs = ftp_size($conn_id, $filelist[$choice]); 
 	$file = ftp_nb_get($conn_id, $locfile, $filelist[$choice], FTP_BINARY);
