@@ -42,10 +42,7 @@ if($localftp){
 	}
 	for($i=sizeof($filelist)-40; $i<sizeof($filelist); $i++){
 		if(strpos($filelist[$i] , "RagexeRE.rgz")){
-			$locfile = "Clients/kRO/RagexeRE/" . substr($filelist[$i], 0, -4) . ".exe";
-		} elseif(strpos($filelist[$i] , "Ragexe.rgz")){
-			$locfile = "Clients/kRO/Ragexe/" . substr($filelist[$i], 0, -4) . ".exe";
-		}
+		$locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
 		if (file_exists($locfile)) {
 			echo "$i #: $filelist[$i]\n";
 		} else {
@@ -54,11 +51,7 @@ if($localftp){
 	}
 	fwrite(STDOUT, "\nGenerate Diff for: ");
 	$choice = trim(fgets(STDIN));
-	if(strpos($filelist[$choice] , "RagexeRE.rgz")){
-		$locfile = "Clients/kRO/RagexeRE/$filelist[$choice]";
-	} elseif(strpos($filelist[$choice] , "Ragexe.rgz")){
-		$locfile = "Clients/kRO/Ragexe/$filelist[$choice]";
-	}
+	$locfile = "Clients/$filelist[$choice]";
 	echo "############ DOWNLOADING.. #############\n";
 	$fs = ftp_size($conn_id, $filelist[$choice]); 
 	$file = ftp_nb_get($conn_id, $locfile, $filelist[$choice], FTP_BINARY);
@@ -79,13 +72,12 @@ if($localftp){
 	$clients[$choice] = $locfile;
 } else {
 	echo "########################################\n\n";
-	$clients = glob("Clients/*/*/{*.exe,*.rgz}", GLOB_BRACE );
+	$clients = glob("Clients/{*.exe,*.rgz}", GLOB_BRACE );
 	if(sizeof($clients) == 0) die("Place clients inside the Clients folder\n");
 	echo "#  : All files in the folder\r\n";
 	foreach ($clients as $i => $client) {
-		list($ignore, $region, $type, $filename) = explode("/", $client);
-		$region = str_pad($region, 5); $type = str_pad($type, 12); 
-		echo "$i  : $region $type $filename\n";
+		list($ignore, $filename) = explode("/", $client);
+		echo "$i  : $filename\n";
 	}
 	fwrite(STDOUT, "\nGenerate Diff for: ");
 	$choice = trim(fgets(STDIN));
@@ -95,7 +87,7 @@ if (!isset($clients[$choice])){
 	die("Bad Choice\n");
 }
 
-list($ignore, $dir1, $dir2, $filename) = explode("/", $clients[$choice]);
+list($ignore, $filename) = explode("/", $clients[$choice]);
 if (stristr(basename($clients[$choice]),"rgz")){
 	echo basename($clients[$choice]) . " file is gzip compressed\n\n";
 	// ungzip
@@ -112,8 +104,6 @@ if (stristr(basename($clients[$choice]),"rgz")){
 	unlink($clients[$choice]);
 	$clients[$choice] = trim($clients[$choice],"rgz")."exe";
 }
-$clienttype = basename($dir2);
-$clientregion = basename($dir1);
 echo "########################################\n\n";
 
 $starttime = microtime(true);
@@ -127,10 +117,7 @@ $failcount = 0;
 if(file_exists($fail)) unlink($fail);
 
 // Diff will be saved to the Diffs folder with the same name, but with .diff extension
-if(!file_exists("./Diffs/")) mkdir("./Diffs/", 0777);
-if(!file_exists("./Diffs/" . basename($dir1) . "/")) mkdir("./Diffs/" . basename($dir1), 0777);
-if(!file_exists("./Diffs/" . basename($dir1) . "/" . basename($dir2) . "/")) mkdir("./Diffs/" . basename($dir1) . "/" . basename($dir2), 0777);
-$diffpath = "./Diffs/" . basename($dir1) . "/" . basename($dir2) . "/" . basename($target, ".exe") . ".diff";
+$diffpath = "./Diffs/" . basename($target, ".exe") . ".diff";
 
 $src = new RObin();
 $src->load($target);
@@ -141,10 +128,10 @@ $clientdate2 = $src->clientdate();
 $clientdate = substr($clientdate2,0,4) . "-" . substr($clientdate2,4,2) . "-" . substr($clientdate2,6,2);
 
 $crc = "OCRC:" . substr(hexdec(sprintf("%x",crc32(file_get_contents($target )))), -8) . "\r\n";
-$diff = "$crc" . "BLURB:[ " . $clientdate . " kRO " . $clienttype . " v1.0 - By Diff Team ]\r\n";
+$diff = "$crc" . "BLURB:[ " . $clientdate . basename($target, ".exe") . " v1.0 - By Diff Team ]\r\n";
 echo "\nGenerating diff for: " . basename($target, ".exe") . "\r\n\r\n";
 
-include_once "Core/" . $clientregion . ".php";
+include_once "Core/kRO.php";
 	
 file_put_contents($diffpath, $diff);
 $totaltime = microtime(true) - $starttime;
