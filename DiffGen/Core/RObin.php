@@ -28,7 +28,7 @@ class RObin
 		$this->exe = $file;
 		$this->size = strlen($file);
 		
-		$this->PEHeader = $this->matchHex("50 45 00 00");
+		$this->PEHeader = $this->match("\x50\x45\x00\x00");
 		echo "PE Header\t".dechex($this->PEHeader)."h\n";
 		
 		// If the loaded file isn't a valid PE file, then it's not necessary to continue
@@ -180,13 +180,6 @@ class RObin
 		return false;
 	}
 	
-	// For easier usage of the ::Hex function
-	public function matchHex($pattern, $wildcard = "", $start = null, $finish = null)
-	{
-		$pattern = $this::Hex($pattern);
-		return $this->match($pattern, $wildcard, $start, $finish);
-	}
-	
 	// Does the same as match(), but it returns an array
 	// of all the matching offsets (might be empty)
 	public function matches($pattern, $wildcard = "", $start = null, $finish = null)
@@ -197,13 +190,6 @@ class RObin
 			$offsets[] = $offset;
 		}
 		return $offsets;
-	}
-	
-	// For easier usage of the ::Hex function
-	public function matchesHex($pattern, $wildcard = "", $start = null, $finish = null)
-	{
-		$pattern = $this::Hex($pattern);
-		return $this->matches($pattern, $wildcard, $start, $finish);
 	}
 	
 	// Returns an offset where there are $size null bytes, searching
