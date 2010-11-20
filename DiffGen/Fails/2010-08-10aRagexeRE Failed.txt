@@ -1,6 +1,0 @@
-[UI](1)_Allow_Chat_Flood_(25_lines)
-[UI](1)_Allow_Chat_Flood_(50_lines)
-[UI](1)_Allow_Chat_Flood_(100_lines)
-[UI]_Custom_Window_Title_(Recommended)
-[Fix]_Disable_1rag1_&_1sak1_(Recommended)
-[Fix]_Disable_4_Letter_UserCharacter_Limit
