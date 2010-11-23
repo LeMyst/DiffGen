@@ -11,7 +11,7 @@
 			return false;
 		}
 		$strOff += $exe->imagebase();
-		$code = pack("I", $exe->str("Ragnarok"));
+		$code = pack("I", $exe->str("Ragnarok","rva"));
 		$offsets = $exe->code($code, "\xAB", -1);
 		if ($offsets === false) {
 			echo "Failed in part 2 ";

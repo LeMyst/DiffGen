@@ -3,9 +3,7 @@ function Diff($src, $exe, $patch, $extra = false) {
 	$tick = microtime(true);
 	if(function_exists($patch)) {
 		global $diff, $fail, $failcount, $patterndebug;
-		if(!$patterndebug) {
-			echo str_pad($patch, 50, " ") . ": ";
-		}
+		echo str_pad($patch, 40, " ") . ": ";
 		if (call_user_func($patch, $exe, $extra) === false) {
 			$failcount++;
 			echo " ##\r\n";
@@ -19,9 +17,9 @@ function Diff($src, $exe, $patch, $extra = false) {
 		foreach ($diffs as $dif) {
 			$diff .= $prefix . ":" . $dif . "\r\n";
 		}
-		echo "Done in " . round(microtime(true) - $tick, 5) . "s\r\n";
+		echo "Done in " . round(microtime(true) - $tick, 5) . "s\n";
 	} else {
-		die("\nError Missing Function " . $patch . "\r\n\n\n");
+		die("\nError Missing Function " . $patch . "\n\n\n");
 	}
 }
 

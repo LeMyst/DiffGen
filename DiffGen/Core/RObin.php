@@ -218,6 +218,7 @@ class RObin
 	
 	// It was meant to be used for patches that add extra code, where it would
 	// replace null bytes (checking if they were really null). Works like replace().
+	// should be modified to change the $src to stop conflicting free space
 	public function insert($code, $offset)
 	{
 		$length = strlen($code);
@@ -278,6 +279,7 @@ class RObin
 	// matches.
 	public function code($code, $wildcard, $count = 1)
 	{
+		//echo "#code()#";
 		$section = $this->getSection(".text");
 		$offsets = $this->matches($code, $wildcard, $section->rOffset, $section->rOffset + $section->rSize);
 		
@@ -296,8 +298,9 @@ class RObin
 	// strings are located). Returns the address (to be used with
 	// asm stuff, NOT offset inside the client exe). Returns the
 	// address on success, or false on failure.
-	public function str($str)
+	public function str($str,$type)
 	{
+		$tick = microtime(true);
 		$iBase = $this->imagebase();
 		$section = $this->getSection(".rdata");
 		$virtual = $section->vOffset - $section->rOffset;
@@ -306,7 +309,13 @@ class RObin
 		if ($offset === false) {
 			return false;
 		}
-		return $offset + $virtual + $iBase;
+        //echo "#str()# in " . round(microtime(true) - $tick, 5) . "s\n";
+        //echo "                                        : ";
+		if($type == "rva")
+			return $offset + $virtual + $iBase;
+		if($type == "raw")
+			return $offset;
+		return false;
 	}
 	
 	// I don't really understand how it works (assembly-wise), but...
@@ -317,6 +326,7 @@ class RObin
 	// Used in both ways on Enable DNS Support patch.
 	public function func($func, $str = true)
 	{
+        $tick = microtime(true);
 		$iBase = $this->imagebase();
 		$section = $this->getSection(".data");
 		$virtual = $section->vOffset - $section->rOffset;
@@ -331,18 +341,9 @@ class RObin
 		if ($offset === false) {
 			return false;
 		}
+        //echo "#func()# in " . round(microtime(true) - $tick, 5) . "s\n";
+        //echo "                                        : ";
 		return $offset + $virtual + $iBase;
-	}
-	
-	// Converts a string representing a byte sequence into the aequivalent unicode sequence
-	static public function Hex($string, $flag = false)
-	{
-		$trimmed = preg_replace('/\s*/m', '', $string);
-		$ret = "";
-		for($i = 0; $i < strlen($trimmed); $i += 2)
-			$ret .= pack('C', intval($trimmed[$i].(($flag == false) ? (isset($trimmed[$i+1]) ? $trimmed[$i+1] : '0') : $trimmed[$i+1]), 16));
-		
-		return $ret;
 	}
 	
 	// Workaround for public access, 'cause they shouldn't be changed outside the class
