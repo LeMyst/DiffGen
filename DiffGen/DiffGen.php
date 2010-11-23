@@ -47,9 +47,9 @@ if (stristr(basename($clients[$choice]),"rgz")){
     $ungz = gzdecode($gz);
     // unrat                                                            // name                | size
     $type = substr($ungz,0,1);                                          // type                | 1 byte
-    $fnlen = hexdec(bin2hex(substr($ungz,1,1)));                        // filenameLength    | 1 byte
+    $fnlen = hexdec(bin2hex(substr($ungz,1,1)));                        // filenameLength      | 1 byte
     $fn = substr($ungz,2,$fnlen);                                       // filename            | filenameLength bytes
-    $flen = unpack("L",substr($ungz,$fnlen+2,4)); $flen = $flen[1];     // length            | 4 bytes
+    $flen = unpack("L",substr($ungz,$fnlen+2,4)); $flen = $flen[1];     // length              | 4 bytes
     $unrat = substr($ungz,$fnlen+6,$flen);                              // data                | length bytes
     file_put_contents(trim($clients[$choice],"rgz")."exe",$unrat);
     unset($unrat);
@@ -87,8 +87,8 @@ include_once "Core/kRO.php";
     
 file_put_contents($diffpath, $diff);
 $totaltime = microtime(true) - $starttime;
-echo "\n" . $passcount . " patches passed";
-echo "\n" . $failcount . " patches failed";
-echo "\r\nDiff saved to: " . $diffpath . " (Process Time: " . round($totaltime, 3) . "s)\r\n";
+echo "\npatches passed : $passcount\n";
+echo "patches failed : $failcount\n";
+echo "Diff saved to:  $diffpath (Process Time: " . round($totaltime, 3) . "s)\n";
 
 ?>

@@ -263,43 +263,6 @@ class Patches
 		return true;
 	}
 
-	static public function EnableQuestWindow($exe)
-	{
-		global $clientdate2;
-
-		if ($exe === true) {
-			return "[UI]_Enable_Quest_Window";
-		}
-		if($clientdate2 <= 20081126)
-		{
-			$code = "\x0F\x85\x10\x11\x00\x00";
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 1";
-				return false;
-			}
-			$exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90\x90"));
-		}
-
-		$codes = array(
-			"\x0F\x85\xBA\x00\x00\x00\x6A\x00\x8D",
-			"\x0F\x85\xC0\x00\x00\x00\x6A\x00\x8D",
-			"\x0F\x85\xCB\x00\x00\x00\x6A\x00\x68",
-		);
-		foreach ($codes as $index => $code)
-		{
-			$offset = $exe->code($code, "\xAB");
-			if ($offset !== false)
-				break;
-		}
-		if ($offset === false) {
-			echo "Failed in part 2";
-			return false;
-		}
-		$exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90\x90"));
-
-		return true;
-	}
 	
 	static public function EnableNewTradeWindow($exe)
 	{
@@ -1084,32 +1047,6 @@ class Patches
 		return true;
 	}
 	
-	static public function ReadDataFolderFirst($exe)
-	{
-		if ($exe === true) {
-			return "[Data]_Read_Data_Folder_First_(Recommended)";
-		}
-		$code = "\x68" . pack("I", $exe->str("readfolder")) . "\x8B\xAB"; // Speeds it up
-		// Uncomment if it breaks (it _might_ help):
-		//$code = "";
-		$len = strlen($code);
-		$code .= "\xE8\xAB\xAB\xAB\xAB\x85\xC0\x74\x07\xC6\x05\xAB\xAB\xAB\xAB\x01\x68" . pack("I", $exe->str("loading"));
-		$offset = $exe->code($code, "\xAB");
-		if ($offset === false) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offset, array((7 + $len) => "\x90\x90"));
-		$code = "\x83\xC4\x08\x8D\x77\x0C\x84\xC0\x0F\x84";// Add these if it breaks: \xAB\x00\x00\x00\x6A\x00\x68\x80\x00\x00\x00\x6A\x03";
-		$offset = $exe->code($code, "\xAB");
-		if ($offset === false) {
-			echo "Failed in part 2";
-			return false;
-		}
-		$exe->replace($offset, array(8 => "\x90\x90\x90\x90\x90\x90"));
-		return true;
-	}
-	
 	static public function UseOfficialClothesPalettes($exe)
 	{
 		if ($exe === true) {
@@ -1138,53 +1075,6 @@ class Patches
 			return false;
 		}
 		$exe->replace($offset, array(4 => "\x90\x90"));
-		return true;
-	}
-	
-	static public function AllowMultipleWindows($exe)
-	{
-		global $clientdate2;
-		if ($exe === true) {
-			return "[Fix](13)_Allow_Multiple_Windows";
-		}
-		if($clientdate2 <= 20090520)
-		{
-			$code = "\x0F\x84\x89\x00\x00\x00\x50\xFF\x15\xAB\xAB\xAB\xAB\x85\xC0\x74\x09\x5F\x5E\x32\xC0\x5B";
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 1";
-				return false;
-			}
-			$exe->replace($offset, array(15 => "\xEB"));
-
-			$code = "\x50\x89\x35\xAB\xAB\xAB\xAB\xFF\x15\xAB\xAB\xAB\xAB\x85\xC0\x74\x07\xC6\x05\xAB\xAB\xAB\xAB\x01\x33\xDB\x6A\x77\x56";
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 2";
-				return false;
-			}
-			$exe->replace($offset, array(15 => "\xEB"));
-
-			//$code = "\xFF\x15\xAB\xAB\xAB\xAB\x50\xFF\x15\xAB\xAB\xAB\xAB\x85\xC0\x74\x0E\x5F\x5E\xB8\x01\x00\x00\x00\x5B"; // Old pattern
-			$code = "\xFF\x15" . pack("I", $exe->func("WaitForSingleObject")) . "\x85\xC0\x74\x0E\x5F\x5E\xB8\x01\x00\x00\x00\x5B";
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 3";
-				return false;
-			}
-			$exe->replace($offset, array(8 => "\xEB")); // x -> 15, if using old pattern
-		}
-		else
-		{
-			$code = "\x00\x00\x00\x83\xF8\x03\x0F\x84\xAB\x00\x00\x00\x83\xF8\x05";
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 4";
-				return false;
-			}
-			$exe->replace($offset, array(-3 => "\x90\xE9"));
-		}
-
 		return true;
 	}
 	
@@ -1251,31 +1141,6 @@ class Patches
 		return true;
 	}
 	
-	static public function UseArialOnAllLangtypes($exe)
-	{
-		if ($exe === true) {
-			return "[UI](9)_Use_Arial_on_All_Langtypes";
-		}
-		$codes = array(
-		"\x83\xFA\x0A\x0F\x87\xAD\x00\x00\x00\xFF\x24\x95\xAB\xAB\xAB\xAB\xA1\xAB\xAB\xAB\xAB\x83\xF8\x06",
-		"\x83\xFA\x06\x0F\x87\xA6\x00\x00\x00\xFF\x24\x95\xAB\xAB\xAB\xAB\xA1\xAB\xAB\xAB\xAB\x83\xF8\x06",
-		"\x83\xFA\xAB\x0F\x87\xAB\x00\x00\x00\xFF\x24\x95\xAB\xAB\xAB\xAB\xA1\xAB\xAB\xAB\xAB\x83\xF8\x06",
-		);
-		$codeoffsets = array(3,3,3);
-		$changes = array("\xEB\x10","\xEB\x10","\xEB\x10");
-		foreach ($codes as $index => $code) {
-			$offset = $exe->code($code, "\xAB");
-			if ($offset !== false) {
-				break;
-			}
-		}
-		if ($offset === false) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offset, array($codeoffsets[$index] => $changes[$index]));
-		return true;
-	}
 
 	static public function UnlimitedLoadingScreens($exe)
 	{
@@ -1390,51 +1255,7 @@ class Patches
 		return true;
 	}
 	
-	static public function AllowChatFlood25Lines($exe)
-	{
-		if ($exe === true) {
-			return "[UI](1)_Allow_Chat_Flood_(25_lines)";
-		}
-		$code = "\x83\x3D\xAB\xAB\xAB\xAB\x0A\x0F\x84\xFD\x00\x00\x00\x83\x7D\x08\x02\x0F\x8C\xF3\x00\x00\x00\x53";
-		$offset = $exe->code($code, "\xAB");
-		if ($offset === false) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offset, array(16 => "\x18"));
-		return true;
-	}
-	
-	static public function AllowChatFlood50Lines($exe)
-	{
-		if ($exe === true) {
-			return "[UI](1)_Allow_Chat_Flood_(50_lines)";
-		}
-		$code = "\x83\x3D\xAB\xAB\xAB\xAB\x0A\x0F\x84\xFD\x00\x00\x00\x83\x7D\x08\x02\x0F\x8C\xF3\x00\x00\x00\x53";
-		$offset = $exe->code($code, "\xAB");
-		if ($offset === false) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offset, array(16 => "\x31"));
-		return true;
-	}
-	
-	static public function AllowChatFlood100Lines($exe)
-	{
-		if ($exe === true) {
-			return "[UI](1)_Allow_Chat_Flood_(100_lines)";
-		}
-		$code = "\x83\x3D\xAB\xAB\xAB\xAB\x0A\x0F\x84\xFD\x00\x00\x00\x83\x7D\x08\x02\x0F\x8C\xF3\x00\x00\x00\x53";
-		$offset = $exe->code($code, "\xAB");
-		if ($offset === false) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offset, array(16 => "\x63"));
-		return true;
-	}
-	
+
 	static public function DisableLv99Aura($exe)
 	{
 		if ($exe === true) {
@@ -1538,57 +1359,8 @@ class Patches
 		return true;
 	}
 
-	static public function ExtendedChatBox($exe)
-	{
-		global $clientdate2;
-		
-		if ($exe === true) {
-			return "[UI]_Extended_Chat_Box";
-		}
-		$num_matches = ($clientdate2 < 20100316 ? 5 : 4);
-		$code = "\xC7\x40\x54\x46";
-		$offsets = $exe->code($code, "\xAB", $num_matches);
-		if (count($offsets) != $num_matches) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offsets[$num_matches - 1], array(3 => "\x58"));  // \xEA
-		return true;
-	}
 
-	static public function ExtendedPMBox($exe)
-	{
-		global $clientdate2;
-		if ($exe === true) {
-			return "[UI]_Extended_PM_Box";
-		}
-		$num_matches = ($clientdate2 < 20100316 ? 5 : 4);
-		$code = "\xC7\x40\x54\x46";
-		$offsets = $exe->code($code, "\xAB", $num_matches);
-		if (count($offsets) != $num_matches) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offsets[$num_matches - 2], array(3 => "\x58"));  // \xEA
-		return true;
-	}
 
-	static public function ExtendedChatRoomBox($exe)
-	{
-		global $clientdate2;
-		if ($exe === true) {
-			return "[UI]_Extended_Chat_Room_Box";
-		}
-		$num_matches = ($clientdate2 < 20100316 ? 5 : 4);
-		$code = "\xC7\x40\x54\x46";
-		$offsets = $exe->code($code, "\xAB", $num_matches);
-		if (count($offsets) != $num_matches) {
-			echo "Failed in part 1";
-			return false;
-		}
-		$exe->replace($offsets[$num_matches - 4], array(3 => "\x58"));  // \xEA
-		return true;
-	}
 
 	static public function PlayOpenningDotBik($exe)
 	{

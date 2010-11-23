@@ -102,7 +102,7 @@ function GetFTP() {
     $conn_id = ftp_connect($ftp_server) or die("Couldn't connect to $ftp_server"); 
     // try to login
     if (!@ftp_login($conn_id, $ftp_user, $ftp_pass)) {
-        echo "Couldn't login as $ftp_user\n";
+        die("\nCouldn't login as $ftp_user\n");
     }
     ftp_pasv($conn_id, true);
     ftp_chdir($conn_id, "Patch");
@@ -122,6 +122,9 @@ function GetFTP() {
     }
     fwrite(STDOUT, "\nGenerate Diff for: ");
     $choice = trim(fgets(STDIN));
+    if(!isset($filelist[$choice])) {
+        die("\nfailure with client choice");
+    }
     $locfile = "Clients/$filelist[$choice]";
     echo "############ DOWNLOADING.. #############\n";
     $fs = ftp_size($conn_id, $filelist[$choice]); 
