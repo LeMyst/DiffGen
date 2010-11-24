@@ -17,7 +17,7 @@ $patches = array(
     // "DisableCharnameChatParsing",
     // "DisableEffect",
     // "DisableEncryptationInLoginPacket0x2b0",
-    // "DisableFilenameCheck",
+    "DisableFilenameCheck",
     "DisableHShield",
     // "DisableHallucinationWavyScreen",
     // "DisableKeyCrypt",

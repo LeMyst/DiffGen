@@ -19,27 +19,27 @@
         // patch call to LoadAhnLab with jmp to call AudioInit
 
         $section = $exe->getSection(".rdata");
+        $virtual = $section->vOffset - $section->rOffset;
         if($section === false) {
             echo "Failed in part 3";
             return false;
         }
         // remove ahnlab dll from import table
-        $aOffset = $exe->match("aossdk.dll\x00\x00");
-        if ($aOffset === false) {
+        $aoffset = $exe->str("aossdk.dll","raw");
+        if ($aoffset === false) {
             echo "Failed in part 4";
             return false;
         }
-        $virtual = $section->vOffset - $section->rOffset;
-        $aOffset += $virtual;
-        $code = "\x00\xAB\xAB\xAB\x00\x00\x00\x00\x00\x00\x00\x00\x00".pack("I", $aOffset);
+        $aoffset += $virtual;
+        $code = "\x00\x00\x00\x00\x00\x00\x00\x00\x00".pack("I", $aoffset);
         $offset = $exe->match($code, "\xAB", $section->rOffset, $section->rOffset+$section->rSize);
         if ($offset === false) {
-            echo dechex($aOffset) ."  # Failed in part 5";
+            echo dechex($aoffset) ."  # Failed in part 5";
             return false;
         }
         
-        $data2 = $exe->read($offset + 21, 19) . str_repeat("\x00", 20);
-        $exe->replace($offset, array(1 => $data2));
+        $data2 = $exe->read($offset + 16, 19) . str_repeat("\x00", 20);
+        $exe->replace($offset, array(-4 => $data2));
 
         return true;
     }
