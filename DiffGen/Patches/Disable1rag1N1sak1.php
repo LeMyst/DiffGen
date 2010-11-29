@@ -3,21 +3,19 @@
         if ($exe === true) {
             return "[Fix]_Disable_1rag1_&_1sak1_(Recommended)";
         }
-        $code =  "\x68\xAB\xAB\xAB\x00"        // push    offset byte_898286 ; Str
-                ."\xFF\xD6"                    // call    esi ; strstr
-                ."\x83\xC4\x08"                // add     esp, 8
-                ."\x85\xC0"                    // test    eax, eax
-                ."\x75\xAB"                    // jnz     short loc_73D643 (patch JNZ to JMP)
-                ."\x68\xAB\xAB\xAB\x00"        // push    offset aEvent   ; "Event"
-                ."\x68\xAB\xAB\xAB\x00"        // push    offset byte_898286 ; Str
-                ."\xFF\xD6"                    // call    esi ; strstr
-                ."\x83\xC4\x08";               // add     esp, 8
+        $rag1 = pack("I", $exe->str("1rag1","rva"));
+        $code =  "\x68" . $rag1     // push    offset a1rag1   ; "1rag1"
+                ."\x55"             // push    ebp             ; Str
+                ."\xFF\xAB"         // call    esi ; strstr
+                ."\x83\xAB\xAB"     // add     esp, 8
+                ."\x85\xAB"         // test    eax, eax
+                ."\x75\xAB";        // jnz     short loc_723E28
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
             echo "Failed in part 1";
             return false;
         }
-        $exe->replace($offset, array(12 => "\xEB"));
+        $exe->replace($offset, array(13 => "\xEB"));
         return true;
     }
 ?>

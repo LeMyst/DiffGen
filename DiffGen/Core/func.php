@@ -85,7 +85,7 @@ function include_directory($dir) {
     foreach(new RecursiveIteratorIterator($it) as $filename => $cur) {
         if( preg_match('/.php$/', $filename) ) {
             echo "Loaded $filename                        \r";
-            usleep(100000);
+            usleep(5000); // visual effect
             require_once($filename);
             $count++;
         }

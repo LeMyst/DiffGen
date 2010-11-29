@@ -12,14 +12,12 @@
         }
         $strOff += $exe->imagebase();
         $code = pack("I", $exe->str("Ragnarok","rva"));
-        $offsets = $exe->code($code, "\xAB", -1);
-        if ($offsets === false) {
+        $offset = $exe->code($code, "\xAB");
+        if ($offset === false) {
             echo "Failed in part 2 ";
             return false;
         }
-        foreach ($offsets as $offset) {
-            $exe->replace($offset, array(0 => pack("I", $strOff)));
-        }
+        $exe->replace($offset, array(0 => pack("I", $strOff)));
         return true;
     }
 ?>

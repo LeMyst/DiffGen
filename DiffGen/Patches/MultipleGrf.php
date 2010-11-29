@@ -1,4 +1,10 @@
 <?php
+// Enable Multiple GRF files
+// adds support to load GRF files from a list inside DATA.INI
+//
+// 26.11.2010 - Organized DiffPatch into a working state for vc9 compiled clients [Yom]
+//
+
     function EnableMultipleGRFs($exe){
         if ($exe === true) {
             return "[Data](7)_Enable_Multiple_GRFs";
@@ -28,11 +34,15 @@
             echo "Failed in part 3";
             return false;
         }
-        // to fix
+        $rdata = $exe->getSection(".rdata");
+        $vrdata = $rdata->vOffset - $rdata->rOffset;
+        $text = $exe->getSection(".text");
+        $vtext = $text->vOffset - $text->rOffset;
+        // read mov and call from WinMain();
         $mov = $exe->read($offset + 5, 5);
         $call = $exe->read($offset + 11, 4, "i");
         // patch
-        $exe->replace($offset, array(0 => "\xE8" . pack("I", $free - ($offset + 5)) . "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+        $exe->replace($offset, array(0 => "\xE8" . pack("I", ($free + $vrdata) - ($offset + 5 + $vtext)) . "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 
         // GetModuleHandleA
         $getmodulehandlea = $exe->func("GetModuleHandleA");
@@ -40,23 +50,24 @@
             echo "Failed in part 5";
             return false;
         }
-        
         // GetProcAddress
         $getprocaddress = $exe->func("GetProcAddress");
         if ($getprocaddress === false) {
             echo "Failed in part 6";
             return false;
         }
+
         // string locations after injected code
-        $dataini        = pack("I", ($exe->imagebase() + $free + 170)); // DATA.INI
-        $getprofile     = pack("I", ($exe->imagebase() + $free + 181)); // GetPrivateProfileStringA
-        $writeprofile   = pack("I", ($exe->imagebase() + $free + 206)); // WritePrivateProfileStringA
-        $data           = pack("I", ($exe->imagebase() + $free + 238)); // Data
-        $kernel32       = pack("I", ($exe->imagebase() + $free + 243)); // KERNEL32
+        $dataini        = pack("I", ($exe->imagebase() + $vrdata + $free + 170)); // DATA.INI
+        $getprofile     = pack("I", ($exe->imagebase() + $vrdata + $free + 181)); // GetPrivateProfileStringA
+        $writeprofile   = pack("I", ($exe->imagebase() + $vrdata + $free + 206)); // WritePrivateProfileStringA
+        $data           = pack("I", ($exe->imagebase() + $vrdata + $free + 233)); // Data
+        $kernel32       = pack("I", ($exe->imagebase() + $vrdata + $free + 238)); // KERNEL32
+        $call           = pack("i", (($call + $offset + 15 + $vtext) - ($free + 120 + $vrdata)));
         
         $code =  "\xC8\x80\x00\x00"                                        // enter   80h, 0
                 ."\x60"                                                    // pusha
-                ."\x68" . pack("I", $kernel32)                             // push    offset ModuleName ; "KERNEL32"
+                ."\x68" . $kernel32                                        // push    offset ModuleName ; "KERNEL32"
                 ."\xFF\x15" . pack("I", $getmodulehandlea)                 // call    ds:GetModuleHandleA
                 ."\x85\xC0"                                                // test    eax, eax
                 ."\x74\x23"                                                // jz      short loc_735E01
@@ -96,7 +107,7 @@
                 ."\x52"                                                    // push    edx
                 ."\x53"                                                    // push    ebx
                 . $mov                                                     // mov     ecx, offset unk_810248
-                ."\xE8" . pack("i", ($offset + 15 + $call - ($free + 120))) // call    CFileMgr::AddPak()
+                ."\xE8" . $call                                            // call    CFileMgr::AddPak()
                 ."\x5A"                                                    // pop     edx
                 ."\x42"                                                    // inc     edx
                 ."\xFE\x4D\xFE"                                            // dec     byte ptr [ebp+var_2]

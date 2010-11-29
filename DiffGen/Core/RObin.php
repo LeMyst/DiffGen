@@ -228,8 +228,10 @@ class RObin
         for ($i = 0; $i < $length; $i++) {
             if ($this->exe[$offset + $i] != $code[$i]) {
                 $poffset = strtoupper(dechex($offset + $i));
-                $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $i]))),2,"0", STR_PAD_LEFT);
-                $pvalue2 = str_pad(strtoupper(dechex(ord($code[$i]))),2,"0", STR_PAD_LEFT);
+                //$pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $i]))),2,"0", STR_PAD_LEFT);
+                //$pvalue2 = str_pad(strtoupper(dechex(ord($code[$i]))),2,"0", STR_PAD_LEFT);
+                $pvalue1 = ord($this->exe[$offset + $i]);
+                $pvalue2 = ord($code[$i]);
                 $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
             }
             $this->exe[$offset + $i] = $code[$i];
@@ -250,8 +252,10 @@ class RObin
             for ($i = 0; $i < strlen($value); $i++) {
                 if ($this->exe[$offset + $pos + $i] != $value[$i]) {
                     $poffset = strtoupper(dechex($offset + $pos + $i));
-                    $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
-                    $pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
+                    //$pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
+                    //$pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
+                    $pvalue1 = ord($this->exe[$offset + $pos + $i]);
+                    $pvalue2 = ord($value[$i]);
                     $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
                 }
                 $this->exe[$offset + $pos + $i] = $value[$i];
@@ -304,13 +308,10 @@ class RObin
         $iBase = $this->imagebase();
         $section = $this->getSection(".rdata");
         $virtual = $section->vOffset - $section->rOffset;
-        // Strings are null terminated, hence $str . "\x00"
         $offset = $this->match("\x00".$str."\x00", "", $section->rOffset, $section->rOffset + $section->rSize) + 1;
         if ($offset === false) {
             return false;
         }
-        //echo "#str()# in " . round(microtime(true) - $tick, 5) . "s\n";
-        //echo "                                        : ";
         if($type == "rva")
             return $offset + $virtual + $iBase;
         if($type == "raw")
@@ -319,7 +320,7 @@ class RObin
     }
     
     // I don't really understand how it works (assembly-wise), but...
-    // Searches for a function on .data section, and returns the address to be
+    // Searches for a function on .rdata section, and returns the address to be
     // used in asm stuff (call instructions, I guess), or false on failure.
     // Some functions work by just searching for their names ($str = true),
     // others however have to be looked for using numbers ($str = false).
@@ -328,12 +329,12 @@ class RObin
     {
         $tick = microtime(true);
         $iBase = $this->imagebase();
-        $section = $this->getSection(".data");
+        $section = $this->getSection(".rdata");
         $virtual = $section->vOffset - $section->rOffset;
         if ($str) {
             // It has to resolve the name or something... can't remember
             $offset = $this->match($func . "\x00", "", $section->rOffset, $section->rOffset + $section->rSize);
-            $code = pack("I", $offset - 2);
+            $code = pack("I", $offset - 2 + $virtual);
         } else {
             $code = $func;
         }
@@ -341,8 +342,6 @@ class RObin
         if ($offset === false) {
             return false;
         }
-        //echo "#func()# in " . round(microtime(true) - $tick, 5) . "s\n";
-        //echo "                                        : ";
         return $offset + $virtual + $iBase;
     }
     
