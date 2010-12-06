@@ -49,15 +49,6 @@ function DiffColor($src, $exe, $patch) {
     echo "Done in " . round(microtime(true) - $tick, 3) . "s\r\n";
 }
 
-function gzdecode($data) {
-  $g=tempnam('/tmp','ff');
-  @file_put_contents($g,$data);
-  ob_start();
-  readgzfile($g);
-  $d=ob_get_clean();
-  return $d;
-}
-
 function DiffAutos($src, $exe, $patch) {
     $tick = microtime(true);
     global $diff, $autos_name, $fail, $failcount;
@@ -78,22 +69,55 @@ function DiffAutos($src, $exe, $patch) {
     }
     echo "Done in " . round(microtime(true) - $tick, 3) . "s\r\n";
 }
+function unpack_rgz($rgz){
+    $exe = trim($rgz,"rgz") . "exe";
+    echo "unpacking " . basename($rgz) . "\n\n";
+    // ungzip
+    $gz = file_get_contents($rgz);
+    $ungz = gzdecode($gz);
+    // unrat                                                            // name                | size
+    $type = substr($ungz,0,1);                                          // type                | 1 byte
+    $fnlen = hexdec(bin2hex(substr($ungz,1,1)));                        // filenameLength      | 1 byte
+    $fn = substr($ungz,2,$fnlen);                                       // filename            | filenameLength bytes
+    $flen = unpack("L",substr($ungz,$fnlen+2,4)); $flen = $flen[1];     // length              | 4 bytes
+    $unrat = substr($ungz,$fnlen+6,$flen);                              // data                | length bytes
+    file_put_contents($exe,$unrat);
+    unset($unrat);
+    unlink($rgz);
+    return $exe;
+}
+
+function gzdecode($data) {
+  $g=tempnam('/tmp','ff');
+  @file_put_contents($g,$data);
+  ob_start();
+  readgzfile($g);
+  $d=ob_get_clean();
+  return $d;
+}
 
 function include_directory($dir) {
+    global $patches;
     $it = new RecursiveDirectoryIterator($dir);
     $count = 0;
     foreach(new RecursiveIteratorIterator($it) as $filename => $cur) {
         if( preg_match('/.php$/', $filename) ) {
-            echo "Loaded $filename                        \r";
-            usleep(5000); // visual effect
             require_once($filename);
+            $filename = basename($filename,".php");
             $count++;
+            if(!function_exists($filename)) {
+                echo "### File Without Function - $filename\n";
+            } else {
+                echo "Loaded $filename                     \r";
+                $patches[] = $filename;
+            }
+            usleep(5000); // visual effect
         }
     }
     echo "Loaded $count Patches                          \n\n";
 }
 
-function GetFTP() {
+function GetFTP($client) {
     echo "############# CONNECTING ###############\n\n";
     $ftp_server = "125.141.215.106";
     $ftp_user = "ragadmin";
@@ -108,11 +132,11 @@ function GetFTP() {
     ftp_chdir($conn_id, "Patch");
     $buff = ftp_nlist($conn_id, '');
     foreach ($buff as $ftpfile) {
-        if(strpos($ftpfile , "RagexeRE.rgz") || strpos($ftpfile , "Ragexe.rgz")){
+        if(strpos($ftpfile, $client)){
             $filelist[] = $ftpfile;
         }
     }
-    for($i=sizeof($filelist)-40; $i<sizeof($filelist); $i++){
+    for($i=sizeof($filelist)-20; $i<sizeof($filelist); $i++){
         $locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
         if (file_exists($locfile)) {
             echo "$i #: $filelist[$i]\n";
@@ -123,7 +147,7 @@ function GetFTP() {
     fwrite(STDOUT, "\nGenerate Diff for: ");
     $choice = trim(fgets(STDIN));
     if(!isset($filelist[$choice])) {
-        die("\nfailure with client choice");
+        die("\nfailure with client choice\n");
     }
     $locfile = "Clients/$filelist[$choice]";
     echo "############ DOWNLOADING.. #############\n";
@@ -139,7 +163,7 @@ function GetFTP() {
         $file = ftp_nb_continue($conn_id); 
     }
     if ($file != FTP_FINISHED) {
-        echo "\nThere was an error downloading the file...";
+        echo "\nThere was an error downloading the file...\n";
     } else {
         echo "\nSuccessfully downloaded to $locfile\n";
     }

@@ -122,41 +122,6 @@ class Patches
         return true;
     }
     
-    static public function UnlimitedChatFlood($exe)
-    {
-        if ($exe === true) {
-            return "[UI](1)_Unlimit_Chat_Flood";
-        }
-        $code = "\x52\x56\xE8\xAB\xAB\xAB\xAB\x83\xC4\x08\x84\xC0\x74\xAB\xFF\x83\xAB\xAB\xAB\xAB\xEB\xAB\xC7\xAB\xAB\xAB\xAB\x00\x00\x00\x00\x00\x8B\x83\xAB\xAB\xAB\xAB\x50";
-        $offsets = $exe->code($code, "\xAB", 4);
-        if ($offsets === false) {
-            echo "Failed in part 1";
-            return false;
-        }
-        foreach ($offsets as $offset) {
-            $exe->replace($offset, array(12 => "\xEB"));
-        }
-        return true;
-    }
-    
-    static public function DisableSwearFilter($exe)
-    {
-        // Size is different on different diffs, which one is true?
-        if ($exe === true) {
-            return "[UI]_Disable_Swear_Filter";
-        }
-        $code = "\x51\xB9\xAB\xAB\xAB\xAB\xE8\xAB\xAB\xAB\xAB\x84\xC0\x74\x53\x6A\x00\x6A\x00\x6A\x00\x6A\x00\x6A\x03";
-        $offsets = $exe->code($code, "\xAB", -1);
-        if ($offsets === false) {
-            echo "Failed in part 1";
-            return false;
-        }
-        foreach ($offsets as $offset) {
-            $exe->replace($offset, array(13 => "\xEB"));
-        }
-        return true;
-    }
-    
     static public function EnableASCIIinText($exe)
     {
         if ($exe === true) {
@@ -424,57 +389,8 @@ class Patches
         return true;
     }
     
-    static public function EnforceLoginPacket0x2b0($exe)
-    {
-        if ($exe === true) {
-            return "[Packet](11)_Enforce_Login_Packet_0x2b0";
-        }
-        $codes = array(
-        "\x85\xC0\x0F\x85\xAF\x01\x00\x00",
-        "\x85\xC0\x0F\x85\xAC\x01\x00\x00",
-        "\x85\xC0\x0F\x85\xB5\x01\x00\x00",
-        );
-        $codeoffsets = array(2,2,2);
-        $changes = array("\x90\x90\x90\x90\x90\x90","\x90\x90\x90\x90\x90\x90","\x90\x90\x90\x90\x90\x90");
-        foreach ($codes as $index => $code) {
-            $offset = $exe->code($code, "\xAB");
-            if ($offset !== false) {
-                break;
-            }
-        }
-        if ($offset === false) {
-            echo "Failed in part 1";
-            return false;
-        }
-        $exe->replace($offset, array($codeoffsets[$index] => $changes[$index]));
-        return true;
-    }
-    
-    static public function DisableLoginPacket0x2b0($exe)
-    {
-        if ($exe === true) {
-            return "[Packet](11)_Disable_Login_Packet_0x2b0";
-        }
-        $codes = array(
-        "\x85\xC0\x0F\x85\xAF\x01\x00\x00",
-        "\x85\xC0\x0F\x85\xAC\x01\x00\x00",
-        "\x85\xC0\x0F\x85\xB5\x01\x00\x00",
-        );
-        $codeoffsets = array(2,2,2);
-        $changes = array("\xE9\xB0\x01\x00\x00\x90","\xE9\xB0\x01\x00\x00\x90","\xE9\xB0\x01\x00\x00\x90");
-        foreach ($codes as $index => $code) {
-            $offset = $exe->code($code, "\xAB");
-            if ($offset !== false) {
-                break;
-            }
-        }
-        if ($offset === false) {
-            echo "Failed in part 1";
-            return false;
-        }
-        $exe->replace($offset, array($codeoffsets[$index] => $changes[$index]));
-        return true;
-    }
+
+
 
     static public function DisableHallucinationWavyScreen($exe)
     {

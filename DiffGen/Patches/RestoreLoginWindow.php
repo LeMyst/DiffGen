@@ -24,11 +24,15 @@
         }
         $mov = $exe->read($offset + 14, 5);
         $numaccount = pack("I", $exe->str("NUMACCOUNT","rva"));
-        $code =  "\xB9\x00\x66\x81\x00"         // mov     ecx, offset unk_816600
-                ."\xE8\x07\x4B\xF0\xFF"         // call    CreateWindow
+        $code =  "\xB9\x00\xAB\xAB\x00"         // mov     ecx, offset unk_816600
+                ."\xE8\xAB\xAB\xAB\xFF"         // call    CreateWindow
                 ."\x6A\x00"                     // push    0
                 ."\x6A\x00"                     // push    0
-                ."\x68" . $numaccount;          // push    offset aNumaccount ; "NUMACCOUNT"
+                ."\x68" . $numaccount           // push    offset aNumaccount ; "NUMACCOUNT"
+                ."\x8B\xF8"                     // mov     edi, eax
+                ."\x8B\x17"                     // mov     edx, [edi]
+                ."\x8B\x82\x90\x00\x00\x00"     // mov     eax, [edx+90h]
+                ."\x68\x23\x27\x00\x00";        // push    2723h
         $offseta = $exe->code($code, "\xAB");
         if ($offseta === false) {
             echo "Failed in part 2";

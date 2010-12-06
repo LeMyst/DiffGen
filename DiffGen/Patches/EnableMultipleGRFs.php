@@ -29,7 +29,9 @@
             return false;
         }
         // find the codecave to inject our data.ini load function
-        $free = $exe->zeroed(251); // find 251 bytes
+        // $free = $exe->zeroed(251); // find 251 bytes
+        $zeroed = str_repeat("\x00", 251);
+        $free = $exe->match($zeroed);
         if ($free === false) {
             echo "Failed in part 3";
             return false;

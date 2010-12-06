@@ -19,7 +19,7 @@ class RObin
     private $client_date = 0;
     
     // Loads file from $path
-    public function load($path)
+    public function load($path,$debug=false)
     {
         $file = file_get_contents($path);
         if ($file === false) {
@@ -29,7 +29,7 @@ class RObin
         $this->size = strlen($file);
         
         $this->PEHeader = $this->match("\x50\x45\x00\x00");
-        echo "PE Header\t".dechex($this->PEHeader)."h\n";
+        if($debug) echo "PE Header\t".dechex($this->PEHeader)."h\n";
         
         // If the loaded file isn't a valid PE file, then it's not necessary to continue
         // with the diff process anyway, so just die~ >:)
@@ -37,14 +37,14 @@ class RObin
             die("Invalid PE file used!\n");
             
         $this->image_base = $this->read($this->PEHeader + 0x34, 4, "V");
-        echo "Image Base\t".dechex($this->image_base)."h\n";
+        if($debug) echo "Image Base\t".dechex($this->image_base)."h\n";
         
         $date = $this->read($this->PEHeader+8, 4, 'V');
         $this->client_date = date('Y', $date) * 10000 + date('m', $date) * 100 + date('d', $date);
-        echo "Client Date\t".$this->client_date."\n";
+        if($debug) echo "Client Date\t".$this->client_date."\n";
         
-        echo "\nName\tvSize\tvOffset\trSize\trOffset\tvrDiff\n";
-        echo "----\t-----\t-------\t-----\t-------\t------\n";
+        if($debug) echo "\nName\tvSize\tvOffset\trSize\trOffset\tvrDiff\n";
+        if($debug) echo "----\t-----\t-------\t-----\t-------\t------\n";
         // Get section information
         $sectionCount = $this->read($this->PEHeader + 0x6, 2, "S");
         for($i = 0, $curSection = $this->PEHeader + 0x18 + 0x60 + 0x10 * 0x8; $i < $sectionCount; $i++) {
@@ -55,11 +55,18 @@ class RObin
             $sectionInfo['name'] = substr($sectionInfo['name'], 0, strpos($sectionInfo['name'], "\x00"));
             
             $sectionInfo['vSize']         = $this->read($curSection+8+0*4, 4, "V");
-            $sectionInfo['vOffset']     = $this->read($curSection+8+1*4, 4, "V");
+            $sectionInfo['vOffset']       = $this->read($curSection+8+1*4, 4, "V");
             $sectionInfo['rSize']         = $this->read($curSection+8+2*4, 4, "V");
-            $sectionInfo['rOffset']     = $this->read($curSection+8+3*4, 4, "V");
-            $sectionInfo['vrDiff']        = dechex($sectionInfo['vOffset'] - $sectionInfo['rOffset']);
-            echo "$sectionInfo[name]\t$sectionInfo[vSize]\t$sectionInfo[vOffset]\t$sectionInfo[rSize]\t$sectionInfo[rOffset]\t0x$sectionInfo[vrDiff]\n";
+            $sectionInfo['rOffset']       = $this->read($curSection+8+3*4, 4, "V");
+            $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
+            $tab = "\t";
+            if($debug) 
+            echo  $sectionInfo['name'] . $tab
+                . dechex($sectionInfo['vSize']) . $tab
+                . dechex($sectionInfo['vOffset']) . $tab
+                . dechex($sectionInfo['rSize']) . $tab
+                . dechex($sectionInfo['rOffset']) . $tab
+                . dechex($sectionInfo['vrDiff']) . "\n";
             // Convert to object for easier access
             // E.g: $exe->getSection(".rdata")->rOffset...
             $this->sections[$sectionInfo['name']] = new stdClass();
