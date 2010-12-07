@@ -101,6 +101,9 @@ function include_directory($dir) {
     $it = new RecursiveDirectoryIterator($dir);
     $count = 0;
     foreach(new RecursiveIteratorIterator($it) as $filename => $cur) {
+        if( preg_match('/#/', $filename) ) {
+            continue;   // skip files begining with #
+        }
         if( preg_match('/.php$/', $filename) ) {
             require_once($filename);
             $filename = basename($filename,".php");
@@ -111,7 +114,7 @@ function include_directory($dir) {
                 echo "Loaded $filename                     \r";
                 $patches[] = $filename;
             }
-            usleep(5000); // visual effect
+            usleep(5000);   // visual effect
         }
     }
     echo "Loaded $count Patches                          \n\n";

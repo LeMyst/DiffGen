@@ -18,6 +18,7 @@
         $exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
         // patch call to LoadAhnLab with jmp to call AudioInit
 
+        /* Need to fix import table ¬_¬
         $section = $exe->getSection(".rdata");
         if($section === false) {
             echo "Failed in part 3";
@@ -39,7 +40,8 @@
         }
         
         $data2 = str_repeat("\x00", 20);
-        //$exe->replace($offset, array(1 => $data2));
+        $exe->replace($offset, array(1 => $data2));
+        */
 
         return true;
     }
