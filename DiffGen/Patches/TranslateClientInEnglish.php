@@ -24,7 +24,9 @@ function TranslateClientInEnglish($exe){
 	
 	foreach($codes as $index => $code) {
 		if(strlen($changes[$index])+1 > strlen($code)){
-			die("\n\nTranslateClientInEnglish > Times: String length error at index $index\n\n");
+			// Don't die, just report..
+			echo "\n\nTranslateClientInEnglish > Times: String length error at index $index\n\n";
+			return false;
 		}
 		
 		$offset = $exe->match($codes[$index], "\xAB", 0);
