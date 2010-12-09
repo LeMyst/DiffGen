@@ -36,15 +36,15 @@
             echo "Failed in part 3";
             return false;
         }
-        $rdata = $exe->getSection(".rdata");
-        $vrdata = $rdata->vOffset - $rdata->rOffset;
+        // $rdata = $exe->getSection(".rdata");
+        // $vrdata = $rdata->vOffset - $rdata->rOffset;
         $text = $exe->getSection(".text");
         $vtext = $text->vOffset - $text->rOffset;
         // read mov and call from WinMain();
         $mov = $exe->read($offset + 5, 5);
         $call = $exe->read($offset + 11, 4, "i");
         // patch
-        $exe->replace($offset, array(0 => "\xE8" . pack("I", ($free + $vrdata) - ($offset + 5 + $vtext)) . "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+        $exe->replace($offset, array(0 => "\xE8" . pack("I", ($free + $vtext) - ($offset + 5 + $vtext)) . "\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 
         // GetModuleHandleA
         $getmodulehandlea = $exe->func("GetModuleHandleA");
@@ -60,12 +60,12 @@
         }
 
         // string locations after injected code
-        $dataini        = pack("I", ($exe->imagebase() + $vrdata + $free + 170)); // DATA.INI
-        $getprofile     = pack("I", ($exe->imagebase() + $vrdata + $free + 181)); // GetPrivateProfileStringA
-        $writeprofile   = pack("I", ($exe->imagebase() + $vrdata + $free + 206)); // WritePrivateProfileStringA
-        $data           = pack("I", ($exe->imagebase() + $vrdata + $free + 233)); // Data
-        $kernel32       = pack("I", ($exe->imagebase() + $vrdata + $free + 238)); // KERNEL32
-        $call           = pack("i", (($call + $offset + 15 + $vtext) - ($free + 120 + $vrdata)));
+        $dataini        = pack("I", ($exe->imagebase() + $vtext + $free + 170)); // DATA.INI
+        $getprofile     = pack("I", ($exe->imagebase() + $vtext + $free + 181)); // GetPrivateProfileStringA
+        $writeprofile   = pack("I", ($exe->imagebase() + $vtext + $free + 206)); // WritePrivateProfileStringA
+        $data           = pack("I", ($exe->imagebase() + $vtext + $free + 233)); // Data
+        $kernel32       = pack("I", ($exe->imagebase() + $vtext + $free + 238)); // KERNEL32
+        $call           = pack("i", (($call + $offset + 15 + $vtext) - ($free + 120 + $vtext)));
         
         $code =  "\xC8\x80\x00\x00"                                        // enter   80h, 0
                 ."\x60"                                                    // pusha
@@ -138,7 +138,6 @@
                 ."KERNEL32\x00";
         
         $exe->insert($code, $free);
-        $free = $exe->zeroed(251); // find 251 bytes
         return true;
     }
 ?>
