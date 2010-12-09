@@ -203,22 +203,18 @@ class RObin
     // on the space after .text section ends and before .rdata begins.
     public function zeroed($size)
     {
+        global $src;
         $zeroed = str_repeat("\x00", $size);
-        $sectionNames = array(".text", ".rdata", ".data", ".rsrc");
-        
         $zero = false;
-        foreach ($sectionNames as $name) {
-            $section = $this->getSection($name);
-            if($section === false)
-                continue;
-            
-            if (($section->rSize - $section->vSize) >= $size) {
-                $offset = $this->match($zeroed, "", $section->rOffset + $section->vSize, $section->rOffset + $section->rSize);
-                if ($offset !== false) {
-                    $zero = $offset;
-                    break;
-                }
-            }
+        $section = $this->getSection(".text");
+        if($section === false){
+            return false;
+        }
+        $offset = strpos($src->exe, $zeroed, $section->vSize);
+        //$offset = $this->match($zeroed, "", $section->vSize);
+        if ($offset !== false) {
+            $zero = $offset;
+            // echo "# " . dechex($offset) . " #";
         }
         return $zero;
     }
@@ -228,6 +224,7 @@ class RObin
     // should be modified to change the $src to stop conflicting free space
     public function insert($code, $offset)
     {
+        global $src;
         $length = strlen($code);
         if ($length < 1) {
             return false;
@@ -235,13 +232,15 @@ class RObin
         for ($i = 0; $i < $length; $i++) {
             if ($this->exe[$offset + $i] != $code[$i]) {
                 $poffset = strtoupper(dechex($offset + $i));
-                //$pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $i]))),2,"0", STR_PAD_LEFT);
-                //$pvalue2 = str_pad(strtoupper(dechex(ord($code[$i]))),2,"0", STR_PAD_LEFT);
+                // output values in hex when patcher supports it
+                // $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $i]))),2,"0", STR_PAD_LEFT);
+                // $pvalue2 = str_pad(strtoupper(dechex(ord($code[$i]))),2,"0", STR_PAD_LEFT);
                 $pvalue1 = ord($this->exe[$offset + $i]);
                 $pvalue2 = ord($code[$i]);
                 $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
             }
             $this->exe[$offset + $i] = $code[$i];
+            $src->exe[$offset + $i] = $code[$i];
         }
         return true;
     }
@@ -259,8 +258,9 @@ class RObin
             for ($i = 0; $i < strlen($value); $i++) {
                 if ($this->exe[$offset + $pos + $i] != $value[$i]) {
                     $poffset = strtoupper(dechex($offset + $pos + $i));
-                    //$pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
-                    //$pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
+                    // output values in hex when patcher supports it
+                    // $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
+                    // $pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
                     $pvalue1 = ord($this->exe[$offset + $pos + $i]);
                     $pvalue2 = ord($value[$i]);
                     $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;

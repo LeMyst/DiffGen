@@ -1,19 +1,19 @@
 <?php
-function Diff($src, $exe, $patch, $extra = false) {
+function Diff($src, $exe, $patch) {
     $tick = microtime(true);
     if(function_exists($patch)) {
         global $diff, $fail, $failcount, $passcount, $patterndebug;
         echo str_pad($patch, 40, " ") . ": ";
-        if (call_user_func($patch, $exe, $extra) === false) {
+        if (call_user_func($patch, $exe) === false) {
             $failcount++;
             echo " ##\r\n";
-            file_put_contents($fail, call_user_func($patch, true, $extra) . "\r\n", FILE_APPEND);
+            file_put_contents($fail, call_user_func($patch, true) . "\r\n", FILE_APPEND);
             $exe->diff();
             return;
         }
         $passcount++;
         $diff .= "\r\n";
-        $prefix = "byte_" . call_user_func($patch, true, $extra);
+        $prefix = "byte_" . call_user_func($patch, true);
         $diffs = $exe->diff();
         foreach ($diffs as $dif) {
             $diff .= $prefix . ":" . $dif . "\r\n";

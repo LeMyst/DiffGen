@@ -24,7 +24,7 @@
         }
         $mov = $exe->read($offset + 14, 5);
         $numaccount = pack("I", $exe->str("NUMACCOUNT","rva"));
-        $code =  "\xB9\x00\xAB\xAB\x00"         // mov     ecx, offset unk_816600
+        $code =  "\xB9\xAB\xAB\xAB\x00"         // mov     ecx, offset unk_816600
                 ."\xE8\xAB\xAB\xAB\xFF"         // call    CreateWindow
                 ."\x6A\x00"                     // push    0
                 ."\x6A\x00"                     // push    0
