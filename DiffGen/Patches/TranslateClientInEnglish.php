@@ -9,7 +9,9 @@ function TranslateClientInEnglish($exe){
 	// I would like to to use a huge array list with codes and replacements, but it isn't really
 	// clean to see what is where and why. So just split them in parts.
 	
-	// Some time declarations (e.g. delete system)
+	//**********************************
+	$trans = "Translate Delete Time";
+	//**********************************
 	$codes = array(	
 									// %d월 %d일 %d시 %d분 %d초 --> Month/Day Hour:Minutes:Seconds
 									"\x25\x64\xBF\xF9\x20\x25\x64\xC0\xCF\x20\x25\x64\xBD\xC3\x20\x25\x64\xBA\xD0\x20\x25\x64\xC3\xCA\x00",
@@ -25,18 +27,29 @@ function TranslateClientInEnglish($exe){
 	foreach($codes as $index => $code) {
 		if(strlen($changes[$index])+1 > strlen($code)){
 			// Don't die, just report..
-			echo "\n\nTranslateClientInEnglish > Times: String length error at index $index\n\n";
+			echo "\n\nTranslateClientInEnglish > {$trans}: String length error at index $index\n\n";
 			return false;
 		}
 		
 		$offset = $exe->match($codes[$index], "\xAB", 0);
 		if($offset === false) {
-			echo "\nTranslateTimes: Failed at index {$index}\n";
+			echo "\n{$trans}: Failed at index {$index}\n";
 			return false;
 		}
 		$exe->replace($offset, array(0 => $changes[$index]."\x00"));
 	}
 	
+	//**********************************
+	$trans = "Translate Message Box";
+	//**********************************
+	$code = "\xB8\xDE\xBD\xC3\xC1\xF6";
+	$offset = $exe->match($code, "\xAB", 0);
+	if ($offset === false) {
+		echo "Failed in {$trans} part 1";
+		return false;
+	}
+	$exe->replace($offset, array(0 => "Message"."\x00"));
+
 	// Next entry..
 	
 	return true;
