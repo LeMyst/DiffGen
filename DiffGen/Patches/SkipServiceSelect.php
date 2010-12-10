@@ -17,8 +17,9 @@ function SkipServiceSelect($exe){
 	
 	// Shinryo:
 	// Gravity has their clientinfo hardcoded and seperated the initialization, screw 'em.. :(
-	// Therefore just replace (jump over) their call with a standard one which parses clientinfo.xml
-	// SelectKoreaClientInfo() -> SelectClientInfo()
+	// SelectKoreaClientInfo() has for example global variables like g_extended_slot set
+	// which aren't set by SelectClientInfo(). Just call both functions will fix this as the
+	// changes from SelectKoreaClientInfo() will persist and overwritten by SelectClientInfo().
 	// TO-DO: Maybe use a seperate diff? Dunno.
 	$code	=	"\xE8\xAB\xAB\xFF\xFF\xE9\xAB\xAB\xFF\xFF\x6A\x00\xE8\xAB\xAB\xFF\xFF\x83\xC4\x04";
 	$offset	=	$exe->code($code,	"\xAB");
@@ -26,8 +27,8 @@ function SkipServiceSelect($exe){
 		echo "Failed in	part 2";
 		return false;
 	}
-	
-	$exe->replace($offset, array(0 =>	"\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+
+	$exe->replace($offset, array(5 =>	"\x90\x90\x90\x90\x90"));
 	
 	return true;
 }
