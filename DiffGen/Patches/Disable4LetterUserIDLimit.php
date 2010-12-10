@@ -1,7 +1,7 @@
 <?php
-    function Disable4LetterUserCharacterLimit($exe) {
+    function Disable4LetterUserIDLimit($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_4_Letter_UserCharacter_Limit";
+            return "[Fix]_Disable_4_Letter_UserID_Limit";
         }
         $code =  "\xE8\xAB\xAB\xAB\xFF"            // call    <address>
                 ."\x83\xAB\x04"                    // cmp     eax, 4
@@ -20,9 +20,15 @@
 					return false;
         }
         
-        $offset = $offset[0];
+        // The UserID check comes right after password check, so start searching from this position..        
+				$offset = $offset[1];
+				$offset = $exe->match("\x83\xAB\x04", "\xAB", $offset+strlen($code));
+				if($offset == false) {
+					echo "Failed in part 3";
+					return false;
+				}
 
-        $exe->replace($offset, array(7 => "\x00"));
+				$exe->replace($offset, array(2 => "\x00"));
         
         return true;
     }
