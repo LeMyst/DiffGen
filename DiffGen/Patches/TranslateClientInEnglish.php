@@ -1,5 +1,8 @@
 <?php
-// 08.03.2010 - Started to rework some translations (this will be a hell of work) [Shinryo]
+// 08.12.2010 - Started to rework some translations (this will be a hell of work) [Shinryo]
+// 10.12.2010 - Okay, won't be so much work as I thought.. All of the translations from the
+//							big array in DiffGen1 is already set in msgstringtable.txt and don't have to be
+//							translated in client again. [Shinryo]
 
 function TranslateClientInEnglish($exe){
 	if ($exe === true) {
@@ -48,7 +51,18 @@ function TranslateClientInEnglish($exe){
 		echo "Failed in {$trans} part 1";
 		return false;
 	}
-	$exe->replace($offset, array(0 => "Message"."\x00"));
+	$exe->replace($offset, array(0 => "Message\x00"));
+	
+	//**********************************
+	$trans = "Translate Character Slot Usage";
+	//**********************************
+	$code = "\x00\x28\xC4\xB3\xB8\xAF\xC5\xCD\x2F\xC3\xD1\x20\xBD\xBD\xB7\xD4\x29\x00";
+	$offset = $exe->match($code, "\xAB", 0);
+	if ($offset === false) {
+		echo "Failed in {$trans} part 1";
+		return false;
+	}
+	$exe->replace($offset, array(1 => "(Used / Total)\x00"));
 
 	// Next entry..
 	
