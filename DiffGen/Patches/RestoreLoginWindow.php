@@ -49,6 +49,41 @@
                 ."\x90";
         $exe->replace($offset, array(24 => $code));
         
+        // Shinryo:
+        // The client doesn't return to the old login interface when an error
+        // occurs. E.g. wrong password, failed to connect, etc.
+        // This shall fix this behaviour by aborting the quit operation,
+        // set the return mode to 3 (login) and pass 10013 as idle value.
+        // It was handy that "this" pointer was passed before. :)
+        $code =  "\xB9\xAB\xAB\xAB\x00"                           // MOV ECX,<address>
+                ."\xE8\xAB\xAB\xAB\xFF"                           // CALL Quit()
+                ."\xC7\x84\x24\xCC\x00\x00\x00\xFF\xFF\xFF\xFF"   // MOV DWORD PTR SS:[ESP+0CC],-1
+                ."\x8D\x8C\x24\xAB\x00\x00\x00"                   // LEA ECX,[ESP+0A4]
+                ."\xFF\x15\xAB\xAB\xAB\x00"                       // CALL DWORD PTR DS:[<address>]
+                ."\x8B\x8C\x24\xAB\xAB\x00\x00"                   // MOV ECX,DWORD PTR SS:[ESP+0C4]
+                ."\x64\x89\x0D\x00\x00\x00\x00";                  // MOV DWORD PTR FS:[0],ECX
+        
+        $replace =   "\x8B\x4C\xE4\x08"             // MOV ECX,DWORD PTR SS:[ESP+8]
+                    ."\x8B\x11"                     // MOV EDX,DWORD PTR DS:[ECX]
+                    ."\x8B\x42\x18"                 // MOV EAX,DWORD PTR DS:[EDX+18]
+                    ."\x6A\x00"                     // PUSH 0
+                    ."\x6A\x00"                     // PUSH 0
+                    ."\x6A\x00"                     // PUSH 0
+                    ."\x68\x1D\x27\x00\x00"         // PUSH 271D
+                    ."\xC7\x41\x0C\x03\x00\x00\x00" // MOV DWORD PTR DS:[ECX+0C],3
+                    ."\xFF\xD0"                     // CALL EAX
+                    ."\x90\x90\x90\x90\x90\x90\x90" // NOPS
+                    ."\x90\x90\x90\x90\x90\x90\x90" // NOPS
+                    ."\x90\x90\x90\x90\x90";        // NOPS
+                    
+        $offset = $exe->code($code, "\xAB");
+        if ($offset === false) {
+            echo "Failed in part 3";
+            return false;
+        }
+        
+        $exe->replace($offset, array(0 => $replace));
+        
         // finally force the client to send old login packet
         $code =  "\x80\x3D\xAB\xAB\xAB\x00\x00" // cmp     g_passwordencrypt, 0
                 ."\x0F\x85\xAB\xAB\x00\x00"     // jnz     loc_62072D
@@ -60,8 +95,12 @@
                 
         $offset = $exe->code($code, "\xAB");
         $repl = "\x90\x90\x90\x90\x90\x90";
+        if ($offset === false) {
+            echo "Failed in part 4";
+            return false;
+        }
         $exe->replace($offset, array(20 => $repl));
         $exe->replace($offset, array(29 => $repl));
-        
+
     }
 ?>
