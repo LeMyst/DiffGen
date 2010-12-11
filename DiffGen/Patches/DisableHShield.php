@@ -18,7 +18,7 @@
         // Skip LoadAhnLab and go straight to AudioInit
         $exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 
-				// Import table fix for aossdk.dll
+        // Import table fix for aossdk.dll
         $section = $exe->getSection(".rdata");
         if($section === false) {
             echo "Failed in part 3";
