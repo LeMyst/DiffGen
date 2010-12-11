@@ -1,27 +1,38 @@
 <?php
-// 10.12.2010 - As far as I see those three codes that were searched before aren't necessary in VC9 [Shinryo]
-
     function IncreaseViewID($exe) {
         if ($exe === true) {
             return "[Add]_Increase_Headgear_ViewID_to_2000";
         }
         
         // In case of break:
-        // Search for "ReqAccName" and search somewhere below for the
+        // Search for "ReqAccName" and search somewhere around for the
         // maximum ViewID.
-        // inc     eax
-				// cmp     eax, <maxViewID>
-				// mov     [esp+4Ch+Src], eax
-				// jl      short <location>                
-				$code	=	"\x40\x3D\xE8\x03\x00\x00\x89\x44\x24\xAB\x7C\x9F";
-				$offset	=	$exe->code($code,	"\xAB");
-				if ($offset	===	false) {
-					echo "Failed in	part 1";
-					return false;
-				}
+        
+        // Search for both cmp's
+        $codes = array(
+	        "\x00\x3D\xE8\x03\x00\x00\x73\x18\x8D",
+	        "\x40\x3D\xE8\x03\x00\x00\x89\x44\x24\xAB\x7C\x9F",
+        );
+        $newvalue = "\xD0\x07";
+        foreach ($codes as $index => $code) {
+            $offset = $exe->code($code, "\xAB");
+            if ($offset === false) {
+                echo "Failed at index $index";
+                return false;
+            } else {
+                $exe->replace($offset, array(2 => $newvalue));
+                // Right after the first compare there has to be a mov to a register with the max ViewID as value
+                if($index == 0) {
+                	$offset = $exe->match("\xE8\x03\x00\x00", "\xAB", $offset+strlen($codes[$index]));
+                	if ($offset === false) {
+			                echo "Failed at index $index part 2";
+			                return false;
+			            }
+			            $exe->replace($offset, array(0 => $newvalue));
+                }
+            }
+        }
 
-				$exe->replace($offset, array(2 =>	"\xD0\x07"));
-				
         return true;
     }
 ?>
