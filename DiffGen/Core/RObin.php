@@ -56,10 +56,10 @@ class RObin
 
             $sectionInfo['vSize']         = $this->read($curSection+8+0*4, 4, "V");
             $sectionInfo['vOffset']       = $this->read($curSection+8+1*4, 4, "V");
-            $sectionInfo['vEnd'] 					= $sectionInfo['vOffset'] + $sectionInfo['vSize'];
+            $sectionInfo['vEnd']          = $sectionInfo['vOffset'] + $sectionInfo['vSize'];
             $sectionInfo['rSize']         = $this->read($curSection+8+2*4, 4, "V");
             $sectionInfo['rOffset']       = $this->read($curSection+8+3*4, 4, "V");
-            $sectionInfo['rEnd'] 					= $sectionInfo['rOffset'] + $sectionInfo['rSize'];
+            $sectionInfo['rEnd']          = $sectionInfo['rOffset'] + $sectionInfo['rSize'];
             $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
             $tab = "\t";
             if($debug) 
@@ -78,9 +78,7 @@ class RObin
                         $this->sections[$sectionInfo['name']]->$name = $value;
                 }
             }
-            
-            //print "Section: ".$this->sections[$sectionInfo['name']]->name."\n";
-            
+
             $curSection += 0x28;
         }
         
@@ -211,26 +209,26 @@ class RObin
     // The only place that is safe to use is the one left empty 
     // and filled with zeroes/paddings by the compiler.
     // Whatever is placed after rOffset+vSize, it doesn't matter, because
-		// the executable (if not already modified) won't access those data.
+    // the executable (if not already modified) won't access those data.
     public function zeroed($size, $search_section = ".text")
     {
-				$zero = false;
-				if($search_section === false) {
-					foreach ($this->sections as $section) {
-						if(($section->rSize - $section->vSize) >= $size) {
-							$zero = $section->rOffset + $section->vSize;
-							break;
-						}
-					}
-				} else {
-					$section = $this->getSection($search_section);
-					if($section !== false && ($section->rSize - $section->vSize) >= $size) {
-							$zero = $section->rOffset + $section->vSize;
-							break;
-					}
-				}
-				
-				return $zero;
+        $zero = false;
+        if($search_section === false) {
+          foreach ($this->sections as $section) {
+            if(($section->rSize - $section->vSize) >= $size) {
+              $zero = $section->rOffset + $section->vSize;
+              break;
+            }
+          }
+        } else {
+          $section = $this->getSection($search_section);
+          if($section !== false && ($section->rSize - $section->vSize) >= $size) {
+              $zero = $section->rOffset + $section->vSize;
+              break;
+          }
+        }
+        
+        return $zero;
     }
     /*public function zeroed($size)
     {

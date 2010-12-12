@@ -4,8 +4,8 @@
 //
 // 26.11.2010 - Organized DiffPatch into a working state for vc9 compiled clients [Yom]
 // 12.10.2010 - The complete diff would take 247+9+14 = 264 bytes.
-//							Note that if you are using k3dt's diff patcher, you have to use 2.30
-//							since 2.31 and all before have a limit of 255 byte changes. [Shinryo]
+//              Note that if you are using k3dt's diff patcher, you have to use 2.30
+//              since 2.31 and all before have a limit of 255 byte changes. [Shinryo]
 
     function EnableMultipleGRFs($exe){
         if ($exe === true) {
@@ -40,19 +40,19 @@
         
         $code =  "\xC8\x80\x00\x00"                                        // enter   80h, 0
                 ."\x60"                                                    // pusha
-                ."\x68"."ST04"                                        	 	 // push    offset ModuleName ; "KERNEL32"
-                ."\xFF\x15"."CA00"													               // call    ds:GetModuleHandleA
+                ."\x68"."ST04"                                             // push    offset ModuleName ; "KERNEL32"
+                ."\xFF\x15"."CA00"                                         // call    ds:GetModuleHandleA
                 ."\x85\xC0"                                                // test    eax, eax
                 ."\x74\x23"                                                // jz      short loc_735E01
-                ."\x8B\x3D"."CA01"                    										 // mov     edi, ds:GetProcAddress
-                ."\x68"."ST01"			                                       // push    offset aGetprivateprof ; "GetPrivateProfileStringA"
+                ."\x8B\x3D"."CA01"                                         // mov     edi, ds:GetProcAddress
+                ."\x68"."ST01"                                             // push    offset aGetprivateprof ; "GetPrivateProfileStringA"
                 ."\x89\xC3"                                                // mov     ebx, eax
                 ."\x50"                                                    // push    eax             ; hModule
                 ."\xFF\xD7"                                                // call    edi ; GetProcAddress()
                 ."\x85\xC0"                                                // test    eax, eax
                 ."\x74\x0F"                                                // jz      short loc_735E01
                 ."\x89\x45\xF6"                                            // mov     [ebp+var_A], eax
-                ."\x68"."ST02"				                                     // push    offset aWriteprivatepr ; "WritePrivateProfileStringA"
+                ."\x68"."ST02"                                             // push    offset aWriteprivatepr ; "WritePrivateProfileStringA"
                 ."\x89\xD8"                                                // mov     eax, ebx
                 ."\x50"                                                    // push    eax             ; hModule
                 ."\xFF\xD7"                                                // call    edi ; GetProcAddress()
@@ -62,7 +62,7 @@
                 ."\x31\xD2"                                                // xor     edx, edx
                 ."\x66\xC7\x45\xFE\x39\x00"                                // mov     [ebp+var_2], 39h ; char 9
                 ."\x52"                                                    // push    edx
-                ."\x68"."ST00"		                                         // push    offset a_Data_ini ; ".\\DATA.INI"
+                ."\x68"."ST00"                                             // push    offset a_Data_ini ; ".\\DATA.INI"
                 ."\x6A\x74"                                                // push    74h
                 ."\x8D\x5D\x81"                                            // lea     ebx, [ebp+var_7F]
                 ."\x53"                                                    // push    ebx
@@ -88,12 +88,12 @@
                 ."\x73\xC1"                                                // jnb     short loc_735E0E
                 ."\x85\xD2"                                                // test    edx, edx
                 ."\x75\x20"                                                // jnz     short loc_735E71
-                ."\x68"."ST00"		                                         // push    offset a_Data_ini ; ".\\DATA.INI"
-                ."\x68".$grf      	                                       // push    offset aData_grf ; "data.grf"
+                ."\x68"."ST00"                                             // push    offset a_Data_ini ; ".\\DATA.INI"
+                ."\x68".$grf                                               // push    offset aData_grf ; "data.grf"
                 ."\x66\xC7\x45\xFE\x32\x00"                                // mov     [ebp+var_2], 32h
                 ."\x8D\x45\xFE"                                            // lea     eax, [ebp+var_2]
                 ."\x50"                                                    // push    eax
-                ."\x68"."ST03"	                                           // push    offset aData_2  ; "Data"
+                ."\x68"."ST03"                                             // push    offset aData_2  ; "Data"
                 ."\xFF\x55\xFA"                                            // call    [ebp+var_6]
                 ."\x85\xC0"                                                // test    eax, eax
                 ."\x75\x97"                                                // jnz     short loc_735E08
@@ -101,18 +101,18 @@
                 ."\xC9"                                                    // leave
                 ."\xC3";                                                   // retn
                 
-        $strings = 	array(
-						        	".\\DATA.INI\x00",
-						        	"GetPrivateProfileStringA\x00",
-						        	"WritePrivateProfileStringA\x00",
-						        	"Data\x00",
-						        	"KERNEL32\x00"
-						        );
-						        
-				// Calculate free space that the code will need.
-				$size = strlen($code);
-				foreach($strings as $index => $string)
-					$size += strlen($string);
+        $strings =  array(
+                      ".\\DATA.INI\x00",
+                      "GetPrivateProfileStringA\x00",
+                      "WritePrivateProfileStringA\x00",
+                      "Data\x00",
+                      "KERNEL32\x00"
+                    );
+                    
+        // Calculate free space that the code will need.
+        $size = strlen($code);
+        foreach($strings as $index => $string)
+          $size += strlen($string);
         
         // Find free space to inject our data.ini load function.
         // Note that for the time beeing those will be probably
@@ -124,14 +124,14 @@
             return false;
         }
         
-				// Create a call to the free space that was found before.     
+        // Create a call to the free space that was found before.     
         $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 
-				// Create default offsets that will be replaced into the code.
-				
-				// GetModuleHandleA
-				$CA00 = $exe->func("GetModuleHandleA");
-				if ($CA00 === false) {
+        // Create default offsets that will be replaced into the code.
+        
+        // GetModuleHandleA
+        $CA00 = $exe->func("GetModuleHandleA");
+        if ($CA00 === false) {
             echo "Failed in part 4";
             return false;
         }
@@ -146,12 +146,12 @@
         // AddPak
         $CA02 = $AddPak - $exe->Raw2Rva($free + strpos($code, "\xE8"."CA02")) - 5;
  
-				// Assign strings.
-				$memPosition = $exe->Raw2Rva($free) + strlen($code);
+        // Assign strings.
+        $memPosition = $exe->Raw2Rva($free) + strlen($code);
         foreach($strings as $index => $string) {
-        	$var = "ST".($index > 9 ? "" : "0" ).$index;
-        	$$var = $memPosition;
-        	$memPosition += strlen($string);
+          $var = "ST".($index > 9 ? "" : "0" ).$index;
+          $$var = $memPosition;
+          $memPosition += strlen($string);
         }
         
         // Create a table for more control (which replaces are allowed).
@@ -159,17 +159,17 @@
 
         // This is a ressource waste but it's more comfortable..
         foreach($replaceTable as $replace) {
-        	if(!isset($$replace)) {
-        		echo 'Failed to resolve $'.$replace.'. Check the script for missing deklarations.';
-        		return false;
-        	}
-        	
-        	if(!strpos($code, $replace)) {
-        		echo 'Failed to replace $'.$replace.' in code. It is not placed inside.';
-        		return false;
-        	}
-        	
-        	$code = str_replace($replace, pack("V", $$replace), $code);
+          if(!isset($$replace)) {
+            echo 'Failed to resolve $'.$replace.'. Check the script for missing deklarations.';
+            return false;
+          }
+          
+          if(!strpos($code, $replace)) {
+            echo 'Failed to replace $'.$replace.' in code. It is not placed inside.';
+            return false;
+          }
+          
+          $code = str_replace($replace, pack("V", $$replace), $code);
         }
         
         // Finally, insert everything.
