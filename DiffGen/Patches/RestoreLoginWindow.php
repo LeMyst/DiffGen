@@ -3,6 +3,7 @@
         if ($exe === true) {
             return "[Fix]_Restore_Login_Window";
         }
+        
         $code =  "\x50"                         // push    eax
                 ."\xE8\xAB\xAB\xAB\xFF"         // call    sub_54AF30
                 ."\x8B\xC8"                     // mov     ecx, eax
@@ -16,12 +17,13 @@
                 ."\xC6\xAB\xAB\xAB\xAB\x00\x00" // mov     T_param, 0
                 ."\xC7\xAB\xAB\x04\x00\x00\x00" // mov     dword ptr [ebx+0Ch], 4
                 // end of patch
-                ."\xE9\xEE\x15\x00\x00";        // jmp     loc_6212E3
+                ."\xE9\xAB\xAB\x00\x00";        // jmp     loc_6212E3
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
             echo "Failed in part 1";
             return false;
         }
+        
         $mov = $exe->read($offset + 14, 5);
         $numaccount = pack("I", $exe->str("NUMACCOUNT","rva"));
         $code =  "\xB9\xAB\xAB\xAB\x00"         // mov     ecx, offset unk_816600
@@ -49,6 +51,27 @@
                 ."\x90";
         $exe->replace($offset, array(24 => $code));
         
+        // Force the client to send old login packet
+        $code =  "\x80\x3D\xAB\xAB\xAB\x00\x00" // cmp     g_passwordencrypt, 0
+                ."\x0F\xAB\xAB\xAB\x00\x00"     // jnz     loc_62072D
+                ."\xA1\xAB\xAB\xAB\x00"         // mov     eax, Langtype
+                // Some clients (this far only 2010-10-05a and 2010-10-07a)
+                // use cmp eax,ebp instead of test eax,eax
+                ."\xAB\xAB"                     // test    eax, eax
+                ."\x0F\xAB\xAB\x00\x00\x00"     // jz      loc_620587 <- remove
+                ."\x83\xF8\x12"                 // cmp     eax, 12h
+                ."\x0F\x84\xAB\x00\x00\x00";    // jz      loc_620587 <- remove
+                
+        $offset = $exe->code($code, "\xAB");
+ 
+        $repl = "\x90\x90\x90\x90\x90\x90";
+        if ($offset === false) {
+            echo "Failed in part 3";
+            return false;
+        }
+        $exe->replace($offset, array(20 => $repl));
+        $exe->replace($offset, array(29 => $repl));
+        
         // Shinryo:
         // The client doesn't return to the old login interface when an error
         // occurs. E.g. wrong password, failed to connect, etc.
@@ -74,33 +97,24 @@
                     ."\xFF\xD0"                     // CALL EAX
                     ."\x90\x90\x90\x90\x90\x90\x90" // NOPS
                     ."\x90\x90\x90\x90\x90\x90\x90" // NOPS
-                    ."\x90\x90\x90\x90\x90";        // NOPS
+                    ."\x90\x90\x90\x90\x90";        // NOPS                    
                     
-        $offset = $exe->code($code, "\xAB");
+        $offset = $exe->match($code, "\xAB");
         if ($offset === false) {
-            echo "Failed in part 3";
-            return false;
+            // Shinryo: Silently fail this one,
+            // since those old diffs don't have priority at the moment
+            // and don't really need this additional feature.
+            //
+            // echo "---> Failed in part 4 - continue anyway..";
+            //
+            // Shinryo:
+            // For the time beeing, just allow this diff anyway.
+            // Have to make some tests first.
+            return true;
         }
-        
-        $exe->replace($offset, array(0 => $replace));
-        
-        // finally force the client to send old login packet
-        $code =  "\x80\x3D\xAB\xAB\xAB\x00\x00" // cmp     g_passwordencrypt, 0
-                ."\x0F\x85\xAB\xAB\x00\x00"     // jnz     loc_62072D
-                ."\xA1\xAB\xAB\xAB\x00"         // mov     eax, Langtype
-                ."\x85\xC0"                     // test    eax, eax
-                ."\x0F\x84\xAB\x00\x00\x00"     // jz      loc_620587 <- remove
-                ."\x83\xF8\x12"                 // cmp     eax, 12h
-                ."\x0F\x84\xAB\x00\x00\x00";    // jz      loc_620587 <- remove
-                
-        $offset = $exe->code($code, "\xAB");
-        $repl = "\x90\x90\x90\x90\x90\x90";
-        if ($offset === false) {
-            echo "Failed in part 4";
-            return false;
-        }
-        $exe->replace($offset, array(20 => $repl));
-        $exe->replace($offset, array(29 => $repl));
 
+        $exe->replace($offset, array(0 => $replace));
+       
+        return true;
     }
 ?>

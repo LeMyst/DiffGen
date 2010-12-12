@@ -1,2 +1,0 @@
-[Fix]_Disable_HShield_(Recommended)
-[Fix]_Restore_Login_Window

@@ -1,3 +1,0 @@
-[Fix]_Disable_RagexeRE_Filename_Check_(Recommended)
-[Fix]_Disable_HShield_(Recommended)
-[Fix]_Restore_Login_Window

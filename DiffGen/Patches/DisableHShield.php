@@ -4,19 +4,21 @@
             return "[Fix]_Disable_HShield_(Recommended)";
         }
         
-        $code =  "\xE8\xAB\xAB\xAB\xFF"        // call    LoadAhnLab
-                ."\x85\xC0"                    // test    eax, eax
-                ."\x74\xAB"                    // jz      short loc_73FEF9
-                ."\xE8\xAB\xAB\xAB\xFF"        // call    AudioInit
-                ."\x85\xC0"                    // test    eax, eax
-                ."\x74\xAB";                   // jz      short loc_73FEF9
+        $code =  "\x51"                         // push    ecx
+                ."\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_88A210, 0
+                ."\x74\x04"                     // jz      short loc_58AD2E
+                ."\x33\xC0"                     // xor     eax, eax
+                ."\x59"                         // pop     ecx
+                ."\xC3";                        // retn
+        
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
             echo "Failed in part 1";
             return false;
         }
-        // Skip LoadAhnLab and go straight to AudioInit
-        $exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+        
+        // Just return 1 without initializing AhnLab :)
+        $exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
 
         // Import table fix for aossdk.dll
         $section = $exe->getSection(".rdata");
