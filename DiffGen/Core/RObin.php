@@ -56,8 +56,10 @@ class RObin
             
             $sectionInfo['vSize']         = $this->read($curSection+8+0*4, 4, "V");
             $sectionInfo['vOffset']       = $this->read($curSection+8+1*4, 4, "V");
+            $sectionInfo['vEnd'] 					= $sectionInfo['vOffset'] + $sectionInfo['vSize'];
             $sectionInfo['rSize']         = $this->read($curSection+8+2*4, 4, "V");
             $sectionInfo['rOffset']       = $this->read($curSection+8+3*4, 4, "V");
+            $sectionInfo['rEnd'] 					= $sectionInfo['rOffset'] + $sectionInfo['rSize'];
             $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
             $tab = "\t";
             if($debug) 
@@ -201,7 +203,44 @@ class RObin
     
     // Returns an offset where there are $size null bytes, searching
     // on the space after .text section ends and before .rdata begins.
-    public function zeroed($size)
+    //
+    // Shinryo: It is fatal to place code in free space where
+    // it isn't clear if this space is used by the executable.
+    // The only place that is safe to use is the one left empty 
+    // and filled with zeroes by the compiler.
+    public function zeroed($size, $search_section = ".text")
+    {
+        $zeroed = str_repeat("\x00", $size);
+				$sectionNames = array(".text", ".rdata", ".data", ".rsrc");
+				
+				$zero = false;
+				if($search_section === false) {
+					foreach ($sectionNames as $name) {
+						
+						$section = $this->getSection($name);
+						if($section === false)
+							continue;
+						
+						if (($section->rSize - $section->vSize) >= $size) {
+							$offset = $this->match($zeroed, "", $section->rOffset + $section->vSize, $section->rEnd);
+							if ($offset !== false) {
+								$zero = $offset;
+								break;
+							}
+						}
+					}
+				} else {
+					$section = $this->getSection($search_section);
+					if ($section !== false && ($section->rSize - $section->vSize) >= $size) {
+							$offset = $this->match($zeroed, "", $section->rOffset + $section->vSize, $section->rEnd);
+							if ($offset !== false)
+								$zero = $offset;
+					}
+				}
+				
+				return $zero;
+    }
+    /*public function zeroed($size)
     {
         global $src;
         $zeroed = str_repeat("\x00", $size);
@@ -217,7 +256,7 @@ class RObin
             // echo "# " . dechex($offset) . " #";
         }
         return $zero;
-    }
+    }*/
     
     // It was meant to be used for patches that add extra code, where it would
     // replace null bytes (checking if they were really null). Works like replace().
