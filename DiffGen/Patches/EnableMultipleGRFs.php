@@ -160,7 +160,7 @@
         // This is a ressource waste but it's more comfortable..
         foreach($replaceTable as $replace) {
           if(!isset($$replace)) {
-            echo 'Failed to resolve $'.$replace.'. Check the script for missing deklarations.';
+            echo 'Failed to resolve $'.$replace.'. Check the script for missing declarations.';
             return false;
           }
           
