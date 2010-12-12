@@ -5,14 +5,16 @@
         }
         
         // Find jump table
-        $ptr = $exe->code("\x18\xAB\x00\x00\x00\x83\xF8\xAB\x0F\x87\xAB\xAB\x00\x00\xFF\x24\x85\xAB\xAB\xAB\x00", "\xAB", 1);
-        if( $ptr === false ) {
-            echo "Failed in part 1";
-            return false;
-        }
+        //$ptr = $exe->code("\x18\xAB\x00\x00\x00\x83\xF8\xAB\x0F\x87\xAB\xAB\x00\x00\xFF\x24\x85\xAB\xAB\xAB\x00", "\xAB", 1);
+        //if( $ptr === false ) {
+        //    echo "Failed in part 1";
+        //    return false;
+        //}
+        
+        //print "Ptr: ".dechex($ptr)."\n";
         
         // JMP DWORD PTR DS:[EAX*4+<address>]
-        $ptr = $exe->match("\xFF\x24\x85", "\xAB", $ptr);
+        $ptr = $exe->match("\xFF\x24\x85\xAB\xAB\xAB\x00\x8D\xB3\xAB\xAB\x00\x00\x68\xAB\xAB\xAB\x00", "\xAB");
         if( $ptr === false ) {
             echo "Failed in part 2";
             return false;

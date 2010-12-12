@@ -1,5 +1,3 @@
 [Fix]_Disable_RagexeRE_Filename_Check_(Recommended)
 [Fix]_Disable_HShield_(Recommended)
-[Add]_Increase_Headgear_ViewID_to_2000
 [Fix]_Restore_Login_Window
-[UI](6)_Skip_License_Screen_(Recommended)

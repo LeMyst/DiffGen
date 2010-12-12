@@ -3,17 +3,27 @@
     if ($exe === true) {
       return "[Fix]_Disable_RagexeRE_Filename_Check_(Recommended)";
     }
-    $code =  "\xE8\xAB\xAB\xAB\xFF"        // call    sub_707420
-                ."\x39\xAB\xAB\xAB\xAB\x00"    // cmp     Langtype, ebp
+    $codeA =  	 "\xE8\xAB\xAB\xAB\xFF";			 // call    sub_707420
+    $codeB = 		 "\x39\xAB\xAB\xAB\xAB\x00"    // cmp     Langtype, ebp
                 ."\x75\x31"                    // jnz     short loc_73FE94
                 ."\xE8\xAB\xAB\xFF\xFF"        // call    sub_73DFB0
                 ."\x84\xC0";                   // test    al, al
-    $offset = $exe->code($code, "\xAB");
+                
+    $offset = $exe->match($codeA.$codeB, "\xAB");
+    
+    $jmpPos = 11;
+    
     if ($offset === false) {
-      echo "Failed in part 1";
-      return false;
+    	// Try to search for register XORing
+    	$offset = $exe->code($codeA."\xAB\xAB".$codeB, "\xAB");
+    	if ($offset === false) {
+	      echo "Failed in part 1";
+	      return false;
+	    }
+	    $jmpPos += 2;
     }
-    $exe->replace($offset, array(11 => "\xEB"));
+    
+    $exe->replace($offset, array($jmpPos => "\xEB"));
     return true;
   }
 ?>
