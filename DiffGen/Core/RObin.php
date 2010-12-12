@@ -53,7 +53,7 @@ class RObin
             // Also: There's also possibility that a new inserted section name could contain some trash bytes after
             // the zero terminator. So get rid of them..
             $sectionInfo['name'] = substr($sectionInfo['name'], 0, strpos($sectionInfo['name'], "\x00"));
-            
+
             $sectionInfo['vSize']         = $this->read($curSection+8+0*4, 4, "V");
             $sectionInfo['vOffset']       = $this->read($curSection+8+1*4, 4, "V");
             $sectionInfo['vEnd'] 					= $sectionInfo['vOffset'] + $sectionInfo['vSize'];
@@ -78,6 +78,8 @@ class RObin
                         $this->sections[$sectionInfo['name']]->$name = $value;
                 }
             }
+            
+            //print "Section: ".$this->sections[$sectionInfo['name']]->name."\n";
             
             $curSection += 0x28;
         }
@@ -207,34 +209,24 @@ class RObin
     // Shinryo: It is fatal to place code in free space where
     // it isn't clear if this space is used by the executable.
     // The only place that is safe to use is the one left empty 
-    // and filled with zeroes by the compiler.
+    // and filled with zeroes/paddings by the compiler.
+    // Whatever is placed after rOffset+vSize, it doesn't matter, because
+		// the executable (if not already modified) won't access those data.
     public function zeroed($size, $search_section = ".text")
     {
-        $zeroed = str_repeat("\x00", $size);
-				$sectionNames = array(".text", ".rdata", ".data", ".rsrc");
-				
 				$zero = false;
 				if($search_section === false) {
-					foreach ($sectionNames as $name) {
-						
-						$section = $this->getSection($name);
-						if($section === false)
-							continue;
-						
-						if (($section->rSize - $section->vSize) >= $size) {
-							$offset = $this->match($zeroed, "", $section->rOffset + $section->vSize, $section->rEnd);
-							if ($offset !== false) {
-								$zero = $offset;
-								break;
-							}
+					foreach ($this->sections as $section) {
+						if(($section->rSize - $section->vSize) >= $size) {
+							$zero = $section->rOffset + $section->vSize;
+							break;
 						}
 					}
 				} else {
 					$section = $this->getSection($search_section);
-					if ($section !== false && ($section->rSize - $section->vSize) >= $size) {
-							$offset = $this->match($zeroed, "", $section->rOffset + $section->vSize, $section->rEnd);
-							if ($offset !== false)
-								$zero = $offset;
+					if($section !== false && ($section->rSize - $section->vSize) >= $size) {
+							$zero = $section->rOffset + $section->vSize;
+							break;
 					}
 				}
 				
