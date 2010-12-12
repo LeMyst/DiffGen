@@ -366,5 +366,29 @@ class RObin
             
         return $this->sections[$name];
     }
+    
+    // Those two functions should be useful for further offset conversions
+    public function Raw2Rva($offset)
+    {
+      foreach($this->sections as $section ) {
+        if($offset >= $section->rOffset && $offset < ($section->rOffset + $section->rSize)) {
+          return $offset + $section->vOffset - $section->rOffset + $this->image_base;
+        }
+      }
+      
+      return false;
+    }
+    
+    public function Rva2Raw($offset)
+    {
+      $offset -= $this->image_base;
+      foreach($this->sections as $section ) {
+        if($offset >= $section->vOffset && $offset < ($section->vOffset + $section->vSize)) {
+          return $offset - $section->vOffset + $section->rOffset;
+        }
+      }
+      
+      return false;
+    }
 }
 ?>
