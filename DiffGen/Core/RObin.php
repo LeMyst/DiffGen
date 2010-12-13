@@ -61,6 +61,8 @@ class RObin
             $sectionInfo['rOffset']       = $this->read($curSection+8+3*4, 4, "V");
             $sectionInfo['rEnd']          = $sectionInfo['rOffset'] + $sectionInfo['rSize'];
             $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
+            // This is used to indicate if code has been placed after vEnd
+            $sectionInfo['align']					= 0;
             $tab = "\t";
             if($debug) 
             echo  $sectionInfo['name'] . $tab
@@ -215,14 +217,14 @@ class RObin
         $zero = false;
         if($search_section === false) {
           foreach ($this->sections as $section) {
-            if(($section->rSize - $section->vSize) >= $size) {
+            if(($section->rSize - $section->vSize - $section->align) >= $size) {
               $zero = $section->rOffset + $section->vSize;
               break;
             }
           }
         } else {
           $section = $this->getSection($search_section);
-          if($section !== false && ($section->rSize - $section->vSize) >= $size) {
+          if($section !== false && ($section->rSize - $section->vSize - $section->align) >= $size) {
               $zero = $section->rOffset + $section->vSize;
               break;
           }
@@ -274,7 +276,7 @@ class RObin
         // "Fake" valid range for the new inserted code
         // to prevent overlapping with other diffs
         $section = $this->RawOffset2Section($offset);
-        $section->vSize += $length;
+        $section->align += $length;
         
         return true;
     }
