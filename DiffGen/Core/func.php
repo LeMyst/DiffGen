@@ -4,20 +4,48 @@ function Diff($src, $exe, $patch) {
     if(function_exists($patch)) {
         global $diff, $fail, $failcount, $passcount, $patterndebug;
         echo str_pad($patch, 40, " ") . ": ";
-        if (call_user_func($patch, $exe) === false) {
+        
+        $diffMap = call_user_func($patch, true);
+        
+        if(!is_array($diffMap)) {       
+          // Have at least one entry, even if not an array passed, lol..
+          $diffMap = array($diffMap);
+        }
+        
+        // Fail.
+        if(count($diffMap) < 1)
+          return;
+        
+        $newDiff = "";
+        foreach($diffMap as $key => $diffName) {
+          // The called function is responsible to return success or failure
+          // and is also responsible for !!detecting replaced byte codes!!
+          if (call_user_func($patch, $exe, $key) === false) {
             $failcount++;
             echo " ##\r\n";
-            file_put_contents($fail, call_user_func($patch, true) . "\r\n", FILE_APPEND);
+            
+            // Place the last returned name (in case of multiple diff)
+            // so that it is easier to trace back which diff exactly failed.
+            file_put_contents($fail, $diffName . "\r\n", FILE_APPEND);
             $exe->diff();
             return;
+          }
+          
+          $prefix = "byte_".$diffName;
+          $diffs = $exe->diff();
+          
+          foreach ($diffs as $dif) {
+            $newDiff .= $prefix . ":" . $dif . "\r\n";
+          }
+            
         }
+        
+        $newDiff .= "\r\n";
+        
+        // Add all found diffs in the function into the "global diff universe" :)
+        $diff .= $newDiff;
+        
         $passcount++;
-        $diff .= "\r\n";
-        $prefix = "byte_" . call_user_func($patch, true);
-        $diffs = $exe->diff();
-        foreach ($diffs as $dif) {
-            $diff .= $prefix . ":" . $dif . "\r\n";
-        }
         echo "Done in " . round(microtime(true) - $tick, 5) . "s\n";
     } else {
         die("\nError Missing Function " . $patch . "\n\n\n");

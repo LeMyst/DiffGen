@@ -36,14 +36,26 @@ if($localftp == "1"){
         $filename = basename($client);
         echo "$i  : $filename\n";
     }
+    
+    echo "all  : All clients\n";
+    
     fwrite(STDOUT, "\nGenerate Diff for: ");
     $choice = trim(fgets(STDIN));
-    if (!isset($clients[$choice])){
+    if (!isset($clients[$choice]) && $choice != "all"){
         die("Bad Choice\n");
     }
-    $target = $clients[$choice];
+    
+    $targets = array();
+    
+    if($choice != "all")
+      // Create only one entry.
+      $targets[] = $clients[$choice];
+    else
+      // Create a reference and parse all entrys.
+      $targets = &$clients;
 }
 
+foreach($targets as $target) {
 // Detect RGZ compressed client files and unpack
 if (stristr(basename($target),"rgz")){
     $target = unpack_rgz($target);
@@ -83,5 +95,6 @@ $totaltime = microtime(true) - $starttime;
 echo "\npatches passed : $passcount\n";
 echo "patches failed : $failcount\n";
 echo "Diff saved to:  $diffpath (Process Time: " . round($totaltime, 3) . "s)\n";
+}
 
 ?>

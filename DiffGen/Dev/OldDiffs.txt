@@ -12,7 +12,7 @@ Diffs:
 [*] FixClientFreeze
 [ ] ChangeVersionIntoDate
 [X] DisableHShield
-[ ] GravityErrorHandler
+[X] ChangeGravityErrorHandler
 [ ] RemoveGravityErrorMessage
 [ ] AdjustFontSize
 [X] AllowChatFlood25Lines
@@ -29,7 +29,7 @@ Diffs:
 [ ] EnableAuraOverLv99
 [X] DisableSwearFilter
 [ ] EnableASCIIinText
-[*] EnableQuestWindow
+[*] EnableQuestWindow // See ReadQuestid2displaydottxt
 [X] TranslateClientInEnglish
 [*] EnableWAndWhoCommands
 [*] EnforceOfficialLoginBackground
@@ -38,28 +38,28 @@ Diffs:
 [ ] OnlySecondLoginBackground
 [X] RemoveGravityLogo
 [X] RemoveGravityAds
-[ ] FixCameraAnglesRecomm
-[ ] FixCameraAnglesLess
-[ ] FixCameraAnglesFull
+[X] FixCameraAnglesRecomm
+[X] FixCameraAnglesLess
+[X] FixCameraAnglesFull
 [ ] IgnoreChangedAlertMessages
 [ ] IgnoreMissingFileErrors
 [ ] IgnoreMissingPaletteErrors
 [ ] IncreaseQualityScreenshotTo95per
 [ ] SSInBMPByDefault
-[ ] IncreaseZoomOut50Per
-[ ] IncreaseZoomOut75Per
-[ ] IncreaseZoomOutMax
+[X] IncreaseZoomOut50Per
+[X] IncreaseZoomOut75Per
+[X] IncreaseZoomOutMax
 [ ] PlayOpenningDotBik
 [ ] ShowAllButtonsInLoginWindows
 [ ] ShowExpBarsUpTo255
 [ ] ShowLicenseScreenAlways
 [X] SkipLicenseScreen
-[ ] SkipResurrectionButtons
+[X] SkipResurrectionButtons
 [X] SkipServiceSelect
 [X] UseArialOnAllLangtypes
 [ ] UseCustomFont
 [X] EnableOfficialCustomFonts
-[ ] UseNormalGuildBrackets
+[X] UseNormalGuildBrackets
 [ ] UseRagnarokIcon
 [ ] EnforceIROFont
 [ ] EnableShowname
@@ -90,7 +90,7 @@ Diffs:
 [ ] MultiLanguageSupport
 [X] LoadLuaBeforeLub
 [X] IncreaseViewID
-[ ] HKLMtoHKCU
+[X] HKLMtoHKCU
 [ ] ChatAtBug
 [*] EnableDNSSupport
 [*] EnableProxySupport
