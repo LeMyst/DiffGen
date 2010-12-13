@@ -269,8 +269,13 @@ class RObin
                 $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
             }
             $this->exe[$offset + $i] = $code[$i];
-            $src->exe[$offset + $i] = $code[$i];
+            $src->exe[$offset + $i] = $code[$i];      
         }
+        // "Fake" valid range for the new inserted code
+        // to prevent overlapping with other diffs
+        $section = $this->RawOffset2Section($offset);
+        $section->vSize += $length;
+        
         return true;
     }
     
@@ -399,21 +404,37 @@ class RObin
     // Those two functions should be useful for further offset conversions
     public function Raw2Rva($offset)
     {
-      foreach($this->sections as $section ) {
+    	if(($section = $this->RawOffset2Section($offset)) !== false)
+ 				return $offset + $section->vOffset - $section->rOffset + $this->image_base;
+    		
+      return false;
+    }
+    
+    public function Rva2Raw($offset)
+    {
+      if(($section = $this->RvaOffset2Section($offset)) !== false)
+				return $offset - $section->vOffset + $section->rOffset;
+          
+      return false;
+    }
+    
+    public function RawOffset2Section($offset)
+    {
+    	foreach($this->sections as $section ) {
         if($offset >= $section->rOffset && $offset < ($section->rOffset + $section->rSize)) {
-          return $offset + $section->vOffset - $section->rOffset + $this->image_base;
+          return $section;
         }
       }
       
       return false;
     }
     
-    public function Rva2Raw($offset)
+    public function RvaOffset2Section($offset)
     {
-      $offset -= $this->image_base;
+    	$offset -= $this->image_base;
       foreach($this->sections as $section ) {
         if($offset >= $section->vOffset && $offset < ($section->vOffset + $section->vSize)) {
-          return $offset - $section->vOffset + $section->rOffset;
+          return $section;
         }
       }
       
