@@ -135,10 +135,10 @@ function include_directory($dir) {
         if( preg_match('/.php$/', $filename) ) {
             require_once($filename);
             $filename = basename($filename,".php");
-            $count++;
             if(!function_exists($filename)) {
                 echo "### File Without Function - $filename\n";
             } else {
+                $count++;
                 echo "Loaded $filename                     \r";
                 $patches[] = $filename;
             }
