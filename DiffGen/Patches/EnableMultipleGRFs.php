@@ -127,7 +127,9 @@
         // Create a call to the free space that was found before.     
         $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 
+        // ***********************************************************
         // Create default offsets that will be replaced into the code.
+        // ***********************************************************
         
         // GetModuleHandleA
         $CA00 = $exe->func("GetModuleHandleA");
@@ -155,7 +157,7 @@
         }
         
         // Create a table for more control (which replaces are allowed).
-        $replaceTable = array("CA00", "CA01", "CA02", "ST00", "ST01","ST02","ST03","ST04",);
+        $replaceTable = array("CA00", "CA01", "CA02", "ST00", "ST01","ST02","ST03","ST04");
 
         // This is a ressource waste but it's more comfortable..
         foreach($replaceTable as $replace) {

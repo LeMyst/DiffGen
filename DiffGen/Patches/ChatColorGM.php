@@ -1,5 +1,5 @@
 <?php
-function GmChatColor($exe, $key = false){
+function ChatColorGM($exe, $key = false){
   
   $colors = array(
               "Blue"        => "\x41\x69\xE6",    //Blue

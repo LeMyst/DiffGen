@@ -94,9 +94,9 @@ Diffs:
 [ ] ChatAtBug
 [*] EnableDNSSupport
 [*] EnableProxySupport
-[ ] SetTCPNODELAY
+[X] SetTCPNODELAY
 [ ] UseSharedClothPalettes
-[ ] GmChatColor
+[X] GmChatColor
 [ ] OtherChatColor
 [ ] MainChatColor
 [ ] YourChatColor

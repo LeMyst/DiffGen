@@ -218,15 +218,14 @@ class RObin
         if($search_section === false) {
           foreach ($this->sections as $section) {
             if(($section->rSize - $section->vSize - $section->align) >= $size) {
-              $zero = $section->rOffset + $section->vSize;
+              $zero = $section->rOffset + $section->vSize + $section->align;
               break;
             }
           }
         } else {
           $section = $this->getSection($search_section);
           if($section !== false && ($section->rSize - $section->vSize - $section->align) >= $size) {
-              $zero = $section->rOffset + $section->vSize;
-              break;
+              $zero = $section->rOffset + $section->vSize + $section->align;
           }
         }
         
@@ -406,7 +405,7 @@ class RObin
     public function Rva2Raw($offset)
     {
       if(($section = $this->RvaOffset2Section($offset)) !== false)
-        return $offset - $section->vOffset + $section->rOffset;
+        return $offset - $this->image_base - $section->vOffset + $section->rOffset;
           
       return false;
     }
@@ -426,7 +425,7 @@ class RObin
     {
       $offset -= $this->image_base;
       foreach($this->sections as $section ) {
-        if($offset >= $section->vOffset && $offset < ($section->vOffset + $section->vSize)) {
+        if($offset >= $section->vOffset && $offset < ($section->vOffset + $section->vSize + $section->align + ($section->rSize - $section->vSize))) {
           return $section;
         }
       }
