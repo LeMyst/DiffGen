@@ -24,29 +24,15 @@ function GmChatColor($exe, $key = false){
     return $diffs;
   }
 
-  // Shinryo:
-  // Get last key that have been used
-  // because the last diff has replaced those bytes that are used to search for the color.
-  // Sure, wildcards would be also good, but that is safer. :)
-  reset($colors);
-  while ($name = current($colors)) {
-    if (key($colors) == $key) {
-        prev($colors);
-        break;
-    }
-    next($colors);
-  }
-  $prevKey = key($colors);
-
   $code =  "\x83\xC4\x1C"         // add     esp, 1Ch
           ."\x6A\x00"             // push    0
           ."\x6A\x00"             // push    0
           // push    0FFFFh ; ChatColor #RRGGBBAA
-          ."\x68".(empty($prevKey) ? "\xFF\xFF\x00" : $colors[$prevKey])."\x00"
+          ."\x68\xFF\xFF\x00\x00"
           ."\x8D\x4C\x24\x14";    // lea     ecx, [esp+118h+Dest]
           
   $offset = $exe->match($code, "\xAB");
-
+  
   // Do not include alpha value.
   $color = $colors[$key];
 
@@ -54,7 +40,7 @@ function GmChatColor($exe, $key = false){
     echo "Failed in part 1";
     return false;
   }
-  
+ 
   $exe->replace($offset, array(8 => $color."\x00"));
   
   return true;

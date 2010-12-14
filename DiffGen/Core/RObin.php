@@ -62,7 +62,7 @@ class RObin
             $sectionInfo['rEnd']          = $sectionInfo['rOffset'] + $sectionInfo['rSize'];
             $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
             // This is used to indicate if code has been placed after vEnd
-            $sectionInfo['align']					= 0;
+            $sectionInfo['align']         = 0;
             $tab = "\t";
             if($debug) 
             echo  $sectionInfo['name'] . $tab
@@ -232,23 +232,6 @@ class RObin
         
         return $zero;
     }
-    /*public function zeroed($size)
-    {
-        global $src;
-        $zeroed = str_repeat("\x00", $size);
-        $zero = false;
-        $section = $this->getSection(".text");
-        if($section === false){
-            return false;
-        }
-        $offset = strpos($src->exe, $zeroed, $section->vSize);
-        //$offset = $this->match($zeroed, "", $section->vSize);
-        if ($offset !== false) {
-            $zero = $offset;
-            // echo "# " . dechex($offset) . " #";
-        }
-        return $zero;
-    }*/
     
     // It was meant to be used for patches that add extra code, where it would
     // replace null bytes (checking if they were really null). Works like replace().
@@ -271,7 +254,9 @@ class RObin
                 $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
             }
             $this->exe[$offset + $i] = $code[$i];
-            $src->exe[$offset + $i] = $code[$i];      
+            
+            // Shinryo: $this->exe is a reference to $src from now on.
+            //$src->exe[$offset + $i] = $code[$i];      
         }
         // "Fake" valid range for the new inserted code
         // to prevent overlapping with other diffs
@@ -301,7 +286,13 @@ class RObin
                     $pvalue2 = ord($value[$i]);
                     $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
                 }
-                $this->exe[$offset + $pos + $i] = $value[$i];
+                
+                // Shinryo:
+                // I left this here even though it's not really necessary or
+                // is a leftover from DiffGen1. In DiffGen2 nothing relys on changes
+                // made JustInTime in the executable. DiffColor() and DiffAutos()
+                // isn't used anymore, therefore there may be space for further improvements.
+                // $this->exe[$offset + $pos + $i] = $value[$i];
             }
         }
         return true;
@@ -406,23 +397,23 @@ class RObin
     // Those two functions should be useful for further offset conversions
     public function Raw2Rva($offset)
     {
-    	if(($section = $this->RawOffset2Section($offset)) !== false)
- 				return $offset + $section->vOffset - $section->rOffset + $this->image_base;
-    		
+      if(($section = $this->RawOffset2Section($offset)) !== false)
+        return $offset + $section->vOffset - $section->rOffset + $this->image_base;
+        
       return false;
     }
     
     public function Rva2Raw($offset)
     {
       if(($section = $this->RvaOffset2Section($offset)) !== false)
-				return $offset - $section->vOffset + $section->rOffset;
+        return $offset - $section->vOffset + $section->rOffset;
           
       return false;
     }
     
     public function RawOffset2Section($offset)
     {
-    	foreach($this->sections as $section ) {
+      foreach($this->sections as $section ) {
         if($offset >= $section->rOffset && $offset < ($section->rOffset + $section->rSize)) {
           return $section;
         }
@@ -433,7 +424,7 @@ class RObin
     
     public function RvaOffset2Section($offset)
     {
-    	$offset -= $this->image_base;
+      $offset -= $this->image_base;
       foreach($this->sections as $section ) {
         if($offset >= $section->vOffset && $offset < ($section->vOffset + $section->vSize)) {
           return $section;

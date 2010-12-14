@@ -1,5 +1,5 @@
 <?php
-function Diff($src, $exe, $patch) {
+function Diff(&$exe, $patch) {
     $tick = microtime(true);
     if(function_exists($patch)) {
         global $diff, $fail, $failcount, $passcount, $patterndebug;
@@ -52,51 +52,6 @@ function Diff($src, $exe, $patch) {
     }
 }
 
-function DiffColor($src, $exe, $patch) {
-    $tick = microtime(true);
-    global $diff, $colors_name, $colors_numbers, $fail, $failcount;
-    echo str_pad($patch, 50, " ") . ": ";
-    if (call_user_func(array("Patches", $patch), $exe) === false){
-        $failcount++;
-        echo " ##\r\n";
-        file_put_contents($fail, call_user_func(array("Patches", $patch), true) . "\r\n", FILE_APPEND);
-        return;
-    }
-    $diff .= "\r\n";
-    $prefix = "byte_" . call_user_func(array("Patches", $patch), true);
-    $diffs = $exe->diff();
-    $diffs = explode(":", $diffs[0]);
-    $pos = hexdec($diffs[0]);
-    for($j = 0; $j < count($colors_name); $j++){
-        $splitcolor = str_split($colors_numbers[$j], 2);
-        for($k = 0; $k < 3; $k++){
-            if (ord($src->exe[$pos+$k]) != hexdec($splitcolor[$k]))
-                $diff .= $prefix . "_(" . $colors_name[$j] . "):" . strtoupper(dechex($pos+$k)) . ":" . ord($src->exe[$pos+$k]) . ":" . hexdec($splitcolor[$k]) . "\r\n";
-        }
-    }
-    echo "Done in " . round(microtime(true) - $tick, 3) . "s\r\n";
-}
-
-function DiffAutos($src, $exe, $patch) {
-    $tick = microtime(true);
-    global $diff, $autos_name, $fail, $failcount;
-    echo str_pad($patch, 50, " ") . ": ";
-    if (call_user_func(array("Patches", $patch), $exe) === false) {
-        $failcount++;
-        echo "Failed\r\n\n";
-        file_put_contents($fail, call_user_func(array("Patches", $patch), true) . "\r\n", FILE_APPEND);
-        return;
-    }
-    $diff .= "\r\n";
-    $prefix = "byte_" . call_user_func(array("Patches", $patch), true);
-    $diffs = $exe->diff();
-    $i = 0;
-    foreach ($diffs as $dif) {
-        $diff .= $prefix . $autos_name[$i] . ":" . $dif . "\r\n";
-        $i++;
-    }
-    echo "Done in " . round(microtime(true) - $tick, 3) . "s\r\n";
-}
 function unpack_rgz($rgz){
     $exe = trim($rgz,"rgz") . "exe";
     echo "unpacking " . basename($rgz) . "\n\n";

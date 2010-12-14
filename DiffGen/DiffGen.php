@@ -48,11 +48,11 @@ if($localftp == "1"){
     $targets = array();
     
     if($choice != "all")
-      // Create only one entry.
-      $targets[] = $clients[$choice];
+    	// Create only one entry.
+    	$targets[] = $clients[$choice];
     else
-      // Create a reference and parse all entrys.
-      $targets = &$clients;
+    	// Create a reference and parse all entrys.
+    	$targets = &$clients;
 }
 
 foreach($targets as $target) {
@@ -86,8 +86,7 @@ $starttime = microtime(true);
 
 // Apply all patches :)
 foreach ($patches as $patch) {
-    $exe = clone $src;
-    Diff($src, $exe, $patch);
+    Diff($src, $patch);
 }
 
 file_put_contents($diffpath, $diff);
