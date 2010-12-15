@@ -1,7 +1,7 @@
 <?php
 function HKLMtoHKCU($exe){
   if ($exe === true) {
-    return "[Fix]_HKLM_To_HKCU";
+    return new xPatch(27, 'HKLM To HKCU', 'Fix');
   }
   
   $code = "\x68\x02\x00\x00\x80";

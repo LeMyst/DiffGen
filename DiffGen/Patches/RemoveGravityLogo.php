@@ -1,7 +1,7 @@
 <?php
 function RemoveGravityLogo($exe){
   if ($exe === true) {
-    return "[UI]_Remove_Gravity_Logo";
+    return new xPatch(39, 'Remove Gravity Logo', 'UI');
   }
   
   // T_R%d.tga

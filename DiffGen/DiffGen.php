@@ -70,7 +70,7 @@ $passcount = 0;
 if(file_exists($fail)) unlink($fail);
 
 // Diff will be saved to the Diffs folder with the same name, but with .diff extension
-$diffpath = "./Diffs/" . basename($target, ".exe") . ".diff";
+$diffpath = "./Diffs/" . basename($target, ".exe") . ".xdiff";
 
 $src = new RObin();
 $src->load($target,false); // true = show client section/header information

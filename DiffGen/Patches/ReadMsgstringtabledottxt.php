@@ -1,7 +1,7 @@
 <?php
     function ReadMsgstringtabledottxt($exe) {
         if ($exe === true) {
-            return "[Data]_Read_msgstringtable.txt_(Recommended)";
+            return new xPatch(36, 'Read msgstringtable.txt', 'Data');
         }
         
         $code =  "\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_869FF0, 0

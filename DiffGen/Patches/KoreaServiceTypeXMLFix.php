@@ -5,7 +5,7 @@
 
 function KoreaServiceTypeXMLFix($exe){
   if ($exe === true) {
-    return "[Fix]_KOREA_ServiceType_XML_Fix_(Recommended)";
+    return new xPatch(33, 'KOREA ServiceType XML Fix', 'Fix');
   }
   
   // Shinryo:

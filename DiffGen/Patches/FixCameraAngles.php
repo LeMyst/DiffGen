@@ -1,5 +1,5 @@
 <?php
-
+// Patches 23-26
 function FixCameraAngles($exe) {
 	return new xPatchGroup(23, 'Fix Camera Angles', array(
 			'FixCameraAnglesRecomm',

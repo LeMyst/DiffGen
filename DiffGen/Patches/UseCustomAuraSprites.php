@@ -1,7 +1,7 @@
 <?php
     function UseCustomAuraSprites($exe){
         if ($exe === true) {
-            return "[Data]_Use_Custom_Aura_Sprites";
+            return new xPatch(45, 'Use Custom Aura Sprites', 'Data');
         }
         $free = 0x380;
         $code =  "\x68" . pack("I", $exe->str("effect\\ring_blue.tga","rva"))

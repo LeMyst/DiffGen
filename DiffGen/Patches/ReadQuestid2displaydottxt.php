@@ -1,7 +1,7 @@
 <?php
     function ReadQuestid2displaydottxt($exe) {
         if ($exe === true) {
-            return "[Data]_Read_questid2display.txt_(Recommended)";
+            return new xPatch(37, 'Read questid2display.txt', 'Data');
         }
         
         $code =  "\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     <langtype>, 0

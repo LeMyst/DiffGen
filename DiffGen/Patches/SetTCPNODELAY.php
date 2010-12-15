@@ -1,7 +1,7 @@
 <?php
     function SetTCPNODELAY($exe){
         if( $exe === true ) {
-            return "[Add]_Disable_Nagle_Algorithm";
+            return new xPatch(41, 'Disable Nagle Algorithm', 'Add');
         }
        
         $code =  "\x55"                           // PUSH EBP       

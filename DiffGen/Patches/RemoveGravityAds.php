@@ -1,7 +1,7 @@
 <?php
 function RemoveGravityAds($exe){
   if ($exe === true) {
-    return "[UI]_Remove_Gravity_Ads";
+    return new xPatch(38, 'Remove Gravity Ads', 'UI');
   }
 
   // T_중력성인.tga

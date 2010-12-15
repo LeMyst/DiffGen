@@ -1,7 +1,7 @@
 <?php
     function UseRagnarokIcon($exe) {
         if ($exe === true) {
-            return "[UI]_Use_Ragnarok_Icon";
+            return new xPatch(47, 'Use Ragnarok Icon', 'UI');
         }
         $code = "\x38\x01\x00\x80\x77";
         $section = $exe->getSection(".data");

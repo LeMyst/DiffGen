@@ -1,7 +1,7 @@
 <?php
     function UseNormalGuildBrackets($exe) {
         if ($exe === true) {
-            return "[UI]_Use_Normal_Guild_Brackets";
+            return new xPatch(46, 'Use Normal Guild Brackets', 'UI');
         }
         $offset = $exe->str("%s"."\xA1\xBA"."%s"."\xA1\xBB","raw");
         if ($offset === false) {

@@ -1,7 +1,7 @@
 <?php
     function ReadDataFolderFirst($exe) {
         if ($exe === true) {
-            return "[Data]_Read_Data_Folder_First_(Recommended)";
+            return new xPatch(35, 'Read Data Folder First', 'Data');
         }
         // strings for pattern search
         $readfolder = pack("I", $exe->str("readfolder","rva"));

@@ -1,7 +1,7 @@
 <?php
 function SkipServiceSelect($exe){
   if ($exe === true) {
-    return "[UI]_Skip_Service_Select";
+    return new xPatch(43, 'Skip Service Select', 'UI');
   }
   
   // Find JE SHORT <address>

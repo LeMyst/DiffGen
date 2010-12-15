@@ -1,7 +1,7 @@
 <?php
     function RestoreLoginWindow($exe) {
         if ($exe === true) {
-            return "[Fix]_Restore_Login_Window";
+            return new xPatch(40, 'Restore Login Window', 'Fix');
         }
         
         $code =  "\x50"                         // push    eax
