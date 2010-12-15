@@ -22,7 +22,8 @@ class xPatch extends xPatchBase
 	private $recommended = false;
 	private $group = 0;
 	
-	private $changes=array();
+	private $inputs=array(); // of xPatchInput
+	private $changes=array(); // of xPatchChange
 	
 	function __construct($id, $name, $type, $group=0, $desc='', $recommended=false)
 	{
@@ -39,16 +40,22 @@ class xPatch extends xPatchBase
 		$this->changes[] = $change;
 	}
 	
+	public function addInput($input)
+	{
+		$this->inputs[] = $input;
+	}
+	
 	public function writeToXml(&$xmlWriter)
 	{
-		
-		
 		$xmlWriter->startElement('patch');
 		$xmlWriter->writeAttribute('id', $this->getID());
 		$xmlWriter->writeAttribute('name', $this->getName());
 		$xmlWriter->writeAttribute('type', $this->getType());
 		if ($this->isRecommended()) $xmlWriter->writeAttribute('recommended', '1');
 		$xmlWriter->writeElement('desc', $this->getDesc());
+		
+		foreach ($this->getInputs() as $i)
+			$i->writeToXml($xmlWriter);
 		
 		$xmlWriter->startElement('changes');
 		foreach ($this->getChanges() as $c)
@@ -71,7 +78,10 @@ class xPatch extends xPatchBase
 				$xmlWriter->writeAttribute('new', $c->getNew());
 			} else {
 				$xmlWriter->writeAttribute('old', dechex($c->getOld()));
-				$xmlWriter->writeAttribute('new', dechex($c->getNew()));
+				if (substr($c->getNew(),0,1) == '$')
+					$xmlWriter->writeAttribute('new', $c->getNew());
+				else				
+					$xmlWriter->writeAttribute('new', dechex($c->getNew()));
 			} 				
 			
 			$xmlWriter->endElement(); //[type]
@@ -87,6 +97,7 @@ class xPatch extends xPatchBase
 	public function isRecommended() { return $this->recommended; }
 	public function getGroup() { return $this->group; }
 	public function getChanges() { return $this->changes; }
+	public function getInputs() { return $this->inputs; }
 	
 	// setters
 	public function setType($val) { $this->type = $val; }
@@ -141,6 +152,66 @@ define('XTYPE_BYTE',		1);
 define('XTYPE_WORD',		2);
 define('XTYPE_DWORD',		3);
 define('XTYPE_STRING',	4);
+
+class xPatchInput
+{
+	private $name = '';
+	private $type = XTYPE_NONE;
+	private $min=null;
+	private $max=null;
+	private $op='';
+	
+	function __construct($name, $type, $op='', $min=null, $max=null)
+	{
+		$this->name = $name;
+		$this->type = $type;
+		$this->op = $op;
+		$this->min = $min;
+		$this->max = $max;
+	}
+	
+	public function writeToXml(&$xmlWriter)
+	{
+		$xmlWriter->startElement('input');
+		$xmlWriter->writeAttribute('name', $this->name);
+		
+		if ($this->type == XTYPE_BYTE)
+			$xmlWriter->writeAttribute('type', 'byte');
+		else if ($this->type == XTYPE_WORD)
+			$xmlWriter->writeAttribute('type', 'word');
+		else if ($this->type == XTYPE_DWORD)
+			$xmlWriter->writeAttribute('type', 'dword');
+		else if ($this->type == XTYPE_STRING)
+			$xmlWriter->writeAttribute('type', 'string');
+		else
+			die("\nUnknown change type ".$this->type." !\n\n");
+			
+		if (!empty($this->op))
+			$xmlWriter->writeAttribute('op', $this->op);
+			
+		if ($this->min !== null)
+			$xmlWriter->writeAttribute('min', $this->min);
+			
+		if ($this->max !== null)
+			$xmlWriter->writeAttribute('max', $this->max);
+			
+		$xmlWriter->endElement(); //input
+	}
+	
+	// getters
+	public function getName() { return $this->name; }
+	public function getType() { return $this->type; }
+	public function getMin() { return $this->min; }
+	public function getMax() { return $this->max; }
+	public function getOp() { return $this->op; }
+	
+	// setters
+	public function setName($val) { $this->name = $val; }
+	public function setType($val) { $this->type = $val; }
+	public function setMin($val) { $this->min = $val; }
+	public function setMax($val) { $this->max = $val; }
+	public function setOp($val) { $this->op = $val; }
+}
 
 class xPatchChange 
 {

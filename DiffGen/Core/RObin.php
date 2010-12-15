@@ -308,30 +308,41 @@ class RObin
     public function replace($offset, $replace)
     {
         foreach ($replace as $pos => $value) {
-            for ($i = 0; $i < strlen($value); $i++) {
-                if ($this->exe[$offset + $pos + $i] != $value[$i]) {
-                    $poffset = strtoupper(dechex($offset + $pos + $i));
-                    // output values in hex when patcher supports it
-                    // $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
-                    // $pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
-                    $pvalue1 = ord($this->exe[$offset + $pos + $i]);
-                    $pvalue2 = ord($value[$i]);
-                    //$this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
-                    
-		                $change = new xPatchChange();
-		                $change->setType(XTYPE_BYTE);
-		                $change->setOffset($offset + $pos + $i);
-		                $change->setOld($pvalue1);
-		                $change->setNew($pvalue2);
-		                $this->xPatch->addChange($change);                    
-                }
-                
-                // Shinryo:
-                // I left this here even though it's not really necessary or
-                // is a leftover from DiffGen1. In DiffGen2 nothing relys on changes
-                // made JustInTime in the executable. DiffColor() and DiffAutos()
-                // isn't used anymore, therefore there may be space for further improvements.
-                // $this->exe[$offset + $pos + $i] = $value[$i];
+						if (substr($value,0,1) == '$')// input variable (xDiff)    
+						{
+							echo 'input: '.$value. "\n";
+						  $change = new xPatchChange();
+	            $change->setType(XTYPE_BYTE);
+	            $change->setOffset($offset + $pos);
+	            $change->setOld(ord($this->exe[$offset + $pos]));
+	            $change->setNew($value);
+	            $this->xPatch->addChange($change); 
+	            print_r($change);
+						} else
+	            for ($i = 0; $i < strlen($value); $i++) {
+	                if ($this->exe[$offset + $pos + $i] != $value[$i]) {
+	                    $poffset = strtoupper(dechex($offset + $pos + $i));
+	                    // output values in hex when patcher supports it
+	                    // $pvalue1 = str_pad(strtoupper(dechex(ord($this->exe[$offset + $pos + $i]))),2,"0", STR_PAD_LEFT);
+	                    // $pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
+	                    $pvalue1 = ord($this->exe[$offset + $pos + $i]);
+	                    $pvalue2 = ord($value[$i]);
+	                    //$this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
+	                    
+			                $change = new xPatchChange();
+			                $change->setType(XTYPE_BYTE);
+			                $change->setOffset($offset + $pos + $i);
+			                $change->setOld($pvalue1);
+			                $change->setNew($pvalue2);
+			                $this->xPatch->addChange($change);                    
+	                }
+	                
+	                // Shinryo:
+	                // I left this here even though it's not really necessary or
+	                // is a leftover from DiffGen1. In DiffGen2 nothing relys on changes
+	                // made JustInTime in the executable. DiffColor() and DiffAutos()
+	                // isn't used anymore, therefore there may be space for further improvements.
+	                // $this->exe[$offset + $pos + $i] = $value[$i];
             }
         }
         return true;
@@ -368,6 +379,12 @@ class RObin
     		$this->xPatch->addChange($change);
     	}
     }    
+    
+    public function addInput($name, $type, $op='', $min=null, $max=null)
+    {
+    	$input = new xPatchInput($name, $type, $op, $min, $max);
+    	$this->xPatch->addInput($input);
+    }
     
     // Returns an array with the changes made since last diff() call.
     public function diff()

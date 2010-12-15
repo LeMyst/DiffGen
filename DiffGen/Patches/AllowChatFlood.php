@@ -3,11 +3,32 @@
 
     function AllowChatFlood($exe) {
 	    return new xPatchGroup(1, 'Allow Chat Flood', array(
-	    	'AllowChatFlood25Lines',
+	    	'AllowChatFloodXLines',
+	    	/*'AllowChatFlood25Lines',
 	    	'AllowChatFlood50Lines',
-	    	'AllowChatFlood100Lines',
+	    	'AllowChatFlood100Lines',*/
 	    	'AllowChatFloodUnlimited'));
     }
+    
+    function AllowChatFloodXLines($exe) {
+        if ($exe === true) {
+            return new xPatch(2, 'Allow Chat Flood (? lines)', 'UI', 1);
+        }
+        $code =  "\x83\x3D\xAB\xAB\xAB\xAB\x0A"    // cmp     Langtype, 10
+                ."\x74\xAB"                        // jz      short loc_5CE560
+                ."\x83\x7C\x24\x04\x02"            // cmp     [esp+arg_0], 2    ; <-- Patch
+                ."\x7C\x47"                        // jl      short loc_5CE560
+                ."\x6A\x00";                       // push    ebx
+        $offset = $exe->code($code, "\xAB");
+        if ($offset === false) {
+            echo "Failed in part 1";
+            return false;
+        }
+        
+        $exe->addInput('$allowChatFlood', XTYPE_BYTE, '-1', 1);
+        $exe->replace($offset, array(13 => '$allowChatFlood'));
+        return true;
+    }    
     
     function AllowChatFlood25Lines($exe) {
         if ($exe === true) {
