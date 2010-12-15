@@ -56,7 +56,7 @@ function xDiff(&$exe, $patch) {
     $tick = microtime(true);
     if(function_exists($patch)) {
         global $diff, $fail, $failcount, $passcount, $patterndebug;
-        echo str_pad($patch, 40, " ") . ": ";
+        
         
         $diffMap = call_user_func($patch, true);
         
@@ -67,12 +67,19 @@ function xDiff(&$exe, $patch) {
         $id = $diffMap->getID();
       	if (array_key_exists($id, $exe->xDiff))
       		die("\nID $id is already in use!\n\n\n");        
+      		
+      	$pad = 40;
+      	if (is_a($diffMap, 'xPatch') && $diffMap->getGroup() > 0)
+      		$pad -= 2;	
+      	echo str_pad($patch, $pad, " ") . ": ";
         
         if (is_a($diffMap, 'xPatchGroup')) { // patch group!
 					$exe->xDiff[$id] = $diffMap; //add group to diff list
-        	//print_r($diffMap);
-        	foreach ($diffMap->getPatchNames() as $d)
+        	echo "\n";
+        	foreach ($diffMap->getPatchNames() as $d) {
+        		echo "  ";
 						xDiff($exe, $d);
+					}
 					return;
         }        
         
