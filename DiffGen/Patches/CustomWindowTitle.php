@@ -17,7 +17,8 @@
             echo "Failed in part 2 ";
             return false;
         }
-        $exe->replace($offset, array(0 => pack("I", $strOff)));
+        //$exe->replace($offset, array(0 => pack("I", $strOff)));
+        $exe->replaceDword($offset, array(0 => $strOff));
         return true;
     }
 ?>

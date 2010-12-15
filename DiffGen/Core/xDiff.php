@@ -58,9 +58,9 @@ class xPatch extends xPatchBase
 				$xmlWriter->startElement('byte');
 			else if ($type == XTYPE_WORD)
 				$xmlWriter->startElement('word');
-			else if ($type == XTYPE_WORD)
+			else if ($type == XTYPE_DWORD)
 				$xmlWriter->startElement('dword');
-			else if ($type == XTYPE_WORD)
+			else if ($type == XTYPE_STRING)
 				$xmlWriter->startElement('string');
 			else
 				die("\nUnknown change type $type !\n\n");

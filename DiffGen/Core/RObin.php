@@ -337,6 +337,38 @@ class RObin
         return true;
     }
     
+    // Basically works like replace() but replaces words instead of bytes
+    public function replaceWord($offset, $replace)
+    {
+    	foreach ($replace as $pos => $value)
+    	{
+    		$old = ord($this->exe{$pos++})+($this->exe($buf{$pos})<<8);
+    		
+    		$change = new xPatchChange();
+    		$change->setType(XTYPE_WORD);
+    		$change->setOffset($offset-1 + $pos);
+    		$change->setOld($old);
+    		$change->setNew($value);
+    		$this->xPatch->addChange($change);
+    	}
+    }
+    
+    // Basically works like replace() but replaces dwords instead of bytes
+    public function replaceDword($offset, $replace)
+    {
+    	foreach ($replace as $pos => $value)
+    	{
+    		$old = ord($this->exe{$offset++})+(ord($this->exe{$offset++})<<8)+(ord($this->exe{$offset++})<<16)+(ord($this->exe{$offset})<<24);
+    		
+    		$change = new xPatchChange();
+    		$change->setType(XTYPE_DWORD);
+    		$change->setOffset($offset-3 + $pos);
+    		$change->setOld($old);
+    		$change->setNew($value);
+    		$this->xPatch->addChange($change);
+    	}
+    }    
+    
     // Returns an array with the changes made since last diff() call.
     public function diff()
     {
