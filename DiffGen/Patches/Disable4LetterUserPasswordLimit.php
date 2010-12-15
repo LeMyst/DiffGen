@@ -1,7 +1,7 @@
 <?php
     function Disable4LetterUserPasswordLimit($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_4_Letter_UserPassword_Limit";
+            return new xPatch(12, 'Disable 4 Letter UserPassword Limit', 'Fix');
         }
         $code =  "\xE8\xAB\xAB\xAB\xFF"            // call    <address>
                 ."\x83\xAB\x04"                    // cmp     eax, 4

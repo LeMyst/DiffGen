@@ -1,7 +1,7 @@
 <?php
     function EnableQuestWindow($exe) {
         if ($exe === true) {
-            return "[UI]_Enable_Quest_Window";
+            return new xPatch(18, 'Enable Quest Window', 'UI');
         }
         $code =  "\x0F\x85\xCB\x00\x00\x00"    // jnz     loc_555684
                 ."\x6A\x00"                    // push    0               ; int

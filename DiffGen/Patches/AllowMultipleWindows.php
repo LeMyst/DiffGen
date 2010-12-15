@@ -1,7 +1,8 @@
 <?php
+		// Patch 6
     function AllowMultipleWindows($exe) {
         if ($exe === true) {
-            return "[Fix](13)_Allow_Multiple_Windows";
+            return new xPatch(6, 'Allow Multiple Windows', 'Fix');
         }
         $code =  "\x0F\x84\xAB\x00\x00\x00"        // jz      loc_73D976
                 ."\x83\xF8\x03"                    // cmp     eax, 3

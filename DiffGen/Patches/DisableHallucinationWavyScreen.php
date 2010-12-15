@@ -1,7 +1,7 @@
 <?php
     function DisableHallucinationWavyScreen($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_Hallucination_Wavy_Screen";
+            return new xPatch(14, 'Disable Hallucination Wavy Screen', 'Fix');
         }
         $code =  "\x83\xC6\xAB"
                 ."\x89\x3D\xAB\xAB\xAB\xAB";

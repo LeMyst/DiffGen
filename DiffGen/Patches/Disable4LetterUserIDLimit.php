@@ -1,7 +1,7 @@
 <?php
     function Disable4LetterUserIDLimit($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_4_Letter_UserID_Limit";
+            return new xPatch(11, 'Disable 4 Letter UserID Limit', 'Fix');
         }
         $code =  "\xE8\xAB\xAB\xAB\xFF"            // call    <address>
                 ."\x83\xAB\x04"                    // cmp     eax, 4

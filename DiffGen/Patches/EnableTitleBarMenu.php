@@ -1,7 +1,7 @@
 <?php
     function EnableTitleBarMenu($exe) {
         if ($exe === true) {
-            return "[UI]_Enable_Title_Bar_Menu";
+            return new xPatch(19, 'Enable Title Bar Menu', 'UI');
         }
         $code = "\x68\x00\x00\xC2\x02"        // push    2C20000h        ; dwStyle
                 ."\x51";                      // push    ecx             ; lpWindowName

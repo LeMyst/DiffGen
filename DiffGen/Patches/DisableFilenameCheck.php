@@ -1,7 +1,7 @@
 <?php
     function DisableFilenameCheck($exe) {
     if ($exe === true) {
-      return "[Fix]_Disable_RagexeRE_Filename_Check_(Recommended)";
+      return new xPatch(13, 'Disable RagexeRE Filename Check', 'Fix');
     }
     
     $codeA =     "\xE8\xAB\xAB\xAB\xFF";       // call    sub_707420

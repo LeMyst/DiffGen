@@ -1,7 +1,7 @@
 <?php
     function CustomWindowTitle($exe) {
         if ($exe === true) {
-            return "[UI]_Custom_Window_Title_(Recommended)";
+            return new xPatch(8, 'Custom Window Title', 'UI');
         }
         $strOff = 0x310;
         global $clientdate, $clienttype;

@@ -1,7 +1,7 @@
 <?php
     function DisableHShield ($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_HShield_(Recommended)";
+            return new xPatch(15, 'Disable HShield', 'Fix');
         }
         
         $code =  "\x51"                         // push    ecx

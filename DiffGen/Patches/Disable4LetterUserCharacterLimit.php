@@ -1,7 +1,7 @@
 <?php
     function Disable4LetterUserCharacterLimit($exe) {
         if ($exe === true) {
-            return "[Fix]_Disable_4_Letter_UserCharacter_Limit";
+            return new xPatch(10, 'Disable 4 Letter UserCharacter Limit', 'Fix');
         }
         $code =  "\xE8\xAB\xAB\xAB\xFF"            // call    <address>
                 ."\x83\xAB\x04"                    // cmp     eax, 4

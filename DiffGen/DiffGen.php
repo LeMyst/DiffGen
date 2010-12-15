@@ -3,6 +3,7 @@ date_default_timezone_set('Asia/Seoul');
 error_reporting(E_ALL);
 ini_set("display_errors", 1);
 
+require_once "Core/xDiff.php";
 require_once "Core/RObin.php";
 require_once "Core/func.php";
 
@@ -86,10 +87,12 @@ $starttime = microtime(true);
 
 // Apply all patches :)
 foreach ($patches as $patch) {
-    Diff($src, $patch);
+    xDiff($src, $patch);
 }
 
-file_put_contents($diffpath, $diff);
+$src->writeDiffFile($diffpath);
+
+//file_put_contents($diffpath, $diff);
 $totaltime = microtime(true) - $starttime;
 echo "\npatches passed : $passcount\n";
 echo "patches failed : $failcount\n";

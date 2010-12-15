@@ -1,7 +1,7 @@
 <?php
     function DisableSwearFilter($exe) {
         if ($exe === true) {
-            return "[UI]_Disable_Swear_Filter";
+            return new xPatch(16, 'Disable Swear Filter', 'UI');
         }
         
         // Shinryo: It's better to use a generic approach

@@ -1,7 +1,7 @@
 <?php
     function ChangeGravityErrorHandler($exe) {
         if ($exe === true)
-            return "[UI]_Change_Gravity_Error_Handler_(Recommended)";
+            return new xPatch(7, 'Change Gravity Error Handler', 'Fix'); 
         global $clientdate, $clienttype;
         $code = "";
         $code2 = "";

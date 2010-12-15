@@ -12,11 +12,15 @@ class RObin
     public /*protected*/ $exe = "";
     public /*protected*/ $size = 0;
     public $dif = array();
+    public $xDiff = array(); //Contains all patches and patch groups
+    public $xPatch = null; // Current xPatch
+    public $xmlWriter = null;
     
     private $PEHeader = null;
     private $image_base = 0;
     private $sections;
     private $client_date = 0;
+    private $crc = 0;
     
     // Loads file from $path
     public function load($path,$debug=false)
@@ -25,6 +29,7 @@ class RObin
         if ($file === false) {
             return false;
         }
+        $this->crc = crc32($file);
         $this->exe = $file;
         $this->size = strlen($file);
         
@@ -83,6 +88,28 @@ class RObin
 
             $curSection += 0x28;
         }
+        
+        // Prepare XMLWriter for xDiff
+        $this->xmlWriter = new XMLWriter();
+        $this->xmlWriter->openMemory();
+        $this->xmlWriter->setIndent(true);
+        $this->xmlWriter->setIndentString("\t");
+				$this->xmlWriter->startDocument('1.0', 'ISO-8859-1');
+        $this->xmlWriter->startElement('diff');
+        
+        $this->xmlWriter->startElement('exe');
+        $this->xmlWriter->writeElement('builddate', $date);
+        $this->xmlWriter->writeElement('filename', basename($path));
+        $this->xmlWriter->writeElement('crc', $this->crc);
+        $this->xmlWriter->writeElement('type', 'RE');
+        $this->xmlWriter->endElement(); // exe
+        
+        $this->xmlWriter->startElement('info');
+        $this->xmlWriter->writeElement('name', '[ '.substr($this->client_date,0,4) . '-' . substr($this->client_date,4,2) . '-' . substr($this->client_date,6,2) . ' kRO ]');
+        $this->xmlWriter->writeElement('author', 'DiffTeam');
+        $this->xmlWriter->writeElement('version', '1.0');
+        $this->xmlWriter->writeElement('releasedate', 'now');
+        $this->xmlWriter->endElement(); // info
         
         return true;
     }
@@ -250,7 +277,13 @@ class RObin
                 // $pvalue2 = str_pad(strtoupper(dechex(ord($code[$i]))),2,"0", STR_PAD_LEFT);
                 $pvalue1 = ord($this->exe[$offset + $i]);
                 $pvalue2 = ord($code[$i]);
-                $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
+                //$this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
+                $change = new xPatchChange();
+                $change->setType(XTYPE_BYTE);
+                $change->setOffset($offset + $i);
+                $change->setOld($pvalue1);
+                $change->setNew($pvalue2);
+                $this->xPatch->addChange($change);
             }
             $this->exe[$offset + $i] = $code[$i];
             
@@ -283,7 +316,14 @@ class RObin
                     // $pvalue2 = str_pad(strtoupper(dechex(ord($value[$i]))),2,"0", STR_PAD_LEFT);
                     $pvalue1 = ord($this->exe[$offset + $pos + $i]);
                     $pvalue2 = ord($value[$i]);
-                    $this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
+                    //$this->dif[] = $poffset.":".$pvalue1.":".$pvalue2;
+                    
+		                $change = new xPatchChange();
+		                $change->setType(XTYPE_BYTE);
+		                $change->setOffset($offset + $pos + $i);
+		                $change->setOld($pvalue1);
+		                $change->setNew($pvalue2);
+		                $this->xPatch->addChange($change);                    
                 }
                 
                 // Shinryo:
@@ -376,6 +416,27 @@ class RObin
             return false;
         }
         return $offset + $virtual + $iBase;
+    }
+    
+    // XDIFF
+		public function writeDiffFile($filePath)
+    {
+    	//print_r($this->xDiff);
+    	$this->xmlWriter->startElement('patches');
+    
+    	foreach ($this->xDiff as $p)
+    	{
+    		if (is_a($p, 'xPatchBase')) //Both xPatch and xPatchGroup implement "writeToXml" :)
+    			$p->writeToXml($this->xmlWriter);     		
+    	}
+    
+    	$this->xmlWriter->endElement(); //patches
+    	$this->xmlWriter->endElement(); //diff
+    	$this->xmlWriter->endDocument();
+    	
+    	file_put_contents($filePath, $this->xmlWriter->outputMemory(true));
+    	$this->xmlWriter->flush();
+    	unset($this->xmlWriter);
     }
     
     // Workaround for public access, 'cause they shouldn't be changed outside the class

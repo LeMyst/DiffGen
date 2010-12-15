@@ -52,6 +52,61 @@ function Diff(&$exe, $patch) {
     }
 }
 
+function xDiff(&$exe, $patch) {
+    $tick = microtime(true);
+    if(function_exists($patch)) {
+        global $diff, $fail, $failcount, $passcount, $patterndebug;
+        echo str_pad($patch, 40, " ") . ": ";
+        
+        $diffMap = call_user_func($patch, true);
+        
+        if (!is_a($diffMap, 'xPatchBase'))
+        	die("\nPatch '$patch' returned an invalid value!\n\n\n");
+        
+        $diffName = $diffMap->getName();
+        $id = $diffMap->getID();
+      	if (array_key_exists($id, $exe->xDiff))
+      		die("\nID $id is already in use!\n\n\n");        
+        
+        if (is_a($diffMap, 'xPatchGroup')) { // patch group!
+					$exe->xDiff[$id] = $diffMap; //add group to diff list
+        	//print_r($diffMap);
+        	foreach ($diffMap->getPatchNames() as $d)
+						xDiff($exe, $d);
+					return;
+        }        
+        
+        $exe->xPatch = $diffMap;
+        
+        // The called function is responsible to return success or failure
+        // and is also responsible for !!detecting replaced byte codes!!
+        if (call_user_func($patch, $exe) === false) {
+          $failcount++;
+          echo " ##\r\n";
+          
+          file_put_contents($fail, $diffName . "\r\n", FILE_APPEND);
+          return;
+        }
+        
+        $group = $diffMap->getGroup();
+        if ($group) {
+        	if (!array_key_exists($group, $exe->xDiff))
+        		die("\nCannot find group for Patch $patch!\n\n\n");
+        	else
+        		$exe->xDiff[$group]->addPatch($exe->xPatch);
+        } else {
+        	$exe->xDiff[$id] = $exe->xPatch;
+        }
+
+        unset($exe->xPatch);
+        
+        $passcount++;
+        echo "Done in " . round(microtime(true) - $tick, 5) . "s\n";
+    } else {
+        die("\nError Missing Function " . $patch . "\n\n\n");
+    }
+}
+
 function unpack_rgz($rgz){
     $exe = trim($rgz,"rgz") . "exe";
     echo "unpacking " . basename($rgz) . "\n\n";

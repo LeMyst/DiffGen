@@ -1,7 +1,7 @@
 <?php
     function ExtendedPMBox($exe){
         if ($exe === true) {
-            return "[UI]_Extended_PM_Box";
+            return new xPatch(22, 'Extended PM Box', 'UI');
         }
         $code = "\xC7\x40\x54\x46";
         $offsets = $exe->code($code, "\xAB", 4);
