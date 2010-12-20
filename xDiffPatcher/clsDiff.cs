@@ -320,7 +320,78 @@ namespace xDiffPatcher
 
             int start = Environment.TickCount;
 
-            if (this.Type == DiffType.Diff)
+            if (this.Type == DiffType.xDiff)
+            {
+                BinaryReader r = new BinaryReader(new StreamReader(inputFile).BaseStream);
+                BinaryWriter w = new BinaryWriter(new StreamWriter(fileName, false).BaseStream);
+
+                int changed = 0;
+
+                byte[] buf = new byte[r.BaseStream.Length];
+                r.Read(buf, 0, buf.Length);
+                //w.Write(buf);
+
+                foreach (DiffPatchBase p in xPatches.Values)
+                {
+                    if (!(p is DiffPatch))
+                        continue;
+
+                    if (!((DiffPatch)p).Apply)
+                        continue;
+
+                    foreach (DiffChange c in ((DiffPatch)p).Changes)
+                    {
+                        switch (c.Type)
+                        {
+                            case ChangeType.Byte:
+                                {
+                                    byte old;
+
+                                    r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                                    old = r.ReadByte();
+                                    if (old != (byte)c.Old)
+                                    {
+                                        //hm....
+                                        MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (byte)c.Old + ")!");
+                                    }
+
+                                    buf[c.Offset] = (byte)c.New_;
+                                    changed++;
+                                }
+                                break;
+
+                            case ChangeType.Word:
+                                {
+                                    UInt16 old;
+
+                                    r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                                    old = r.ReadUInt16();
+                                    if (old != (UInt16)c.Old)
+                                    {
+                                        MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ushort)c.Old + ")!");
+                                    }
+                                }
+
+                                buf[c.Offset] =   (byte)((ushort)c.New_ & 0xFF00);
+                                buf[c.Offset+1] = (byte)((ushort)c.New_ & 0x00FF);
+                                break;
+
+                            default:
+                                break;
+                        }
+                    }
+                }
+
+                w.Write(buf);
+
+                int stop = Environment.TickCount;
+
+                MessageBox.Show("Finished patching " + changed + "bytes in " + (stop - start) + "ms!");
+
+                r.Close();
+                w.Close();
+            }
+            else if (this.Type == DiffType.Diff)
             {
                 BinaryReader r = new BinaryReader(new StreamReader(inputFile).BaseStream);
                 BinaryWriter w = new BinaryWriter(new StreamWriter(fileName, false).BaseStream);
@@ -489,16 +560,19 @@ namespace xDiffPatcher
             this.Name = patch.Attributes["name"].InnerText;
             this.Type = patch.Attributes["type"].InnerText;
 
-            if ((tmpNode = patch.ParentNode) != null && tmpNode.Name == "patchgroup")
+            tmpNode = patch.ParentNode;
+            if (tmpNode != null && tmpNode.Name == "patchgroup")
                 this.GroupID = int.Parse(tmpNode.Attributes["id"].InnerText);
 
             if (patch.Attributes["recommended"] != null)
                 this.Recommended = true;
 
-            if ((tmpNode = patch.SelectSingleNode("//desc")) != null)
+            tmpNode = patch.SelectSingleNode("desc");
+            if (tmpNode != null)
                 this.Desc = tmpNode.InnerText;
 
-            if ((tmpNode = patch.SelectSingleNode("//changes")) != null)
+            tmpNode = patch.SelectSingleNode("changes");
+            if (tmpNode != null)
             {
                 foreach (XmlNode change in tmpNode.ChildNodes)
                 {
@@ -524,7 +598,12 @@ namespace xDiffPatcher
                         c.New_ = change.Attributes["new"].InnerText;
                         c.Old = change.Attributes["old"].InnerText;
                     }
-                    else
+                    else if (c.Type == ChangeType.Byte)
+                    {
+                        c.New_ = byte.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                        c.Old = byte.Parse(change.Attributes["old"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                    }
+                    else if (c.Type == ChangeType.Word)
                     {
                         c.New_ = uint.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
                         c.Old = uint.Parse(change.Attributes["old"].InnerText, System.Globalization.NumberStyles.HexNumber);

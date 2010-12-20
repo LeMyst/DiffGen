@@ -265,14 +265,23 @@ namespace xDiffPatcher
                 str.Close();
 
                 int i = 0;
-                foreach (KeyValuePair<string, DiffPatch> p in indexedPatches)
+                foreach (KeyValuePair<int, DiffPatchBase> p in file.xPatches)
+                {
+                    if (p.Value is DiffPatchGroup)
+                        continue;
+                    if (rightPatches.Contains(p.Key))
+                        ((DiffPatch)file.xPatches[p.Key]).Apply = true;
+                    else
+                        ((DiffPatch)file.xPatches[p.Key]).Apply = false;
+                }
+                /*foreach (KeyValuePair<string, DiffPatch> p in indexedPatches)
                 {
                     if (rightPatches.Contains(i))
                         file.Patches[p.Key].Apply = true;
                     else
                         file.Patches[p.Key].Apply = false;
                     i++;
-                }
+                }*/
 
                 file.Patch(txtExeFile.Text, sfd.FileName);
             }
