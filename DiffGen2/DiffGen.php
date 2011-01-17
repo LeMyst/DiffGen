@@ -23,9 +23,9 @@ fwrite(STDOUT, "Where do we get clients: ");
 $localftp = trim(fgets(STDIN));
 
 if($localftp == "1"){
-    $target = GetFTP("RagexeRE.rgz");
+    $targets[] = GetFTP("RagexeRE.rgz");
 }elseif($localftp == "2"){
-    $target = GetFTP("Ragexe.rgz");
+    $targets[] = GetFTP("Ragexe.rgz");
 } else {
     echo "########################################\n\n";
     $clients = glob("Clients/{*.exe,*.rgz}", GLOB_BRACE );
