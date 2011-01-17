@@ -1,7 +1,9 @@
 <?php
-function ChatColorGM($exe, $key = false){
-  
-  $colors = array(
+function ChatColorGM($exe) {
+    if ($exe === true) {
+        return new xPatch(52, 'GM Chat Color', 'Color');
+    }
+  /*$colors = array(
               "Blue"        => "\x41\x69\xE6",    //Blue
               "LightBlue"   => "\x66\xCC\xFF",    //LightBlue
               "Green"       => "\x96\xF0\x96",    //Green
@@ -14,15 +16,15 @@ function ChatColorGM($exe, $key = false){
               // Not used since the GM Color is yellow by default.
               //"Yellow"      => "\xFF\xFF\x00",  //Yellow
               "White"       => "\xFF\xFF\xFF"     //White
-            );
+            );*/
 
-  $diffs = array();
+  /*$diffs = array();
   foreach($colors as $name => $code)
     $diffs[$name] = "[Color](A)_GM_Chat_Color_(".$name.")";
 
   if ($exe === true) {
     return $diffs;
-  }
+  }*/
 
   $code =  "\x83\xC4\x1C"         // add     esp, 1Ch
           ."\x6A\x00"             // push    0
@@ -34,14 +36,15 @@ function ChatColorGM($exe, $key = false){
   $offset = $exe->match($code, "\xAB");
   
   // Do not include alpha value.
-  $color = $colors[$key];
+  //$color = $colors[$key];
 
   if ($offset === false) {
     echo "Failed in part 1";
     return false;
   }
  
-  $exe->replace($offset, array(8 => $color."\x00"));
+  $exe->addInput('$gmChatColor', XTYPE_COLOR);
+  $exe->replaceDword($offset, array(8 => '$gmChatColor'));
   
   return true;
 }

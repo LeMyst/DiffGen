@@ -1,8 +1,9 @@
 <?php
     function UsePlainTextDescriptions($exe) {
         if ($exe === true) {
-            return "[Data](8)_Use_Plain_Text_Descriptions_(Recommended)";
+            return new xPatch(48, 'Use Plain Text Descriptions', 'Data');
         }
+        
         $code =  "\x75\x54"             // jnz     short loc_58CADD
                 ."\x56"                 // push    esi
                 ."\x57"                 // push    edi
@@ -12,6 +13,7 @@
             echo "Failed in part 1";
             return false;
         }
+        
         $exe->replace($offset, array(0 => "\xEB"));
         return true;
     }

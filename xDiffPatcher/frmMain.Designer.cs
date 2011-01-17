@@ -291,6 +291,7 @@
             this.picModifier.Size = new System.Drawing.Size(25, 25);
             this.picModifier.TabIndex = 12;
             this.picModifier.TabStop = false;
+            this.picModifier.Click += new System.EventHandler(this.picModifier_Click);
             // 
             // imgListModifier
             // 

@@ -99,7 +99,7 @@ class xPatch extends xPatchBase
 	public function getChanges() { return $this->changes; }
 	public function getInputs() { return $this->inputs; }
 	
-	// setters
+	// setters
 	public function setType($val) { $this->type = $val; }
 	public function setDesc($val) { $this->desc = $val; }
 	public function setRecommended($val) { $this->recommended = $val; }
@@ -152,6 +152,7 @@ define('XTYPE_BYTE',		1);
 define('XTYPE_WORD',		2);
 define('XTYPE_DWORD',		3);
 define('XTYPE_STRING',	4);
+define('XTYPE_COLOR',		5);
 
 class xPatchInput
 {
@@ -183,6 +184,8 @@ class xPatchInput
 			$xmlWriter->writeAttribute('type', 'dword');
 		else if ($this->type == XTYPE_STRING)
 			$xmlWriter->writeAttribute('type', 'string');
+		else if ($this->type == XTYPE_COLOR)
+			$xmlWriter->writeAttribute('type', 'color');			
 		else
 			die("\nUnknown change type ".$this->type." !\n\n");
 			

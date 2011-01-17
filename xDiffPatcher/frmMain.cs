@@ -361,27 +361,32 @@ namespace xDiffPatcher
                 var p = (DiffPatch)lstPatches.SelectedNode.Tag;
                 if (p.Inputs.Count <= 0 || i >= p.Inputs.Count)
                 {
-                    //txtModifier.Visible = true;
-                    //cmbModifiers.Visible = true;
-                    //picModifier.Visible = true;
-                    //lblModifiers.Visible = true;
-
                     return;
                 }
 
-                //txtModifier.Visible = true;
-                //cmbModifiers.Visible = true;
-                //picModifier.Visible = true;
-                //lblModifiers.Visible = true;
+                if (p.Inputs[i].Type == ChangeType.Color)
+                {
+                    txtModifier.ReadOnly = true;
+                    picModifier.Image = null;
+                    if (p.Inputs[i].Value == null || p.Inputs[i].Value.Length < 6)
+                        p.Inputs[i].Value = "000000";
+
+                    // I know, i know <.<
+                    picModifier.BackColor = Color.FromArgb(int.Parse(p.Inputs[i].Value.Substring(0, 2), System.Globalization.NumberStyles.HexNumber),
+                        int.Parse(p.Inputs[i].Value.Substring(2, 2), System.Globalization.NumberStyles.HexNumber),
+                        int.Parse(p.Inputs[i].Value.Substring(4, 2), System.Globalization.NumberStyles.HexNumber));
+                }
+                else
+                {
+                    txtModifier.ReadOnly = false;
+                    picModifier.BackColor = Color.Transparent;
+                }
 
                 txtModifier.Text = p.Inputs[i].Value;
             }
             else
             {
-                /*txtModifier.Visible = true;
-                cmbModifiers.Visible = true;
-                picModifier.Visible = true;
-                lblModifiers.Visible = true;*/
+
             }
         }
 
@@ -429,12 +434,13 @@ namespace xDiffPatcher
             if (lstPatches.SelectedNode != null && lstPatches.SelectedNode.Tag != null && lstPatches.SelectedNode.Tag is DiffPatch && cmbModifiers.SelectedIndex >= 0)
             {
                 DiffInput input = ((DiffPatch)lstPatches.SelectedNode.Tag).Inputs[cmbModifiers.SelectedIndex];
+                if (input.Type == ChangeType.Color) return;
 
                 bool ok = DiffInput.CheckInput(txtModifier.Text, input);
                 
                 if (ok)
                     input.Value = txtModifier.Text;
-
+                
                 if (!ok)
                     picModifier.Image = imgListModifier.Images["red.png"];
                 else
@@ -445,6 +451,25 @@ namespace xDiffPatcher
         private void cmbModifiers_SelectedIndexChanged(object sender, EventArgs e)
         {
             ShowModifier(cmbModifiers.SelectedIndex);
+        }
+
+        private void picModifier_Click(object sender, EventArgs e)
+        {
+            if (lstPatches.SelectedNode != null && lstPatches.SelectedNode.Tag != null && lstPatches.SelectedNode.Tag is DiffPatch && cmbModifiers.SelectedIndex >= 0)
+            {
+                DiffInput input = ((DiffPatch)lstPatches.SelectedNode.Tag).Inputs[cmbModifiers.SelectedIndex];
+                if (input.Type != ChangeType.Color) return;
+
+                var ret = 0;
+                var colPick = new ColorDialog();
+                ret = (int)colPick.ShowDialog(this);
+                
+                if (ret == (int)System.Windows.Forms.DialogResult.OK)
+                {
+                    input.Value = String.Format("{0:X2}{1:X2}{2:X2}", colPick.Color.R, colPick.Color.G, colPick.Color.B);
+                    ShowModifier(cmbModifiers.SelectedIndex);
+                }
+            }
         }
 
     }

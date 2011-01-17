@@ -41,7 +41,8 @@ namespace xDiffPatcher
         Byte,
         Word,
         Dword,
-        String
+        String,
+        Color
     }
 
     public class DiffFile
@@ -372,7 +373,7 @@ namespace xDiffPatcher
                             r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
                             old = r.ReadUInt32();
                             if (old != (UInt32)c.Old)
-                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ulong)c.Old + ")!");
+                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (uint)c.Old + ")!");
                         }
 
                         UInt32 val2 = (UInt32)c.GetNewValue(patch);
@@ -567,7 +568,12 @@ namespace xDiffPatcher
                         if (Type == ChangeType.Byte)
                             return byte.Parse(i.Value);
                         else if (Type == ChangeType.Dword)
-                            return UInt32.Parse(i.Value);
+                        {
+                            if (i.Type == ChangeType.Color)
+                                return UInt32.Parse(i.Value + "00", System.Globalization.NumberStyles.HexNumber);
+                            else
+                                return UInt32.Parse(i.Value);
+                        }
                         else if (Type == ChangeType.Word)
                             return UInt16.Parse(i.Value);
                         else if (Type == ChangeType.String)
@@ -691,6 +697,8 @@ namespace xDiffPatcher
                 this.Type = ChangeType.Dword;
             else if (type == "string")
                 this.Type = ChangeType.String;
+            else if (type == "color")
+                this.Type = ChangeType.Color;
             else
                 this.Type = ChangeType.None;
         }

@@ -1,7 +1,7 @@
 <?php
     function SkipLicenseScreen($exe) {
         if ($exe === true) {
-            return "[UI](6)_Skip_License_Screen_(Recommended)";
+           return new xPatch(50, 'Skip License Screen', 'UI');
         }
         
         // Find jump table
