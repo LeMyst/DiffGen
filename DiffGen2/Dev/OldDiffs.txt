@@ -1,0 +1,107 @@
+Shinro:
+This file shall be used as a reference for diffs
+that are fixed, broken or obsolete.
+
+Legend:
+[ ] Broken
+[X] Fixed
+[*] Obsolete
+
+Diffs:
+[*] AuraCrashfix
+[*] FixClientFreeze
+[ ] ChangeVersionIntoDate
+[X] DisableHShield
+[X] ChangeGravityErrorHandler
+[ ] RemoveGravityErrorMessage
+[ ] AdjustFontSize
+[X] AllowChatFlood25Lines
+[X] AllowChatFlood50Lines
+[X] AllowChatFlood100Lines
+[X] UnlimitedChatFlood
+[X] ExtendedChatBox
+[X] ExtendedPMBox
+[X] ExtendedChatRoomBox
+[*] DisableCharnameChatParsing
+[X] CustomWindowTitle
+[X] EnableTitleBarMenu
+[ ] DisableLv99Aura
+[ ] EnableAuraOverLv99
+[X] DisableSwearFilter
+[ ] EnableASCIIinText
+[*] EnableQuestWindow // See ReadQuestid2displaydottxt
+[X] TranslateClientInEnglish
+[*] EnableWAndWhoCommands
+[*] EnforceOfficialLoginBackground
+[*] BlackLoginBackground
+[ ] OnlyFirstLoginBackground
+[ ] OnlySecondLoginBackground
+[X] RemoveGravityLogo
+[X] RemoveGravityAds
+[X] FixCameraAnglesRecomm
+[X] FixCameraAnglesLess
+[X] FixCameraAnglesFull
+[ ] IgnoreChangedAlertMessages
+[ ] IgnoreMissingFileErrors
+[ ] IgnoreMissingPaletteErrors
+[ ] IncreaseQualityScreenshotTo95per
+[ ] SSInBMPByDefault
+[X] IncreaseZoomOut50Per
+[X] IncreaseZoomOut75Per
+[X] IncreaseZoomOutMax
+[ ] PlayOpenningDotBik
+[ ] ShowAllButtonsInLoginWindows
+[ ] ShowExpBarsUpTo255
+[ ] ShowLicenseScreenAlways
+[X] SkipLicenseScreen
+[X] SkipResurrectionButtons
+[X] SkipServiceSelect
+[X] UseArialOnAllLangtypes
+[ ] UseCustomFont
+[X] EnableOfficialCustomFonts
+[X] UseNormalGuildBrackets
+[ ] UseRagnarokIcon
+[ ] EnforceIROFont
+[ ] EnableShowname
+[ ] DisableEffect
+[ ] FreeFormStatsPolygon
+[ ] ReadDataFolderFirst
+[X] ReadMsgstringtabledottxt
+[ ] UnlimitedLoadingScreens
+[ ] UseCustomAuraSprites
+[ ] Enable127Hairstyles
+[ ] GRFAdataBdataSupport
+[X] EnableMultipleGRFs
+[ ] UseEncodedDescriptions
+[X] UsePlainTextDescriptions
+[ ] UseOfficialClothesPalettes
+[*] AllowMultipleWindows
+[ ] DisableMultipleWindows
+[X] Disable1rag1N1sak1
+[X] Disable4LetterUserCharacterLimit
+[X] Disable4LetterUserIDLimit
+[X] Disable4LetterUserPasswordLimit
+[X] DisableFilenameCheck
+[*] InvalidEmailFix
+[X] KoreaServiceTypeXMLFix
+[ ] ShowDebug
+[X] DisableHallucinationWavyScreen
+[*] DisableEncryptationInLoginPacket0x2b0
+[ ] MultiLanguageSupport
+[X] LoadLuaBeforeLub
+[X] IncreaseViewID
+[X] HKLMtoHKCU
+[ ] ChatAtBug
+[*] EnableDNSSupport
+[*] EnableProxySupport
+[X] SetTCPNODELAY
+[ ] UseSharedClothPalettes
+[X] GmChatColor
+[ ] OtherChatColor
+[ ] MainChatColor
+[ ] YourChatColor
+[ ] YourPartyChatColor
+[ ] OtherPartyChatColor
+[ ] GuildChatColor
+[*] Autos
+[*] OFF_by_default_Skip
