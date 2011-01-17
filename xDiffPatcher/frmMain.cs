@@ -74,8 +74,7 @@ namespace xDiffPatcher
             else
                 file.Load(txtDiffFile.Text, DiffType.Diff);
 
-            lstPatches1.Items.Clear();
-            lstPatches2.Items.Clear();
+            lstPatches.Nodes.Clear();
 
             int num = file.PatchCount();
 
@@ -104,22 +103,32 @@ namespace xDiffPatcher
             if (file.Type == DiffType.xDiff)
                 foreach (KeyValuePair<int,DiffPatchBase> p in file.xPatches)
                 {
-                    /*if (p.Value is DiffPatchGroup)
+                    if (p.Value is DiffPatchGroup)
                     {
-                        
-                    }*/
-                    /*else */if (p.Value is DiffPatch)
+                        TreeNodeEx node = new TreeNodeEx(p.Value.Name);
+                        node.Tag = file.xPatches[p.Value.ID]; //is this a reference or a copy? :x
+                        node.ActAsRadioGroup = true;
+
+                        foreach (DiffPatch p2 in ((DiffPatchGroup)p.Value).Patches)
+                        {
+                            TreeNodeEx n = new TreeNodeEx(p2.Name);
+                            n.Tag = file.xPatches[p2.ID];
+                            node.Nodes.Add(n);
+                        }
+                        lstPatches.Nodes.Add(node);
+                    }
+                    else if (p.Value is DiffPatch && ((DiffPatch) p.Value).GroupID <= 0)
                     {
-                        leftPatches[i] = p.Key;
-                        lstPatches1.Items.Add("(" + ((DiffPatch)p.Value).GroupID + ") "+ p.Value.Name);
-                        i++;
+                        TreeNodeEx node = new TreeNodeEx(p.Value.Name);
+                        node.Tag = file.xPatches[p.Value.ID];
+                        lstPatches.Nodes.Add(node);
                     }
                 }
             else
                 foreach (KeyValuePair<string, DiffPatch> p in indexedPatches)
                 {
                     leftPatches[i] = i;
-                    lstPatches1.Items.Add(p.Value.Name);
+                    //lstPatches.Items.Add(p.Value.Name);
                     i++;
                 }
         }
@@ -149,19 +158,18 @@ namespace xDiffPatcher
 
         private void RebuildListboxes()
         {
-            lstPatches1.Items.Clear();
-            lstPatches2.Items.Clear();
+            lstPatches.Nodes.Clear();
 
             Array.Sort(leftPatches);
             Array.Sort(rightPatches);
 
             int i = 0;
-            foreach (int str in leftPatches)
+            /*foreach (int str in leftPatches)
             {
                 if (str == int.MaxValue)
                     continue;
                 //lstPatches1.Items.Add(indexedPatches[str].Value.Name);
-                lstPatches1.Items.Add("(" + ((DiffPatch)file.xPatches[str]).GroupID + ") " + file.xPatches[str].Name);
+                lstPatches.Items.Add("(" + ((DiffPatch)file.xPatches[str]).GroupID + ") " + file.xPatches[str].Name);
                 i++;
             }
 
@@ -172,15 +180,15 @@ namespace xDiffPatcher
                 //lstPatches2.Items.Add(indexedPatches[str].Value.Name);
                 lstPatches2.Items.Add("(" + ((DiffPatch)file.xPatches[str]).GroupID + ") " + file.xPatches[str].Name);
                 i++;
-            }
+            }*/
         }
 
         private void btnToLeft_Click(object sender, EventArgs e)
         {
-            if (lstPatches2.SelectedItems == null || lstPatches2.SelectedItems.Count <= 0)
+            /*if (lstPatches2.SelectedItems == null || lstPatches2.SelectedItems.Count <= 0)
                 return;
 
-            int leftCount = lstPatches1.Items.Count;
+            int leftCount = lstPatches.Items.Count;
             int i = 0;
             foreach (int idx in lstPatches2.SelectedIndices)
             {
@@ -194,7 +202,7 @@ namespace xDiffPatcher
             Array.Sort(rightPatches);
             Array.Sort(leftPatches);
 
-            RebuildListboxes();
+            RebuildListboxes();*/
         }
 
 
@@ -219,12 +227,12 @@ namespace xDiffPatcher
 
         private void btnToRight_Click(object sender, EventArgs e)
         {
-            if (lstPatches1.SelectedItems == null || lstPatches1.SelectedItems.Count <= 0)
+            /*if (lstPatches.SelectedItems == null || lstPatches.SelectedItems.Count <= 0)
                 return;
 
             int rightCount = lstPatches2.Items.Count;
             int i = 0;
-            foreach (int idx in lstPatches1.SelectedIndices)
+            foreach (int idx in lstPatches.SelectedIndices)
             {  
                 if (!CanMoveToRight(leftPatches[idx]))
                 {
@@ -244,7 +252,7 @@ namespace xDiffPatcher
 
             Array.Sort(leftPatches);
             Array.Sort(rightPatches);
-            RebuildListboxes();
+            RebuildListboxes();*/
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -265,15 +273,28 @@ namespace xDiffPatcher
                 str.Close();
 
                 int i = 0;
-                foreach (KeyValuePair<int, DiffPatchBase> p in file.xPatches)
+                //foreach (KeyValuePair<int, DiffPatchBase> p in file.xPatches)
+                //{
+                //    if (p.Value is DiffPatchGroup)
+                //        continue;
+                //    /*if (rightPatches.Contains(p.Key))
+                //        ((DiffPatch)file.xPatches[p.Key]).Apply = true;
+                //    else
+                //        ((DiffPatch)file.xPatches[p.Key]).Apply = false;*/
+                //}
+
+                foreach (TreeNode n in lstPatches.Nodes)
                 {
-                    if (p.Value is DiffPatchGroup)
-                        continue;
-                    if (rightPatches.Contains(p.Key))
-                        ((DiffPatch)file.xPatches[p.Key]).Apply = true;
-                    else
-                        ((DiffPatch)file.xPatches[p.Key]).Apply = false;
+                    if (n.Tag is DiffPatch)
+                        ((DiffPatch)n.Tag).Apply = n.Checked;
+
+                    foreach (TreeNode m in n.Nodes)
+                    {
+                        if (m.Tag is DiffPatch)
+                            ((DiffPatch)m.Tag).Apply = m.Checked;
+                    }
                 }
+
                 /*foreach (KeyValuePair<string, DiffPatch> p in indexedPatches)
                 {
                     if (rightPatches.Contains(i))
@@ -332,6 +353,100 @@ namespace xDiffPatcher
             }
 
         }
+
+        private void ShowModifier(int i)
+        {
+            if (lstPatches.SelectedNode != null && lstPatches.SelectedNode.Tag != null && lstPatches.SelectedNode.Tag is DiffPatch)
+            {
+                var p = (DiffPatch)lstPatches.SelectedNode.Tag;
+                if (p.Inputs.Count <= 0 || i >= p.Inputs.Count)
+                {
+                    //txtModifier.Visible = true;
+                    //cmbModifiers.Visible = true;
+                    //picModifier.Visible = true;
+                    //lblModifiers.Visible = true;
+
+                    return;
+                }
+
+                //txtModifier.Visible = true;
+                //cmbModifiers.Visible = true;
+                //picModifier.Visible = true;
+                //lblModifiers.Visible = true;
+
+                txtModifier.Text = p.Inputs[i].Value;
+            }
+            else
+            {
+                /*txtModifier.Visible = true;
+                cmbModifiers.Visible = true;
+                picModifier.Visible = true;
+                lblModifiers.Visible = true;*/
+            }
+        }
+
+        private void lstPatches_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node != null && e.Node.Tag != null && e.Node.Tag is DiffPatchBase)
+            {
+                cmbModifiers.Items.Clear();
+                txtModifier.Text = "";
+                picModifier.Image = null;
+
+                ShowModifier(0);
+
+                if (e.Node.Tag is DiffPatchGroup)
+                {
+                    var p = (DiffPatchGroup)e.Node.Tag;
+                    txtDesc.Text = "[" + p.Name + "]";
+                }
+                else if (e.Node.Tag is DiffPatch)
+                {
+                    var p = (DiffPatch)e.Node.Tag;
+                    txtDesc.Text = "[" + p.Type + "] " + p.Name + "\n" + p.Desc;
+
+                    foreach (DiffInput i in p.Inputs)
+                    {
+                        cmbModifiers.Items.Add(i.Name.TrimStart('$'));
+                    }
+                    if (p.Inputs.Count > 0) {
+                        cmbModifiers.SelectedIndex = 0;
+                        txtModifier_TextChanged(null, null);
+                    }
+                    //ShowModifier(0);
+                }
+                else
+                {
+                    txtDesc.Text = "%%ERROR%%";
+                }
+            }
+        }
+
+
+
+        private void txtModifier_TextChanged(object sender, EventArgs e)
+        {
+            if (lstPatches.SelectedNode != null && lstPatches.SelectedNode.Tag != null && lstPatches.SelectedNode.Tag is DiffPatch && cmbModifiers.SelectedIndex >= 0)
+            {
+                DiffInput input = ((DiffPatch)lstPatches.SelectedNode.Tag).Inputs[cmbModifiers.SelectedIndex];
+
+                bool ok = DiffInput.CheckInput(txtModifier.Text, input);
+                
+                if (ok)
+                    input.Value = txtModifier.Text;
+
+                if (!ok)
+                    picModifier.Image = imgListModifier.Images["red.png"];
+                else
+                    picModifier.Image = imgListModifier.Images["green.png"];
+            }
+        }
+
+        private void cmbModifiers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ShowModifier(cmbModifiers.SelectedIndex);
+        }
+
     }
 
     public class MyPatch : DiffPatch

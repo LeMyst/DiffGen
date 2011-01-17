@@ -378,7 +378,23 @@ class RObin
     		$change->setNew($value);
     		$this->xPatch->addChange($change);
     	}
-    }    
+    }  
+    
+    public function replaceString($offset, $replace)
+    {
+    	foreach ($replace as $pos => $value)
+    	{
+    		//$old = ord($this->exe{$offset++})+(ord($this->exe{$offset++})<<8)+(ord($this->exe{$offset++})<<16)+(ord($this->exe{$offset})<<24);
+    		$old = '';
+    		
+    		$change = new xPatchChange();
+    		$change->setType(XTYPE_STRING);
+    		$change->setOffset($offset + $pos);
+    		$change->setOld($old);
+    		$change->setNew($value);
+    		$this->xPatch->addChange($change);
+    	}    	
+    }  
     
     public function addInput($name, $type, $op='', $min=null, $max=null)
     {

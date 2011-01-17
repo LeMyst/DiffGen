@@ -313,6 +313,108 @@ namespace xDiffPatcher
             return 0;
         }
 
+        private int ApplyPatch(DiffPatch patch, ref byte[] buf, BinaryReader r)
+        {
+            int changed = 0;
+
+            if (!patch.Apply)
+                return -1;
+
+            foreach (DiffInput i in patch.Inputs)
+                if (!DiffInput.CheckInput(i.Value, i))
+                    return -2;
+
+            foreach (DiffChange c in patch.Changes)
+            {
+                switch (c.Type)
+                {
+                    case ChangeType.Byte:
+                        {
+                            byte old;
+
+                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                            old = r.ReadByte();
+                            if (old != (byte)c.Old)
+                            {
+                                //hm....
+                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (byte)c.Old + ")!");
+                            }
+
+                            //buf[c.Offset] = (byte)c.New_;
+                            buf[c.Offset] = (byte)c.GetNewValue(patch);
+                            changed++;
+                        }
+                        break;
+
+                    case ChangeType.Word:
+                        {
+                            UInt16 old;
+
+                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                            old = r.ReadUInt16();
+                            if (old != (UInt16)c.Old)
+                            {
+                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ushort)c.Old + ")!");
+                            }
+                        }
+
+                        ushort val = (ushort)c.GetNewValue(patch);
+                        buf[c.Offset] = (byte)(val);
+                        buf[c.Offset + 1] = (byte)(val >> 8);
+
+                        changed += 2;
+                        break;
+
+                    case ChangeType.Dword:
+                        {
+                            UInt32 old;
+
+                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                            old = r.ReadUInt32();
+                            if (old != (UInt32)c.Old)
+                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ulong)c.Old + ")!");
+                        }
+
+                        UInt32 val2 = (UInt32)c.GetNewValue(patch);
+                        buf[c.Offset] = (byte)(val2);
+                        buf[c.Offset + 1] = (byte)(val2 >> 8);
+                        buf[c.Offset + 2] = (byte)(val2 >> 16);
+                        buf[c.Offset + 3] = (byte)(val2 >> 24);
+
+                        //(UInt32)buf[c.Offset] = 0x12345678;
+
+
+                        changed += 4;
+                        break;
+
+                    case ChangeType.String:
+                        {
+                            string old;
+
+                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
+                            old = ""; // Who cares :)
+
+                            string str = (string)c.GetNewValue(patch);
+                            byte[] arr = System.Text.Encoding.ASCII.GetBytes(str);
+                            int i = 0;
+
+                            foreach (byte b in arr)
+                                buf[c.Offset + i++] = b;
+
+                            changed += i;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            MessageBox.Show("Applied patch '" + patch.Name + "' (" + changed + " bytes)");
+
+            return changed;
+        }
+
         public int Patch(string inputFile, string fileName)
         {
             if (!File.Exists(inputFile))
@@ -333,53 +435,24 @@ namespace xDiffPatcher
 
                 foreach (DiffPatchBase p in xPatches.Values)
                 {
-                    if (!(p is DiffPatch))
-                        continue;
-
-                    if (!((DiffPatch)p).Apply)
-                        continue;
-
-                    foreach (DiffChange c in ((DiffPatch)p).Changes)
+                    int ret;
+                    if (p is DiffPatch)
                     {
-                        switch (c.Type)
-                        {
-                            case ChangeType.Byte:
-                                {
-                                    byte old;
-
-                                    r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                                    old = r.ReadByte();
-                                    if (old != (byte)c.Old)
-                                    {
-                                        //hm....
-                                        MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (byte)c.Old + ")!");
-                                    }
-
-                                    buf[c.Offset] = (byte)c.New_;
-                                    changed++;
-                                }
-                                break;
-
-                            case ChangeType.Word:
-                                {
-                                    UInt16 old;
-
-                                    r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                                    old = r.ReadUInt16();
-                                    if (old != (UInt16)c.Old)
-                                    {
-                                        MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ushort)c.Old + ")!");
-                                    }
-                                }
-
-                                buf[c.Offset] =   (byte)((ushort)c.New_ & 0xFF00);
-                                buf[c.Offset+1] = (byte)((ushort)c.New_ & 0x00FF);
-                                break;
-
-                            default:
-                                break;
-                        }
+                        ret = ApplyPatch((DiffPatch)p, ref buf, r);
+                        if (ret < 0 && ret == -2)
+                            MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
+                        if (ret > 0)
+                            changed += ret;
                     }
+                    else if (p is DiffPatchGroup)
+                        foreach (DiffPatch p2 in ((DiffPatchGroup)p).Patches)
+                        {
+                            ret = ApplyPatch(p2, ref buf, r);
+                            if (ret < 0 && ret == -2)
+                                MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
+                            if (ret > 0)
+                                changed += ret;
+                        }
                 }
 
                 w.Write(buf);
@@ -474,8 +547,40 @@ namespace xDiffPatcher
         }
         public object New_
         {
-            get { return m_new; }
+            get { 
+                return m_new; 
+            }
             set { m_new = value; }
+        }
+
+        public object GetNewValue(DiffPatch p)
+        {
+            if (this.New_ is string && ((string)this.New_).StartsWith("$"))
+            {
+                string str = ((string)this.New_);
+                str = str.TrimStart('$');
+
+                foreach (DiffInput i in p.Inputs)
+                {
+                    if (i.Name == str)
+                    {
+                        if (Type == ChangeType.Byte)
+                            return byte.Parse(i.Value);
+                        else if (Type == ChangeType.Dword)
+                            return UInt32.Parse(i.Value);
+                        else if (Type == ChangeType.Word)
+                            return UInt16.Parse(i.Value);
+                        else if (Type == ChangeType.String)
+                            return i.Value;
+                        else
+                            return null;
+                    }
+                }
+
+                throw new Exception("Could not resolve input value '" + this.New_ + "'!");
+            }
+
+            return this.New_;
         }
     }
 
@@ -511,6 +616,132 @@ namespace xDiffPatcher
 
     }
 
+    public class DiffInput
+    {
+        ChangeType m_type;
+        String m_name;
+        string m_operator;
+        int m_min = int.MaxValue;
+        int m_max = int.MaxValue;
+        string m_value; // for diffpatcher only
+
+        public string Value
+        {
+            get { return m_value; }
+            set { m_value = value; }
+        }
+
+        public ChangeType Type
+        {
+            get { return m_type; }
+            set { m_type = value; }
+        }
+        public String Name
+        {
+            get { return m_name; }
+            set { m_name = value; }
+        }
+        public String Operator
+        {
+            get { return m_operator; }
+            set { m_operator = value; }
+        }
+        public int Min
+        {
+            get { return m_min; }
+            set { m_min = value; }
+        }
+        public int Max
+        {
+            get { return m_max; }
+            set { m_max = value; }
+        }
+
+        public void LoadFromXML(XmlNode node)
+        {
+            this.Min = int.MaxValue;
+            this.Max = int.MaxValue;
+            this.Name = null;
+            this.Type = ChangeType.None;
+
+            string type = null;
+
+            System.Collections.IEnumerator e = node.Attributes.GetEnumerator();
+            e.Reset();
+            while (e.MoveNext())
+            {
+                XmlAttribute a = (XmlAttribute)e.Current;
+                if (a.Name == "name")
+                    this.Name = a.Value.TrimStart('$');
+                else if (a.Name == "op")
+                    this.Operator = a.Value;
+                else if (a.Name == "max")
+                    this.Max = int.Parse(a.Value);
+                else if (a.Name == "min")
+                    this.Min = int.Parse(a.Value);
+                else if (a.Name == "type")
+                    type = a.Value;
+            }
+
+            if (type == "byte")
+                this.Type = ChangeType.Byte;
+            else if (type == "word")
+                this.Type = ChangeType.Word;
+            else if (type == "dword")
+                this.Type = ChangeType.Dword;
+            else if (type == "string")
+                this.Type = ChangeType.String;
+            else
+                this.Type = ChangeType.None;
+        }
+
+        public static bool CheckInput(string value, DiffInput input)
+        {
+            bool ok = true;
+
+            if (input.Type == ChangeType.String)
+            {
+                if (input.Min != int.MaxValue && value.Length < input.Min)
+                    ok = false;
+
+                if (input.Max != int.MaxValue && value.Length > input.Max)
+                    ok = false;
+            }
+            else if (input.Type == ChangeType.Byte)
+            {
+                byte val = 0;
+                if (!byte.TryParse(value, out val))
+                    ok = false;
+                else if (input.Min != int.MaxValue && val < input.Min)
+                    ok = false;
+                else if (input.Max != int.MaxValue && val > input.Max)
+                    ok = false;
+            }
+            else if (input.Type == ChangeType.Word)
+            {
+                UInt16 val = 0;
+                if (!UInt16.TryParse(value, out val))
+                    ok = false;
+                else if (input.Min != int.MaxValue && val < input.Min)
+                    ok = false;
+                else if (input.Max != int.MaxValue && val > input.Max)
+                    ok = false;
+            }
+            else if (input.Type == ChangeType.Byte)
+            {
+                UInt32 val = 0;
+                if (!UInt32.TryParse(value, out val))
+                    ok = false;
+                else if (input.Min != int.MaxValue && val < input.Min)
+                    ok = false;
+                else if (input.Max != int.MaxValue && val > input.Max)
+                    ok = false;
+            }
+
+            return ok;
+        }
+    }
+
     public class DiffPatch : DiffPatchBase
     {
         string m_type = "";
@@ -519,6 +750,7 @@ namespace xDiffPatcher
         int m_groupID = 0;
         bool m_apply = false; // for diffpatcher
 
+        List<DiffInput> m_inputs = new List<DiffInput>();
         List<DiffChange> m_changes = new List<DiffChange>();
 
         public int GroupID
@@ -551,6 +783,11 @@ namespace xDiffPatcher
             get { return m_changes; }
             set { m_changes = value; }
         }
+        public List<DiffInput> Inputs
+        {
+            get { return m_inputs; }
+            set { m_inputs = value; }
+        }
 
         public void LoadFromXML(XmlNode patch)
         {
@@ -571,6 +808,17 @@ namespace xDiffPatcher
             if (tmpNode != null)
                 this.Desc = tmpNode.InnerText;
 
+            foreach (XmlNode i in patch.SelectNodes("input"))
+            {
+                var input = new DiffInput();
+                input.LoadFromXML(i);
+                this.Inputs.Add(input); 
+            }
+
+            /*                        var input = new DiffInput();
+                        input.LoadFromXML(change);
+                        this.Inputs.Add(input);*/
+
             tmpNode = patch.SelectSingleNode("changes");
             if (tmpNode != null)
             {
@@ -590,24 +838,34 @@ namespace xDiffPatcher
                         c.Type = ChangeType.None;
 
                     if (change.Attributes["new"].InnerText.StartsWith("$"))
-                        throw new Exception("This xDiff Patcher version does not support input variables, sorry :(");
-
+                    {
+                        c.New_ = change.Attributes["new"].InnerText;
+                    }
                     c.Offset = uint.Parse(change.Attributes["offset"].InnerText, System.Globalization.NumberStyles.HexNumber);
                     if (c.Type == ChangeType.String)
                     {
-                        c.New_ = change.Attributes["new"].InnerText;
+                        if (c.New_ == null)
+                            c.New_ = change.Attributes["new"].InnerText;
                         c.Old = change.Attributes["old"].InnerText;
                     }
                     else if (c.Type == ChangeType.Byte)
                     {
-                        c.New_ = byte.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                        if (c.New_ == null)
+                            c.New_ = byte.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
                         c.Old = byte.Parse(change.Attributes["old"].InnerText, System.Globalization.NumberStyles.HexNumber);
                     }
                     else if (c.Type == ChangeType.Word)
                     {
-                        c.New_ = uint.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                        if (c.New_ == null)
+                            c.New_ = ushort.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                        c.Old = ushort.Parse(change.Attributes["old"].InnerText, System.Globalization.NumberStyles.HexNumber);
+                    } 
+                    else if (c.Type == ChangeType.Dword)
+                    {
+                        if (c.New_ == null)
+                            c.New_ = uint.Parse(change.Attributes["new"].InnerText, System.Globalization.NumberStyles.HexNumber);
                         c.Old = uint.Parse(change.Attributes["old"].InnerText, System.Globalization.NumberStyles.HexNumber);
-                    }
+                    } 
 
                     this.Changes.Add(c);
                 }

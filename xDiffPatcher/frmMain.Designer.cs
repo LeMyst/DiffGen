@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnLoad = new System.Windows.Forms.Button();
             this.btnOpenDiff = new System.Windows.Forms.Button();
@@ -39,21 +41,21 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button1 = new System.Windows.Forms.Button();
             this.btnApplyLast = new System.Windows.Forms.Button();
-            this.btnToRight = new System.Windows.Forms.Button();
-            this.btnToLeft = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.lstPatches1 = new System.Windows.Forms.ListBox();
-            this.lstPatches2 = new System.Windows.Forms.ListBox();
             this.mnuStrip = new System.Windows.Forms.MenuStrip();
             this.mnuProfiles = new System.Windows.Forms.ToolStripMenuItem();
+            this.label3 = new System.Windows.Forms.Label();
+            this.txtDesc = new System.Windows.Forms.TextBox();
+            this.lblModifiers = new System.Windows.Forms.Label();
+            this.cmbModifiers = new System.Windows.Forms.ComboBox();
+            this.txtModifier = new System.Windows.Forms.TextBox();
+            this.picModifier = new System.Windows.Forms.PictureBox();
+            this.imgListModifier = new System.Windows.Forms.ImageList(this.components);
+            this.lstPatches = new xDiffPatcher.PatchList();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
-            this.splitContainer1.Panel1.SuspendLayout();
-            this.splitContainer1.Panel2.SuspendLayout();
-            this.splitContainer1.SuspendLayout();
             this.mnuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picModifier)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -67,9 +69,11 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.txtExeFile);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(12, 32);
+            this.groupBox1.Location = new System.Drawing.Point(16, 39);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(540, 109);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(4);
+            this.groupBox1.Size = new System.Drawing.Size(524, 134);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Input files";
@@ -77,9 +81,10 @@
             // btnLoad
             // 
             this.btnLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnLoad.Location = new System.Drawing.Point(435, 76);
+            this.btnLoad.Location = new System.Drawing.Point(384, 94);
+            this.btnLoad.Margin = new System.Windows.Forms.Padding(4);
             this.btnLoad.Name = "btnLoad";
-            this.btnLoad.Size = new System.Drawing.Size(99, 23);
+            this.btnLoad.Size = new System.Drawing.Size(132, 28);
             this.btnLoad.TabIndex = 6;
             this.btnLoad.Text = "Load!";
             this.btnLoad.UseVisualStyleBackColor = true;
@@ -88,9 +93,10 @@
             // btnOpenDiff
             // 
             this.btnOpenDiff.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenDiff.Location = new System.Drawing.Point(499, 47);
+            this.btnOpenDiff.Location = new System.Drawing.Point(469, 58);
+            this.btnOpenDiff.Margin = new System.Windows.Forms.Padding(4);
             this.btnOpenDiff.Name = "btnOpenDiff";
-            this.btnOpenDiff.Size = new System.Drawing.Size(35, 23);
+            this.btnOpenDiff.Size = new System.Drawing.Size(47, 28);
             this.btnOpenDiff.TabIndex = 5;
             this.btnOpenDiff.Text = "...";
             this.btnOpenDiff.UseVisualStyleBackColor = true;
@@ -100,17 +106,19 @@
             // 
             this.txtDiffFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtDiffFile.Location = new System.Drawing.Point(68, 49);
+            this.txtDiffFile.Location = new System.Drawing.Point(91, 60);
+            this.txtDiffFile.Margin = new System.Windows.Forms.Padding(4);
             this.txtDiffFile.Name = "txtDiffFile";
-            this.txtDiffFile.Size = new System.Drawing.Size(425, 20);
+            this.txtDiffFile.Size = new System.Drawing.Size(369, 22);
             this.txtDiffFile.TabIndex = 4;
             // 
             // btnOpenExe
             // 
             this.btnOpenExe.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenExe.Location = new System.Drawing.Point(499, 19);
+            this.btnOpenExe.Location = new System.Drawing.Point(469, 23);
+            this.btnOpenExe.Margin = new System.Windows.Forms.Padding(4);
             this.btnOpenExe.Name = "btnOpenExe";
-            this.btnOpenExe.Size = new System.Drawing.Size(35, 23);
+            this.btnOpenExe.Size = new System.Drawing.Size(47, 28);
             this.btnOpenExe.TabIndex = 3;
             this.btnOpenExe.Text = "...";
             this.btnOpenExe.UseVisualStyleBackColor = true;
@@ -119,9 +127,10 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 52);
+            this.label2.Location = new System.Drawing.Point(8, 64);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.Size = new System.Drawing.Size(75, 17);
             this.label2.TabIndex = 2;
             this.label2.Text = "(x)Diff File:";
             // 
@@ -129,129 +138,79 @@
             // 
             this.txtExeFile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtExeFile.Location = new System.Drawing.Point(68, 21);
+            this.txtExeFile.Location = new System.Drawing.Point(91, 26);
+            this.txtExeFile.Margin = new System.Windows.Forms.Padding(4);
             this.txtExeFile.Name = "txtExeFile";
-            this.txtExeFile.Size = new System.Drawing.Size(425, 20);
+            this.txtExeFile.Size = new System.Drawing.Size(369, 22);
             this.txtExeFile.TabIndex = 1;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 24);
+            this.label1.Location = new System.Drawing.Point(8, 30);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
+            this.label1.Size = new System.Drawing.Size(65, 17);
             this.label1.TabIndex = 0;
             this.label1.Text = "EXE File:";
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.picModifier);
+            this.groupBox2.Controls.Add(this.txtModifier);
+            this.groupBox2.Controls.Add(this.cmbModifiers);
+            this.groupBox2.Controls.Add(this.lblModifiers);
+            this.groupBox2.Controls.Add(this.txtDesc);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Controls.Add(this.lstPatches);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.btnApplyLast);
-            this.groupBox2.Controls.Add(this.btnToRight);
-            this.groupBox2.Controls.Add(this.btnToLeft);
             this.groupBox2.Controls.Add(this.btnSave);
-            this.groupBox2.Controls.Add(this.splitContainer1);
-            this.groupBox2.Location = new System.Drawing.Point(12, 147);
+            this.groupBox2.Location = new System.Drawing.Point(16, 181);
+            this.groupBox2.Margin = new System.Windows.Forms.Padding(4);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(540, 738);
+            this.groupBox2.Padding = new System.Windows.Forms.Padding(4);
+            this.groupBox2.Size = new System.Drawing.Size(524, 573);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Diffydiff";
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(192, 705);
+            this.button1.Location = new System.Drawing.Point(11, 498);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(156, 23);
+            this.button1.Size = new System.Drawing.Size(208, 28);
             this.button1.TabIndex = 5;
             this.button1.Text = "Apply a profile...";
             this.button1.UseVisualStyleBackColor = true;
             // 
             // btnApplyLast
             // 
-            this.btnApplyLast.Location = new System.Drawing.Point(192, 676);
+            this.btnApplyLast.Location = new System.Drawing.Point(11, 462);
+            this.btnApplyLast.Margin = new System.Windows.Forms.Padding(4);
             this.btnApplyLast.Name = "btnApplyLast";
-            this.btnApplyLast.Size = new System.Drawing.Size(156, 23);
+            this.btnApplyLast.Size = new System.Drawing.Size(208, 28);
             this.btnApplyLast.TabIndex = 4;
             this.btnApplyLast.Text = "Apply last diffs";
             this.btnApplyLast.UseVisualStyleBackColor = true;
             this.btnApplyLast.Click += new System.EventHandler(this.btnApplyLast_Click);
             // 
-            // btnToRight
-            // 
-            this.btnToRight.Location = new System.Drawing.Point(273, 647);
-            this.btnToRight.Name = "btnToRight";
-            this.btnToRight.Size = new System.Drawing.Size(75, 23);
-            this.btnToRight.TabIndex = 3;
-            this.btnToRight.Text = ">>>";
-            this.btnToRight.UseVisualStyleBackColor = true;
-            this.btnToRight.Click += new System.EventHandler(this.btnToRight_Click);
-            // 
-            // btnToLeft
-            // 
-            this.btnToLeft.Location = new System.Drawing.Point(192, 647);
-            this.btnToLeft.Name = "btnToLeft";
-            this.btnToLeft.Size = new System.Drawing.Size(75, 23);
-            this.btnToLeft.TabIndex = 2;
-            this.btnToLeft.Text = "<<<";
-            this.btnToLeft.UseVisualStyleBackColor = true;
-            this.btnToLeft.Click += new System.EventHandler(this.btnToLeft_Click);
-            // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(447, 705);
+            this.btnSave.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSave.Location = new System.Drawing.Point(189, 534);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(87, 23);
+            this.btnSave.Size = new System.Drawing.Size(116, 28);
             this.btnSave.TabIndex = 1;
             this.btnSave.Text = "Diff\'n\'Save!";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
-            // 
-            // splitContainer1
-            // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.splitContainer1.IsSplitterFixed = true;
-            this.splitContainer1.Location = new System.Drawing.Point(9, 20);
-            this.splitContainer1.Name = "splitContainer1";
-            // 
-            // splitContainer1.Panel1
-            // 
-            this.splitContainer1.Panel1.Controls.Add(this.lstPatches1);
-            // 
-            // splitContainer1.Panel2
-            // 
-            this.splitContainer1.Panel2.Controls.Add(this.lstPatches2);
-            this.splitContainer1.Size = new System.Drawing.Size(525, 621);
-            this.splitContainer1.SplitterDistance = 237;
-            this.splitContainer1.SplitterWidth = 50;
-            this.splitContainer1.TabIndex = 0;
-            // 
-            // lstPatches1
-            // 
-            this.lstPatches1.AllowDrop = true;
-            this.lstPatches1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstPatches1.FormattingEnabled = true;
-            this.lstPatches1.HorizontalScrollbar = true;
-            this.lstPatches1.Location = new System.Drawing.Point(0, 0);
-            this.lstPatches1.Name = "lstPatches1";
-            this.lstPatches1.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstPatches1.Size = new System.Drawing.Size(237, 621);
-            this.lstPatches1.TabIndex = 0;
-            // 
-            // lstPatches2
-            // 
-            this.lstPatches2.AllowDrop = true;
-            this.lstPatches2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstPatches2.FormattingEnabled = true;
-            this.lstPatches2.HorizontalScrollbar = true;
-            this.lstPatches2.Location = new System.Drawing.Point(0, 0);
-            this.lstPatches2.Name = "lstPatches2";
-            this.lstPatches2.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.lstPatches2.Size = new System.Drawing.Size(238, 621);
-            this.lstPatches2.TabIndex = 0;
             // 
             // mnuStrip
             // 
@@ -260,37 +219,117 @@
             this.mnuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.mnuStrip.Location = new System.Drawing.Point(0, 0);
             this.mnuStrip.Name = "mnuStrip";
-            this.mnuStrip.Size = new System.Drawing.Size(564, 23);
+            this.mnuStrip.Padding = new System.Windows.Forms.Padding(8, 2, 0, 2);
+            this.mnuStrip.Size = new System.Drawing.Size(553, 28);
             this.mnuStrip.TabIndex = 2;
             this.mnuStrip.Text = "menuStrip1";
             // 
             // mnuProfiles
             // 
             this.mnuProfiles.Name = "mnuProfiles";
-            this.mnuProfiles.Size = new System.Drawing.Size(58, 20);
+            this.mnuProfiles.Size = new System.Drawing.Size(70, 24);
             this.mnuProfiles.Text = "Profiles";
             this.mnuProfiles.Click += new System.EventHandler(this.mnuProfiles_Click);
             // 
+            // label3
+            // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(285, 19);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(95, 17);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "Description:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtDesc.Location = new System.Drawing.Point(288, 39);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtDesc.Size = new System.Drawing.Size(228, 175);
+            this.txtDesc.TabIndex = 8;
+            // 
+            // lblModifiers
+            // 
+            this.lblModifiers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblModifiers.AutoSize = true;
+            this.lblModifiers.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblModifiers.Location = new System.Drawing.Point(285, 233);
+            this.lblModifiers.Name = "lblModifiers";
+            this.lblModifiers.Size = new System.Drawing.Size(79, 17);
+            this.lblModifiers.TabIndex = 9;
+            this.lblModifiers.Text = "Modifiers:";
+            // 
+            // cmbModifiers
+            // 
+            this.cmbModifiers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cmbModifiers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbModifiers.FormattingEnabled = true;
+            this.cmbModifiers.Location = new System.Drawing.Point(288, 253);
+            this.cmbModifiers.Name = "cmbModifiers";
+            this.cmbModifiers.Size = new System.Drawing.Size(228, 24);
+            this.cmbModifiers.TabIndex = 10;
+            this.cmbModifiers.SelectedIndexChanged += new System.EventHandler(this.cmbModifiers_SelectedIndexChanged);
+            // 
+            // txtModifier
+            // 
+            this.txtModifier.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtModifier.Location = new System.Drawing.Point(288, 286);
+            this.txtModifier.Name = "txtModifier";
+            this.txtModifier.Size = new System.Drawing.Size(185, 22);
+            this.txtModifier.TabIndex = 11;
+            this.txtModifier.TextChanged += new System.EventHandler(this.txtModifier_TextChanged);
+            // 
+            // picModifier
+            // 
+            this.picModifier.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.picModifier.Location = new System.Drawing.Point(479, 284);
+            this.picModifier.Name = "picModifier";
+            this.picModifier.Size = new System.Drawing.Size(25, 25);
+            this.picModifier.TabIndex = 12;
+            this.picModifier.TabStop = false;
+            // 
+            // imgListModifier
+            // 
+            this.imgListModifier.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListModifier.ImageStream")));
+            this.imgListModifier.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgListModifier.Images.SetKeyName(0, "green.png");
+            this.imgListModifier.Images.SetKeyName(1, "red.png");
+            // 
+            // lstPatches
+            // 
+            this.lstPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstPatches.CheckBoxes = true;
+            this.lstPatches.Location = new System.Drawing.Point(11, 22);
+            this.lstPatches.Name = "lstPatches";
+            this.lstPatches.Size = new System.Drawing.Size(256, 433);
+            this.lstPatches.TabIndex = 6;
+            this.lstPatches.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstPatches_AfterSelect);
+            // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(564, 925);
+            this.ClientSize = new System.Drawing.Size(553, 767);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.mnuStrip);
             this.MainMenuStrip = this.mnuStrip;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "frmMain";
             this.Text = "xDiffPatcher by LightFighter - DiffTeam!";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
-            this.splitContainer1.Panel1.ResumeLayout(false);
-            this.splitContainer1.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
-            this.splitContainer1.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.mnuStrip.ResumeLayout(false);
             this.mnuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picModifier)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -307,16 +346,19 @@
         private System.Windows.Forms.TextBox txtExeFile;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.SplitContainer splitContainer1;
-        private System.Windows.Forms.ListBox lstPatches1;
-        private System.Windows.Forms.ListBox lstPatches2;
         private System.Windows.Forms.Button btnSave;
-        private System.Windows.Forms.Button btnToRight;
-        private System.Windows.Forms.Button btnToLeft;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btnApplyLast;
         private System.Windows.Forms.MenuStrip mnuStrip;
         private System.Windows.Forms.ToolStripMenuItem mnuProfiles;
+        private PatchList lstPatches;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox txtDesc;
+        private System.Windows.Forms.PictureBox picModifier;
+        private System.Windows.Forms.TextBox txtModifier;
+        private System.Windows.Forms.ComboBox cmbModifiers;
+        private System.Windows.Forms.Label lblModifiers;
+        private System.Windows.Forms.ImageList imgListModifier;
     }
 }
 

@@ -29,24 +29,38 @@
         private void InitializeComponent()
         {
             this.listBox1 = new System.Windows.Forms.ListBox();
+            this.patchList1 = new xDiffPatcher.PatchList();
             this.SuspendLayout();
             // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(12, 12);
+            this.listBox1.ItemHeight = 16;
+            this.listBox1.Location = new System.Drawing.Point(300, 13);
+            this.listBox1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(143, 225);
+            this.listBox1.Size = new System.Drawing.Size(189, 276);
             this.listBox1.TabIndex = 0;
+            // 
+            // patchList1
+            // 
+            this.patchList1.Location = new System.Drawing.Point(12, 12);
+            this.patchList1.Name = "patchList1";
+            this.patchList1.Size = new System.Drawing.Size(281, 490);
+            this.patchList1.TabIndex = 1;
+            this.patchList1.Text = "patchList";
             // 
             // frmProfiles
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(386, 247);
+            this.ClientSize = new System.Drawing.Size(942, 514);
+            this.Controls.Add(this.patchList1);
             this.Controls.Add(this.listBox1);
+            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmProfiles";
             this.Text = "frmProfiles";
+            this.Load += new System.EventHandler(this.frmProfiles_Load);
             this.ResumeLayout(false);
 
         }
@@ -54,5 +68,6 @@
         #endregion
 
         private System.Windows.Forms.ListBox listBox1;
+        private PatchList patchList1;
     }
 }

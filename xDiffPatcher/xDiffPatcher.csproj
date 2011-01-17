@@ -33,6 +33,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,6 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="clsDiff.cs" />
+    <Compile Include="clsProfile.cs" />
+    <Compile Include="PatchList.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PatchList.Designer.cs">
+      <DependentUpon>PatchList.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -67,6 +78,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmProfiles.resx">
       <DependentUpon>frmProfiles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PatchList.resx">
+      <DependentUpon>PatchList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
