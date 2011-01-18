@@ -351,6 +351,7 @@ namespace xDiffPatcher
 
                 if (p.Inputs[i].Type == ChangeType.Color)
                 {
+                    lblModifierInfo.Text = "";
                     txtModifier.ReadOnly = true;
                     picModifier.Image = null;
                     if (p.Inputs[i].Value == null || p.Inputs[i].Value.Length < 6)
@@ -365,6 +366,17 @@ namespace xDiffPatcher
                 {
                     txtModifier.ReadOnly = false;
                     picModifier.BackColor = Color.Transparent;
+
+                    string info = "";
+
+                    if (p.Inputs[i].Min != int.MaxValue)
+                        info += "Mininum: " + p.Inputs[i].Min + (p.Inputs[i].Type == ChangeType.String ? " chars\r\n" : "\r\n");
+                    if (p.Inputs[i].Max != int.MaxValue)
+                        info += "Maximum: " + p.Inputs[i].Max + (p.Inputs[i].Type == ChangeType.String ? " chars\r\n" : "\r\n");
+                    if (p.Inputs[i].Operator != null && p.Inputs[i].Operator.Length > 0)
+                        info += "Operation: '" + p.Inputs[i].Operator + "'\r\n";
+
+                    lblModifierInfo.Text = info;
                 }
 
                 txtModifier.Text = p.Inputs[i].Value;
@@ -381,6 +393,7 @@ namespace xDiffPatcher
             {
                 cmbModifiers.Items.Clear();
                 txtModifier.Text = "";
+                lblModifierInfo.Text = "";
                 picModifier.Image = null;
 
                 ShowModifier(0);
@@ -393,7 +406,7 @@ namespace xDiffPatcher
                 else if (e.Node.Tag is DiffPatch)
                 {
                     var p = (DiffPatch)e.Node.Tag;
-                    txtDesc.Text = "[" + p.Type + "] " + p.Name + "\n" + p.Desc;
+                    txtDesc.Text = "[" + p.Type + "] " + p.Name + "\r\n" + p.Desc;
 
                     foreach (DiffInput i in p.Inputs)
                     {
