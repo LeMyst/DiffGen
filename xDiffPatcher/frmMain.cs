@@ -267,7 +267,7 @@ namespace xDiffPatcher
         {
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "Exe file (*.exe)|*.exe";
-            sfd.FileName = file.FileInfo.Name.Replace(".exe", "_patched.exe");
+            sfd.FileName = file.FileInfo.Name.Replace(".xdiff", "_patched.exe");
             sfd.DefaultExt = "*.exe";
             sfd.OverwritePrompt = true;
             sfd.InitialDirectory = new System.IO.FileInfo(txtExeFile.Text).DirectoryName;

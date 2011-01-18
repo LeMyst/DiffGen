@@ -353,7 +353,7 @@ class RObin
     {
     	foreach ($replace as $pos => $value)
     	{
-    		$old = ord($this->exe{$pos++})+($this->exe($buf{$pos})<<8);
+    		$old = ord($this->exe{$pos+$offset++})+($this->exe($buf{$pos+$offset})<<8);
     		
     		$change = new xPatchChange();
     		$change->setType(XTYPE_WORD);
@@ -369,7 +369,7 @@ class RObin
     {
     	foreach ($replace as $pos => $value)
     	{
-    		$old = ord($this->exe{$offset++})+(ord($this->exe{$offset++})<<8)+(ord($this->exe{$offset++})<<16)+(ord($this->exe{$offset})<<24);
+    		$old = ord($this->exe{$pos+$offset++})+(ord($this->exe{$pos+$offset++})<<8)+(ord($this->exe{$pos+$offset++})<<16)+(ord($this->exe{$pos+$offset})<<24);
     		
     		$change = new xPatchChange();
     		$change->setType(XTYPE_DWORD);
