@@ -1,7 +1,7 @@
 <?php
     function CustomWindowTitle($exe) {
         if ($exe === true) {
-            return new xPatch(8, 'Custom Window Title', 'UI');
+            return new xPatch(8, 'Custom Window Title', 'UI', 0, 'Changes window title. Normally, the window title is "Ragnarok".');
         }
         $strOff = 0x310;
         global $clientdate, $clienttype;

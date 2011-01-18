@@ -1,7 +1,7 @@
 <?php
     function ChangeGravityErrorHandler($exe) {
         if ($exe === true)
-            return new xPatch(7, 'Change Gravity Error Handler', 'Fix'); 
+            return new xPatch(7, 'Change Gravity Error Handler', 'Fix', 0, 'It changes the Gravity Error Handler Mesage for a Custom One Pre-Defined by Diff Team.'); 
         global $clientdate, $clienttype;
         $code = "";
         $code2 = "";

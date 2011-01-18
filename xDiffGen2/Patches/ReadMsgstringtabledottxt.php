@@ -1,7 +1,7 @@
 <?php
     function ReadMsgstringtabledottxt($exe) {
         if ($exe === true) {
-            return new xPatch(36, 'Read msgstringtable.txt', 'Data');
+            return new xPatch(36, 'Read msgstringtable.txt', 'Data', 0, 'This option will force the client to read all the user interface messages from  msgstringtable.txt instead of displaying the korean messages.  (This does not fix the korean images, like buttons.)');
         }
         
         $code =  "\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_869FF0, 0

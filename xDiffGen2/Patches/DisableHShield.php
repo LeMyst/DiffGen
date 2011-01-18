@@ -1,7 +1,7 @@
 <?php
     function DisableHShield ($exe) {
         if ($exe === true) {
-            return new xPatch(15, 'Disable HShield', 'Fix');
+            return new xPatch(15, 'Disable HShield', 'Fix', 0, 'Disables HackShield');
         }
         
         $code =  "\x51"                         // push    ecx

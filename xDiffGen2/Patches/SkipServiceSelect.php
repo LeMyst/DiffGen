@@ -1,7 +1,7 @@
 <?php
 function SkipServiceSelect($exe){
   if ($exe === true) {
-    return new xPatch(43, 'Skip Service Select', 'UI');
+    return new xPatch(43, 'Skip Service Select', 'UI', 0, 'Skips the service select screen and jumps directly to the login/password prompt.');
   }
   
   // Find JE SHORT <address>

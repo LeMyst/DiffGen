@@ -9,7 +9,20 @@
 
     function EnableMultipleGRFs($exe){
         if ($exe === true) {
-            return new xPatch(49, 'Enable Multiple GRFs', 'UI');
+            return new xPatch(49, 'Enable Multiple GRFs', 'UI', 0, 
+"If you enable this feature, you will have to put a data.ini in your client folder.
+You can only load up to 10 total grf files with this option (0-9).
+The read priority is 0 first to 9 last.
+
+--------[ Example of data.ini ]---------
+[data]
+0=bdata.grf
+1=adata.grf
+2=sdata.grf
+3=data.grf
+----------------------------------------
+
+If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.grf, 2=last.grf");
         }
         
         // Remove rdata.grf string to stop it loading.

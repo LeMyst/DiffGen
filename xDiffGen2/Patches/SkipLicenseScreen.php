@@ -1,7 +1,7 @@
 <?php
     function SkipLicenseScreen($exe) {
         if ($exe === true) {
-           return new xPatch(50, 'Skip License Screen', 'UI');
+           return new xPatch(50, 'Skip License Screen', 'UI', 0, 'Skip the warning screen and goes directly to the main window with the Service Select.');
         }
         
         // Find jump table

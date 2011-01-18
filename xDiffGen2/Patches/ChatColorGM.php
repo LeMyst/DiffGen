@@ -1,7 +1,7 @@
 <?php
 function ChatColorGM($exe) {
     if ($exe === true) {
-        return new xPatch(52, 'GM Chat Color', 'Color');
+        return new xPatch(52, 'GM Chat Color', 'Color', 0, 'Changes the GM Chat color and sets it to the specified value.');
     }
   /*$colors = array(
               "Blue"        => "\x41\x69\xE6",    //Blue

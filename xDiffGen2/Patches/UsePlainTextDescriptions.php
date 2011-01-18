@@ -1,7 +1,7 @@
 <?php
     function UsePlainTextDescriptions($exe) {
         if ($exe === true) {
-            return new xPatch(48, 'Use Plain Text Descriptions', 'Data');
+            return new xPatch(48, 'Use Plain Text Descriptions', 'Data', 0, 'Signals that the contents of text files are text files, not encoded.');
         }
         
         $code =  "\x75\x54"             // jnz     short loc_58CADD

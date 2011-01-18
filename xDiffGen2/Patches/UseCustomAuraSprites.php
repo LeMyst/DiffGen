@@ -1,7 +1,13 @@
 <?php
     function UseCustomAuraSprites($exe){
         if ($exe === true) {
-            return new xPatch(45, 'Use Custom Aura Sprites', 'Data');
+            return new xPatch(45, 'Use Custom Aura Sprites', 'Data', 0, 
+"This option will make it so your warp portals will not be affected by your aura sprites.
+If you enable this feature, you will have to make aurafloat.tga and auraring.bmp and
+place them in your '.\\data\\texture\\effect' folder.
+
+Enable this to used aurafloat.tga, auraring.bmp and freezing_circle.bmp as aura sprites.
+The default aura files are pikapika2.bmp, blue_ring.tga and freezing_circle.bmp.");
         }
         $free = 0x380;
         $code =  "\x68" . pack("I", $exe->str("effect\\ring_blue.tga","rva"))

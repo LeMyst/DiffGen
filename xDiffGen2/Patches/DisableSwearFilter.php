@@ -1,7 +1,7 @@
 <?php
     function DisableSwearFilter($exe) {
         if ($exe === true) {
-            return new xPatch(16, 'Disable Swear Filter', 'UI');
+            return new xPatch(16, 'Disable Swear Filter', 'UI', 0, 'The content of manner.txt has no impact on ability to send text.');
         }
         
         // Shinryo: It's better to use a generic approach

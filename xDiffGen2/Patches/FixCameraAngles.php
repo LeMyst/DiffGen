@@ -9,7 +9,7 @@ function FixCameraAngles($exe) {
 
 function FixCameraAnglesRecomm($exe){
   if ($exe === true) {
-    return new xPatch(24, 'Fix Camera Angles', 'UI', 23);
+    return new xPatch(24, 'Fix Camera Angles', 'UI', 23, 0, 'Unlocks the possible camera angles to give more freedom of placement. Gives a medium range of around 60 degress');
   }
   
   // Shinro:
@@ -33,7 +33,7 @@ function FixCameraAnglesRecomm($exe){
 
 function FixCameraAnglesLess($exe){
   if ($exe === true) {
-    return new xPatch(25, 'Fix Camera Angles (less)', 'UI', 23);
+    return new xPatch(25, 'Fix Camera Angles (less)', 'UI', 23, 0, 'Unlocks the possible camera angles to give more freedom of placement. Gives a somewhat small viewing range (around 30 degress)');
   }
   
   // Shinro:
@@ -57,7 +57,7 @@ function FixCameraAnglesLess($exe){
 
 function FixCameraAnglesFull($exe){
   if ($exe === true) {
-    return new xPatch(26, 'Fix Camera Angles (FULL)', 'UI', 23);
+    return new xPatch(26, 'Fix Camera Angles (FULL)', 'UI', 23, 0, 'Unlocks the possible camera angles to give more freedom of placement. This enables an almost ground-level camera.');
   }
   
   // Shinro:

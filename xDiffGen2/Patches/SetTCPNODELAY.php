@@ -1,7 +1,10 @@
 <?php
     function SetTCPNODELAY($exe){
         if( $exe === true ) {
-            return new xPatch(41, 'Disable Nagle Algorithm', 'Add');
+            return new xPatch(41, 'Disable Nagle Algorithm', 'Add', 0, 
+            	"Disables the Nagle Algorithm.
+The Nagle Algorithm queues packets before they are sent in order to minimize protocol overhead. Disabling the algorithm will slightly increase network traffic, but it will decrease latency as well.
+See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
         }
        
         $code =  "\x55"                           // PUSH EBP       

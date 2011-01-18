@@ -5,7 +5,7 @@
 
 function KoreaServiceTypeXMLFix($exe){
   if ($exe === true) {
-    return new xPatch(33, 'KOREA ServiceType XML Fix', 'Fix');
+    return new xPatch(33, 'KOREA ServiceType XML Fix', 'Fix', 0, 'Applies ServiceType "America" properties when your sclientinfo says "Korea".');
   }
   
   // Shinryo:

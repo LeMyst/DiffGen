@@ -1,7 +1,7 @@
 <?php
     function LoadLuaBeforeLub($exe) {
         if ($exe === true) {
-            return new xPatch(34, 'Load Lua Before Lub', 'Data');
+            return new xPatch(34, 'Load Lua Before Lub', 'Data', 0, 'Makes the client to load .lua files before .lub files');
         }
         $code =  "\x2E\x6C\x75\x61"     // .LUA
                 ."\x00\x00\x00\x00"     // padding

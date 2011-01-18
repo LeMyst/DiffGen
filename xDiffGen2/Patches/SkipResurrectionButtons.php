@@ -1,7 +1,7 @@
 <?php
     function SkipResurrectionButtons($exe) {
         if ($exe === true) {
-            return new xPatch(42, 'Skip Resurrection Buttons', 'UI');
+            return new xPatch(42, 'Skip Resurrection Buttons', 'UI', 0, 'Skip resurrection button when you die or use Token of Ziegfried.');
         }
         // Simply change the 'Token of Siegfried' ID to 0xFFFF - way easier.
         $ptr = $exe->code("\x68\xC5\x1D\x00\x00", "\xAB", 1);

@@ -1,7 +1,7 @@
 <?php
     function DisableHallucinationWavyScreen($exe) {
         if ($exe === true) {
-            return new xPatch(14, 'Disable Hallucination Wavy Screen', 'Fix');
+            return new xPatch(14, 'Disable Hallucination Wavy Screen', 'Fix', 0, 'Disables the Hallucination effect (screen becomes wavy and lags the client), used by baphomet, horongs, and such.');
         }
         $code =  "\x83\xC6\xAB"
                 ."\x89\x3D\xAB\xAB\xAB\xAB";

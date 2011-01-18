@@ -1,7 +1,7 @@
 <?php
     function Disable4LetterUserIDLimit($exe) {
         if ($exe === true) {
-            return new xPatch(11, 'Disable 4 Letter UserID Limit', 'Fix');
+            return new xPatch(11, 'Disable 4 Letter UserID Limit', 'Fix', 0, 'Will allow people to use account names shorter than 4 characters.');
         }
         $code =  "\xE8\xAB\xAB\xAB\xFF"            // call    <address>
                 ."\x83\xAB\x04"                    // cmp     eax, 4

@@ -1,7 +1,7 @@
 <?php
     function DisableFilenameCheck($exe) {
     if ($exe === true) {
-      return new xPatch(13, 'Disable RagexeRE Filename Check', 'Fix');
+      return new xPatch(13, 'Disable RagexeRE Filename Check', 'Fix', 0, 'Disables the check that forces the sakexe to quit if not called "sakexe.exe" in langtype 0');
     }
     
     $codeA =     "\xE8\xAB\xAB\xAB\xFF";       // call    sub_707420

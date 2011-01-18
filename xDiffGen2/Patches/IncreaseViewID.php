@@ -1,7 +1,7 @@
 <?php
     function IncreaseViewID($exe) {
         if ($exe === true) {
-            return new xPatch(28, 'Increase Headgear ViewID to 2000', 'Add');
+            return new xPatch(28, 'Increase Headgear ViewID to 2000', 'Add', 0, 'Increases the limit for the headgear ViewIDs to 2000');
         }
         
         // In case of break:

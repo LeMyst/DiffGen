@@ -12,7 +12,7 @@
     
     function AllowChatFloodXLines($exe) {
         if ($exe === true) {
-            return new xPatch(2, 'Allow Chat Flood (? lines)', 'UI', 1);
+            return new xPatch(2, 'Allow Chat Flood (? lines)', 'UI', 1, 'Disable the clientside repeat limit of 3, and sets it to the specified value.');
         }
         $code =  "\x83\x3D\xAB\xAB\xAB\xAB\x0A"    // cmp     Langtype, 10
                 ."\x74\xAB"                        // jz      short loc_5CE560
@@ -86,7 +86,7 @@
     
     function AllowChatFloodUnlimited($exe) {
         if ($exe === true) {
-            return new xPatch(5, 'Allow Chat Flood (unlimited lines)', 'UI', 1);
+            return new xPatch(5, 'Allow Chat Flood (unlimited lines)', 'UI', 1, 'Disable the clientside repeat limit of 3, and sets it to unlimited.');
         }
         $code =  "\x83\xC4\x08"             // add     esp, 8
                 ."\x84\xC0"                 // test    al, al

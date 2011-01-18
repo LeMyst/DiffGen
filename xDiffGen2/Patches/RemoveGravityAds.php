@@ -1,7 +1,7 @@
 <?php
 function RemoveGravityAds($exe){
   if ($exe === true) {
-    return new xPatch(38, 'Remove Gravity Ads', 'UI');
+    return new xPatch(38, 'Remove Gravity Ads', 'UI', 0, 'Removes Gravity ads on the login background.');
   }
 
   // T_중력성인.tga

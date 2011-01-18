@@ -6,7 +6,7 @@
 
 function TranslateClientInEnglish($exe){
   if ($exe === true) {
-    return new xPatch(44, 'Translate Client In English', 'UI');
+    return new xPatch(44, 'Translate Client In English', 'UI', 0, 'This will translate some of the hardcoded Korean phrases to English');
   }
   
   // I would like to to use a huge array list with codes and replacements, but it isn't really

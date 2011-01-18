@@ -11,7 +11,7 @@
 
     function IncreaseZoomOut50Per($exe) {
         if ($exe === true) {
-            return new xPatch(30, 'Increase Zoom Out 50%', 'UI', 29);
+            return new xPatch(30, 'Increase Zoom Out 50%', 'UI', 29, 0, 'Increases the zoom-out range by 50 percent');
         }
         $code = "\x00\x00\x66\x43\x00\x00\xC8\x43\x00\x00\x96\x43";
         $offsets = $exe->matches($code, "\xAB", 0);
@@ -26,7 +26,7 @@
 
     function IncreaseZoomOut75Per($exe) {
         if ($exe === true) {
-            return new xPatch(31, 'Increase Zoom Out 75%', 'UI', 29);
+            return new xPatch(31, 'Increase Zoom Out 75%', 'UI', 29, 0, 'Increases the zoom-out range by 75 percent');
         }
         $code = "\x00\x00\x66\x43\x00\x00\xC8\x43\x00\x00\x96\x43";
         $offsets = $exe->matches($code, "\xAB", 0);
@@ -41,7 +41,7 @@
 
     function IncreaseZoomOutMax($exe) {
         if ($exe === true) {
-            return new xPatch(32, 'Increase Zoom Out Max', 'UI', 29);
+            return new xPatch(32, 'Increase Zoom Out Max', 'UI', 29, 0, 'Maximizes the zoom-out range');
         }
         $code = "\x00\x00\x66\x43\x00\x00\xC8\x43\x00\x00\x96\x43";
         $offsets = $exe->matches($code, "\xAB", 0);

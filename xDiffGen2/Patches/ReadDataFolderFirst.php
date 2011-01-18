@@ -1,7 +1,7 @@
 <?php
     function ReadDataFolderFirst($exe) {
         if ($exe === true) {
-            return new xPatch(35, 'Read Data Folder First', 'Data');
+            return new xPatch(35, 'Read Data Folder First', 'Data', 0, 'Gives the data directory contents priority over the data/sdata.grf contents.');
         }
         // strings for pattern search
         $readfolder = pack("I", $exe->str("readfolder","rva"));

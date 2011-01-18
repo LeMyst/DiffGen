@@ -1,7 +1,7 @@
 <?php
 function RemoveGravityLogo($exe){
   if ($exe === true) {
-    return new xPatch(39, 'Remove Gravity Logo', 'UI');
+    return new xPatch(39, 'Remove Gravity Logo', 'UI', 0, 'Removes Gravity Logo on the login background.');
   }
   
   // T_R%d.tga
