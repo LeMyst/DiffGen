@@ -39,6 +39,7 @@
             this.txtExeFile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.grpDiff = new System.Windows.Forms.GroupBox();
+            this.lblModifierInfo = new System.Windows.Forms.Label();
             this.btnSaveProfile = new System.Windows.Forms.Button();
             this.picModifier = new System.Windows.Forms.PictureBox();
             this.txtModifier = new System.Windows.Forms.TextBox();
@@ -46,14 +47,14 @@
             this.lblModifiers = new System.Windows.Forms.Label();
             this.txtDesc = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.lstPatches = new xDiffPatcher.PatchList();
             this.btnApplyProfile = new System.Windows.Forms.Button();
             this.btnApplyLast = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.mnuStrip = new System.Windows.Forms.MenuStrip();
             this.mnuProfiles = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListModifier = new System.Windows.Forms.ImageList(this.components);
-            this.lblModifierInfo = new System.Windows.Forms.Label();
-            this.lstPatches = new xDiffPatcher.PatchList();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1.SuspendLayout();
             this.grpDiff.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picModifier)).BeginInit();
@@ -183,6 +184,15 @@
             this.grpDiff.TabStop = false;
             this.grpDiff.Text = "Diffydiff";
             // 
+            // lblModifierInfo
+            // 
+            this.lblModifierInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblModifierInfo.AutoSize = true;
+            this.lblModifierInfo.Location = new System.Drawing.Point(223, 323);
+            this.lblModifierInfo.Name = "lblModifierInfo";
+            this.lblModifierInfo.Size = new System.Drawing.Size(0, 17);
+            this.lblModifierInfo.TabIndex = 14;
+            // 
             // btnSaveProfile
             // 
             this.btnSaveProfile.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -258,6 +268,18 @@
             this.label3.TabIndex = 7;
             this.label3.Text = "Description:";
             // 
+            // lstPatches
+            // 
+            this.lstPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstPatches.CheckBoxes = true;
+            this.lstPatches.Location = new System.Drawing.Point(11, 22);
+            this.lstPatches.Name = "lstPatches";
+            this.lstPatches.Size = new System.Drawing.Size(201, 360);
+            this.lstPatches.TabIndex = 6;
+            this.lstPatches.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstPatches_AfterSelect);
+            // 
             // btnApplyProfile
             // 
             this.btnApplyProfile.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -297,7 +319,8 @@
             // mnuStrip
             // 
             this.mnuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.mnuProfiles});
+            this.mnuProfiles,
+            this.aboutToolStripMenuItem});
             this.mnuStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             this.mnuStrip.Location = new System.Drawing.Point(0, 0);
             this.mnuStrip.Name = "mnuStrip";
@@ -320,26 +343,12 @@
             this.imgListModifier.Images.SetKeyName(0, "green.png");
             this.imgListModifier.Images.SetKeyName(1, "red.png");
             // 
-            // lblModifierInfo
+            // aboutToolStripMenuItem
             // 
-            this.lblModifierInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblModifierInfo.AutoSize = true;
-            this.lblModifierInfo.Location = new System.Drawing.Point(223, 323);
-            this.lblModifierInfo.Name = "lblModifierInfo";
-            this.lblModifierInfo.Size = new System.Drawing.Size(0, 17);
-            this.lblModifierInfo.TabIndex = 14;
-            // 
-            // lstPatches
-            // 
-            this.lstPatches.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstPatches.CheckBoxes = true;
-            this.lstPatches.Location = new System.Drawing.Point(11, 22);
-            this.lstPatches.Name = "lstPatches";
-            this.lstPatches.Size = new System.Drawing.Size(201, 360);
-            this.lstPatches.TabIndex = 6;
-            this.lstPatches.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstPatches_AfterSelect);
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(62, 24);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -391,6 +400,7 @@
         private System.Windows.Forms.Button btnSaveProfile;
         public PatchList lstPatches;
         private System.Windows.Forms.Label lblModifierInfo;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 

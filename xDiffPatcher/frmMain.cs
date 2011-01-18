@@ -496,6 +496,11 @@ namespace xDiffPatcher
             this.ProfileForm.ShowDialog(this);
         }
 
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new AboutBox1().ShowDialog(this);
+        }
+
 
     }
 
