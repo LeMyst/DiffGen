@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Soap;
 using System.IO;
+using Microsoft.VisualBasic;
 
 namespace xDiffPatcher
 {
@@ -21,6 +22,8 @@ namespace xDiffPatcher
 
         FileInfo exeFile = null;
         FileInfo diffFile = null;
+
+        public frmProfiles ProfileForm = new frmProfiles();
         
         public int[] leftPatches;
         public int[] rightPatches;
@@ -75,6 +78,9 @@ namespace xDiffPatcher
                 file.Load(txtDiffFile.Text, DiffType.Diff);
 
             lstPatches.Nodes.Clear();
+
+            if (file.xPatches.Count <= 0)
+                return;
 
             int num = file.PatchCount();
 
@@ -131,6 +137,8 @@ namespace xDiffPatcher
                     //lstPatches.Items.Add(p.Value.Name);
                     i++;
                 }
+
+            grpDiff.Enabled = true;
         }
 
         private void lstPatches_MouseDown(ListBox sender, MouseEventArgs e)
@@ -304,54 +312,31 @@ namespace xDiffPatcher
                     i++;
                 }*/
 
+                DiffProfile profile = new DiffProfile();
+                profile.Name = "Last Patches";
+                profile.Generate(lstPatches);
+                profile.Save("lastPatches.xml");
+
                 file.Patch(txtExeFile.Text, sfd.FileName);
             }
         }
 
         private void mnuProfiles_Click(object sender, EventArgs e)
         {
-            new frmProfiles().ShowDialog();
+            this.ProfileForm.ShowDialog(this);
         }
 
         private void btnApplyLast_Click(object sender, EventArgs e)
         {
-            System.IO.FileStream str = null;
-            SoapFormatter soap = new SoapFormatter();
-            int[] lastPatches;
+            DiffProfile profile = DiffProfile.Load("lastPatches.xml");
 
-            try
+            if (profile == null)
             {
-                str = new System.IO.FileStream("lastPatches.xml", System.IO.FileMode.Open, System.IO.FileAccess.Read);
-                lastPatches = (int[])soap.Deserialize(str);
-                str.Close();
-
-                foreach (int n in lastPatches)
-                {
-                    if (!rightPatches.Contains(n))
-                    {
-                        rightPatches[rightPatches.ToList().IndexOf(int.MaxValue)] = n;
-                        leftPatches[leftPatches.ToList().IndexOf(n)] = int.MaxValue;
-                    }
-                }
-
-                RebuildListboxes();
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                MessageBox.Show("No last used patches found!");
+                MessageBox.Show("Error loading last patches!");
                 return;
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error deserializing last patches:\n" + ex.ToString());
-                return;
-            }
-            finally
-            {
-                if (str != null)
-                    str.Close();
-            }
 
+            profile.Apply(ref lstPatches, ref file);
         }
 
         private void ShowModifier(int i)
@@ -471,6 +456,33 @@ namespace xDiffPatcher
                 }
             }
         }
+
+        private void btnSaveProfile_Click(object sender, EventArgs e)
+        {
+            string str = Interaction.InputBox("Please enter a name for the profile:");
+
+            if (str == null || str.Length <= 0)
+                return;
+
+            if (!Directory.Exists("profiles"))
+                Directory.CreateDirectory("profiles");
+
+            if (System.IO.File.Exists("profiles/" + str + ".xml"))
+                if (MessageBox.Show("There is already a profile file '" + str + ".xml'. Overwrite?", "Warning", MessageBoxButtons.YesNo) != System.Windows.Forms.DialogResult.Yes)
+                    return;
+
+
+            DiffProfile p = new DiffProfile();
+            p.Name = str;
+            p.Generate(lstPatches);
+            p.Save("profiles/" + str + ".xml");
+        }
+
+        private void btnApplyProfile_Click(object sender, EventArgs e)
+        {
+            this.ProfileForm.ShowDialog(this);
+        }
+
 
     }
 
