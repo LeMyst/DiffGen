@@ -1,7 +1,7 @@
 <?php
     function RestoreLoginWindow($exe) {
         if ($exe === true) {
-            return new xPatch(40, 'Restore Login Window', 'Fix');
+            return new xPatch(40, 'Restore Login Window', 'Fix', 0, 'Circumvents Gravity\'s new token-based login system and restores the normal login window');
         }
         
         $code =  "\x50"                         // push    eax

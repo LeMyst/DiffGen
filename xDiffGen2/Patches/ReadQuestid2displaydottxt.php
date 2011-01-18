@@ -1,7 +1,7 @@
 <?php
     function ReadQuestid2displaydottxt($exe) {
         if ($exe === true) {
-            return new xPatch(37, 'Read questid2display.txt', 'Data');
+            return new xPatch(37, 'Read questid2display.txt', 'Data', 0, 'Makes the client to load questid2display.txt on every langtype (instead of only 0).');
         }
         
         $code =  "\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     <langtype>, 0
