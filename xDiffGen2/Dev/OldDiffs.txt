@@ -60,12 +60,12 @@ Diffs:
 [ ] UseCustomFont
 [X] EnableOfficialCustomFonts
 [X] UseNormalGuildBrackets
-[ ] UseRagnarokIcon
+[X] UseRagnarokIcon
 [ ] EnforceIROFont
 [ ] EnableShowname
 [ ] DisableEffect
 [ ] FreeFormStatsPolygon
-[ ] ReadDataFolderFirst
+[X] ReadDataFolderFirst
 [X] ReadMsgstringtabledottxt
 [ ] UnlimitedLoadingScreens
 [ ] UseCustomAuraSprites
@@ -97,11 +97,11 @@ Diffs:
 [X] SetTCPNODELAY
 [ ] UseSharedClothPalettes
 [X] GmChatColor
-[ ] OtherChatColor
-[ ] MainChatColor
-[ ] YourChatColor
-[ ] YourPartyChatColor
-[ ] OtherPartyChatColor
-[ ] GuildChatColor
+[X] OtherChatColor
+[X] MainChatColor
+[X] YourChatColor
+[X] YourPartyChatColor
+[X] OtherPartyChatColor
+[X] GuildChatColor
 [*] Autos
 [*] OFF_by_default_Skip
