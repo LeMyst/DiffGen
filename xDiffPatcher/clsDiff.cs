@@ -338,7 +338,7 @@ namespace xDiffPatcher
                             if (old != (byte)c.Old)
                             {
                                 //hm....
-                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (byte)c.Old + ")!");
+                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (byte)c.Old));
                             }
 
                             //buf[c.Offset] = (byte)c.New_;
@@ -355,7 +355,7 @@ namespace xDiffPatcher
                             old = r.ReadUInt16();
                             if (old != (UInt16)c.Old)
                             {
-                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (ushort)c.Old + ")!");
+                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (ushort)c.Old));
                             }
                         }
 
@@ -373,7 +373,7 @@ namespace xDiffPatcher
                             r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
                             old = r.ReadUInt32();
                             if (old != (UInt32)c.Old)
-                                MessageBox.Show("Data mismatch at " + c.Offset + "(" + old + " != " + (uint)c.Old + ")!");
+                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (uint)c.Old));
                         }
 
                         UInt32 val2 = (UInt32)c.GetNewValue(patch);
