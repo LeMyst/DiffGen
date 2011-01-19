@@ -1,7 +1,7 @@
 <?php
 function ChatColorPlayerYou($exe) {
     if ($exe === true) {
-        return new xPatch(60, 'Your Player Chat Color', 'Color', 0, 'Changes your players Chat color and sets it to the specified value.');
+        return new xPatch(60, 'Your Player Chat Color', 'Color', 0, 'Changes your players Chat color and sets it to the specified value. Default value is 00ff00 (a green color)');
     }
 
     $code =  "\xEB\x35"              // jz      short loc_5E179C
