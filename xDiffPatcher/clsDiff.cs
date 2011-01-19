@@ -411,7 +411,7 @@ namespace xDiffPatcher
                 }
             }
 
-            MessageBox.Show("Applied patch '" + patch.Name + "' (" + changed + " bytes)");
+            //MessageBox.Show("Applied patch '" + patch.Name + "' (" + changed + " bytes)");
 
             return changed;
         }
