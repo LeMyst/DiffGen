@@ -569,8 +569,8 @@ namespace xDiffPatcher
                             return byte.Parse(i.Value);
                         else if (Type == ChangeType.Dword)
                         {
-                            if (i.Type == ChangeType.Color)
-                                return UInt32.Parse(i.Value + "00", System.Globalization.NumberStyles.HexNumber);
+                            if (i.Type == ChangeType.Color && i.Value.Length >= 6)
+                                return UInt32.Parse(String.Format("00{2:X}{1:X}{0:X}", i.Value.Substring(0,2), i.Value.Substring(2,2), i.Value.Substring(4,2)), System.Globalization.NumberStyles.HexNumber);
                             else
                                 return UInt32.Parse(i.Value);
                         }
