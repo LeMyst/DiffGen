@@ -317,7 +317,6 @@ class RObin
 	            $change->setOld(ord($this->exe[$offset + $pos]));
 	            $change->setNew($value);
 	            $this->xPatch->addChange($change); 
-	            print_r($change);
 						} else
 	            for ($i = 0; $i < strlen($value); $i++) {
 	                if ($this->exe[$offset + $pos + $i] != $value[$i]) {
