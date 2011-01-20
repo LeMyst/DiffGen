@@ -556,6 +556,7 @@ namespace xDiffPatcher
 
         public object GetNewValue(DiffPatch p)
         {
+            object val = null;
             if (this.New_ is string && ((string)this.New_).StartsWith("$"))
             {
                 string str = ((string)this.New_);
@@ -566,20 +567,54 @@ namespace xDiffPatcher
                     if (i.Name == str)
                     {
                         if (Type == ChangeType.Byte)
-                            return byte.Parse(i.Value);
+                            val = byte.Parse(i.Value);
                         else if (Type == ChangeType.Dword)
                         {
                             if (i.Type == ChangeType.Color && i.Value.Length >= 6)
-                                return UInt32.Parse(String.Format("00{2:X}{1:X}{0:X}", i.Value.Substring(0,2), i.Value.Substring(2,2), i.Value.Substring(4,2)), System.Globalization.NumberStyles.HexNumber);
+                                val = UInt32.Parse(String.Format("00{2:X}{1:X}{0:X}", i.Value.Substring(0,2), i.Value.Substring(2,2), i.Value.Substring(4,2)), System.Globalization.NumberStyles.HexNumber);
                             else
-                                return UInt32.Parse(i.Value);
+                                val = UInt32.Parse(i.Value);
                         }
                         else if (Type == ChangeType.Word)
-                            return UInt16.Parse(i.Value);
+                            val = UInt16.Parse(i.Value);
                         else if (Type == ChangeType.String)
-                            return i.Value;
+                            val = i.Value;
                         else
                             return null;
+
+                        if (i.Operator != null && i.Operator.Length >= 2)
+                        {
+                            i.Operator = i.Operator.Trim();
+                            char op = i.Operator[0];
+
+                            if (op == '+')
+                            {
+                                string val2 = i.Operator.Substring(1).Trim();
+
+                                if (Type == ChangeType.Byte)
+                                    return (byte) (((byte)val) + byte.Parse(val2));
+                                if (Type == ChangeType.Word)
+                                    return (ushort) (((ushort)val) + ushort.Parse(val2));
+                                if (Type == ChangeType.Dword)
+                                    return (uint) (((uint)val) + uint.Parse(val2));
+                            }
+                            else if (op == '-')
+                            {
+                                string val2 = i.Operator.Substring(1).Trim();
+
+                                if (Type == ChangeType.Byte)
+                                    return (byte) (((byte)val) - byte.Parse(val2));
+                                if (Type == ChangeType.Word)
+                                    return (ushort) (((ushort)val) - ushort.Parse(val2));
+                                if (Type == ChangeType.Dword)
+                                    return (uint) (((uint)val) - uint.Parse(val2));
+                            }
+
+                        }
+                        else
+                        {
+                            return val;
+                        }
                     }
                 }
 
