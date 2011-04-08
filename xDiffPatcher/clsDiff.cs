@@ -47,7 +47,7 @@ namespace xDiffPatcher
 
     public class DiffFile
     {
-        private int m_exeBuildDate = 0;
+        private string m_exeBuildDate = "";
         private string m_exeName = "";
         private int m_exeCRC = 0;
         private int m_exeType = 0;
@@ -64,7 +64,7 @@ namespace xDiffPatcher
         private Dictionary<int, DiffPatchBase> m_xpatches; //for xDiff
         private Dictionary<string, DiffPatch> m_patches; //for diff
 
-        public int ExeBuildDate
+        public string ExeBuildDate
         {
             get { return m_exeBuildDate; }
             set { m_exeBuildDate = value; }
@@ -173,12 +173,12 @@ namespace xDiffPatcher
             if (type == DiffType.xDiff)
             {
                 XmlDocument XDoc = null;
-                try
-                {
+                /*try
+                {*/
                     XDoc = new XmlDocument();
                     XDoc.Load(fileName);
 
-                    this.ExeBuildDate = int.Parse(XDoc.SelectSingleNode("//diff/exe/builddate").InnerText);
+                    this.ExeBuildDate = XDoc.SelectSingleNode("//diff/exe/builddate").InnerText;
                     this.ExeName = XDoc.SelectSingleNode("//diff/exe/filename").InnerText;
                     this.ExeCRC = int.Parse(XDoc.SelectSingleNode("//diff/exe/crc").InnerText);
                     string xtype = XDoc.SelectSingleNode("//diff/exe/type").InnerText;
@@ -221,12 +221,12 @@ namespace xDiffPatcher
                             this.xPatches.Add(p.ID, p);
                         }
                     }
-                }
+                /*}
                 catch (Exception ex)
                 {
                     MessageBox.Show("Failed to parse xDiff file: \n"+ex.ToString());
                     return 2;
-                }
+                }*/
             } else if (type == DiffType.Diff)
             {
                 bool hex = false;

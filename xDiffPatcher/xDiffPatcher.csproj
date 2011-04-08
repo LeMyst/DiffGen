@@ -60,6 +60,12 @@
     </Compile>
     <Compile Include="clsDiff.cs" />
     <Compile Include="clsProfile.cs" />
+    <Compile Include="frmErrorHandler.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmErrorHandler.Designer.cs">
+      <DependentUpon>frmErrorHandler.cs</DependentUpon>
+    </Compile>
     <Compile Include="PatchList.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -82,6 +88,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="AboutBox1.resx">
       <DependentUpon>AboutBox1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmErrorHandler.resx">
+      <DependentUpon>frmErrorHandler.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
