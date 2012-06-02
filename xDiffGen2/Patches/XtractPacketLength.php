@@ -12,38 +12,60 @@
             echo "Failed in part 1";
             return false;
         }
+		echo dechex($offset) . "#";
         $fp = fopen("PacketTables\\" . basename($target, ".exe") . ".txt", 'w');
         fwrite($fp,"Extracted With DiffGen2\n\n");
 
         // time to walk some code
         $ptr = 0;
         $done = 0;
+        $ac = 0;
         while(!$done) {
             $ins = bin2hex($exe->read($offset + $ptr, 1));
             switch($ins){
-                case "50":
-                case "51":
-                case "52":
-                case "55":
-                case "56":
-                case "57":
-                    $ptr += 1; // push
+                case "50": // push    eax
+                case "51": // push    ecx
+                case "52": // push    edx
+                case "55": // push    ebp
+                case "56": // push    esi
+                case "57": // push    edi
+                    $ptr += 1;
                     break;
-                case "8b":
-                    $ptr += 2; // mov ebp, esp
+                case "68":
+                    $ac += 1;
+                    if($ac == 3)
+                        $len = $exe->read($offset + $ptr + 1, 4, "L");
+                    if($ac == 4)
+                        $pak = $exe->read($offset + $ptr + 1, 4, "L");
+                    $ptr += 5;
                     break;
-                case "83":
+                case "6a":
+                    $ac += 1;
+                    if($ac == 3)
+                        $len = $exe->read($offset + $ptr + 1, 1, "c");
+                    if($ac == 4)
+                        $pak = $exe->read($offset + $ptr + 1, 1, "c");
+                    $ptr += 2;
+                    break;
+                case "8b": // mov     ecx, esi
+                case "33": // xor     edx, edx
+                    $ptr += 2;
+                    break;
+                case "83": // sub     esp, 1Ch
                     $ptr += 3;
                     break;
-                case "b8":
+                case "b8": // mov     eax, 4
                     $len = $exe->read($offset + $ptr + 1, 4, "L");
                     $ptr += 5;
                     break;
-                case "b9":
+                case "b9": // mov     ecx, 2Fh
                     $len = "-1";
                     $ptr += 5;
                     break;
-                case "89":
+                case "ba": // mov     edx, 1
+                    $ptr += 5;
+                    break;
+                case "89": // mov     [esp+20h+var_C], eax
                     if(bin2hex($exe->read($offset + $ptr + 1, 1)) == "7c") {
                         $pak = $pak2; // packet length read from edi
                     }
@@ -65,9 +87,10 @@
                         $done = 1;
                         break;
                     }
-                    fwrite($fp, "0x". str_pad(dechex($pak), 3, "0", STR_PAD_LEFT).",$len\n");
+                    fwrite($fp, "0". strtoupper(str_pad(dechex($pak), 3, "0", STR_PAD_LEFT)).",$len\n");
                     $pak = null;
                     $len = null;
+                    $ac = 0;
                     $ptr += 5;
                     break;
                 case "5d":

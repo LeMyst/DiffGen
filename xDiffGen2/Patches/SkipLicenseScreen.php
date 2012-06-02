@@ -10,6 +10,7 @@
         //    echo "Failed in part 1";
         //    return false;
         //}
+		// Search NUMACCOUNT , then xref that function to locate the jump table
         
         //print "Ptr: ".dechex($ptr)."\n";
         

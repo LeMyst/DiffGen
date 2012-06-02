@@ -63,7 +63,18 @@ function TranslateClientInEnglish($exe){
     return false;
   }
   $exe->replace($offset, array(1 => "(Used / Total)\x00"));
-
+  
+  //**********************************
+  $trans = "Translate Cash Shop Points";
+  //**********************************
+  $code = "\x00\x54\x6F\x74\x61\x6C\x20\x3A\x20\x25\x64\x20\xC4\xB3\xBD\xC3\x00";
+  $offset = $exe->match($code, "\xAB", 0);
+  if ($offset === false) {
+    echo "Failed in {$trans} part 1";
+    return false;
+  }
+  $exe->replace($offset, array(1 => "Total : %d Points\x00"));
+  
   // Next entry..
   
   return true;

@@ -73,7 +73,7 @@ if(file_exists($fail)) unlink($fail);
 $diffpath = "./Diffs/" . basename($target, ".exe") . ".xdiff";
 
 $src = new RObin();
-$src->load($target,false); // true = show client section/header information
+$src->load($target,true); // true = show client section/header information
 $srcc = $src;
 
 // Use PE timestamp now; previous method is fine for generating the title, but here it's just wrong

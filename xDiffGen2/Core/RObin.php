@@ -227,7 +227,9 @@ class RObin
         while ($offset = $this->match($pattern, $wildcard, $offset + strlen($pattern), $finish)) {
             $offsets[] = $offset;
         }
-        return $offsets;
+        if(sizeof($offsets) > 0)
+            return $offsets;
+        return false;
     }
     
     // Returns an offset where there are $size null bytes, searching

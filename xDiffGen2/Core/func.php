@@ -119,7 +119,7 @@ function unpack_rgz($rgz){
     echo "unpacking " . basename($rgz) . "\n\n";
     // ungzip
     $gz = file_get_contents($rgz);
-    $ungz = gzdecode($gz);
+    $ungz = gzdecode2($gz);
     // unrat                                                            // name                | size
     $type = substr($ungz,0,1);                                          // type                | 1 byte
     $fnlen = hexdec(bin2hex(substr($ungz,1,1)));                        // filenameLength      | 1 byte
@@ -132,7 +132,7 @@ function unpack_rgz($rgz){
     return $exe;
 }
 
-function gzdecode($data) {
+function gzdecode2($data) {
   $g=tempnam('/tmp','ff');
   @file_put_contents($g,$data);
   ob_start();
@@ -167,11 +167,12 @@ function include_directory($dir) {
 
 function GetFTP($client) {
     echo "############# CONNECTING ###############\n\n";
-    $ftp_server = "125.141.215.106";
-    $ftp_user = "ragadmin";
-    $ftp_pass = "icsragadmin!@";
+    $ftp_server = "ragnarok.nowcdn.co.kr";
+	$ftp_port = 20021;
+    $ftp_user = "anonymous";
+    $ftp_pass = "";
     // set up a connection or die
-    $conn_id = ftp_connect($ftp_server) or die("Couldn't connect to $ftp_server"); 
+    $conn_id = ftp_connect($ftp_server,$ftp_port) or die("Couldn't connect to $ftp_server"); 
     // try to login
     if (!@ftp_login($conn_id, $ftp_user, $ftp_pass)) {
         die("\nCouldn't login as $ftp_user\n");
@@ -184,7 +185,7 @@ function GetFTP($client) {
             $filelist[] = $ftpfile;
         }
     }
-    for($i=sizeof($filelist)-20; $i<sizeof($filelist); $i++){
+    for($i=sizeof($filelist)-50; $i<sizeof($filelist); $i++){
         $locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
         if (file_exists($locfile)) {
             echo "$i #: $filelist[$i]\n";

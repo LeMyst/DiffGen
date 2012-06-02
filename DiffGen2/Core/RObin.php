@@ -17,6 +17,7 @@ class RObin
     private $image_base = 0;
     private $sections;
     private $client_date = 0;
+    private $crc = 0;
     
     // Loads file from $path
     public function load($path,$debug=false)
@@ -25,6 +26,7 @@ class RObin
         if ($file === false) {
             return false;
         }
+        $this->crc = crc32($file);
         $this->exe = $file;
         $this->size = strlen($file);
         
@@ -200,7 +202,9 @@ class RObin
         while ($offset = $this->match($pattern, $wildcard, $offset + strlen($pattern), $finish)) {
             $offsets[] = $offset;
         }
-        return $offsets;
+        if(sizeof($offsets) > 0)
+            return $offsets;
+        return false;
     }
     
     // Returns an offset where there are $size null bytes, searching
