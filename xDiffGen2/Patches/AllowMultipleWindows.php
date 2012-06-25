@@ -10,7 +10,7 @@
                 ."\x83\xF8\x05";                   // cmp     eax, 5
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
-            echo "Failed in part 4";
+            echo "Failed in part 1";
             return false;
         }
         $exe->replace($offset, array(0 => "\x90\xE9"));

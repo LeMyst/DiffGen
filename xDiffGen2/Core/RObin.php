@@ -312,7 +312,7 @@ class RObin
         foreach ($replace as $pos => $value) {
 						if (substr($value,0,1) == '$')// input variable (xDiff)    
 						{
-							echo 'input: '.$value. "\n";
+							echo 'input: '.$value. " : ";
 						  $change = new xPatchChange();
 	            $change->setType(XTYPE_BYTE);
 	            $change->setOffset($offset + $pos);
@@ -425,12 +425,12 @@ class RObin
         //echo "#code()#";
         $section = $this->getSection(".text");
         $offsets = $this->matches($code, $wildcard, $section->rOffset, $section->rOffset + $section->rSize);
-        
+        //echo var_dump($offsets);
         if (($count != -1) && (count($offsets) != $count)){
             echo "#code() found ".count($offsets)." matches# ";
             return false;
         }
-        if (($count == -1) && count($offsets) == 0){
+        if ($offsets == false){
             echo "#code() found no matches# ";
             return false;
         }
