@@ -171,7 +171,7 @@ namespace xDiffPatcher
             Array.Sort(leftPatches);
             Array.Sort(rightPatches);
 
-            int i = 0;
+            //int i = 0;
             /*foreach (int str in leftPatches)
             {
                 if (str == int.MaxValue)
@@ -280,7 +280,7 @@ namespace xDiffPatcher
                 soap.Serialize(str, patches.ToArray<int>());
                 str.Close();
 
-                int i = 0;
+                //int i = 0;
                 //foreach (KeyValuePair<int, DiffPatchBase> p in file.xPatches)
                 //{
                 //    if (p.Value is DiffPatchGroup)
@@ -500,8 +500,6 @@ namespace xDiffPatcher
         {
             new AboutBox1().ShowDialog(this);
         }
-
-
     }
 
     public class MyPatch : DiffPatch

@@ -19,6 +19,25 @@
         
         // Just return 1 without initializing AhnLab :)
         $exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
+		
+		$offset = $exe->str("CHackShieldMgr::Monitoring() failed","raw");
+        if ($offset !== false) {
+            // Second part of patch, i think only for ragexe
+			$code =  "\xE8\xAB\xAB\xAB\xAB"
+					."\x84\xC0"
+					."\x74\x16"
+					."\x8B\xAB"
+					."\xE8\xAB\xAB\xAB\xAB";
+			$offset = $exe->code($code, "\xAB");
+			if ($offset === false) {
+				echo "Failed in part 2";
+				return false;
+			}
+			$exe->replace($offset, array(0 => "\xB0\x01\x5E\xC3\x90"));
+        }
+		
+		
+		
 
         // Import table fix for aossdk.dll
         $section = $exe->getSection(".rdata");

@@ -7,8 +7,8 @@ require_once "Core/xDiff.php";
 require_once "Core/RObin.php";
 require_once "Core/func.php";
 
-$patches = array();
-include_directory("Patches");
+$patches = array(); //                                       o
+include_directory("Patches"); // load ALL THE PATCHES ,(o_O)/
 
 echo"                                                         ______ \n";
 echo"             _____  __   ___   ___ _______              |      |\n";
@@ -16,25 +16,23 @@ echo"            |     \|__|.'  _|.'  _|     __|.-----.-----.|__    |\n";
 echo"            |  --  |  ||   _||   _|    |  ||  -__|     ||.   __|\n";
 echo"            |_____/|__||__|  |__| |_______||_____|__|__||______|\n\n";
 
-// lets add some ftp support [Yom]
-echo "0 => Local clients folder (can just press enter)\n";
-echo "1 => Gravity kRO ftp (RagexeRE)\n";
-echo "2 => Gravity kRO ftp (Ragexe)\n";
-echo "m => Mass Test a Patch\n";
-echo "f => Fetch last 150 clients\n";
-
-fwrite(STDOUT, "Where do we get clients: ");
+echo "##### Main Menu #####                            \n";
+echo "0 => Local clients folder (can just press enter) \n";
+echo "1 => Gravity kRO ftp (RagexeRE)                  \n";
+echo "2 => Gravity kRO ftp (Ragexe)                    \n";
+echo "m => Mass Test a Patch                           \n";
+echo "f => Fetch all clients for Mass Test             \n";
+echo "Which option shall be done: ";
 $menu = trim(fgets(STDIN));
 
 if($menu == "1"){
 	$targets[] = GetFTP("RagexeRE.rgz", 50);
 }elseif($menu == "2"){
-	$targets[] = GetFTP("Ragexe.rgz", 50);
+	$targets[] = GetFTP("agexe.rgz", 50);
 }elseif($menu == "f"){
-	GetFTP("Ragexe", 150, true);
+	GetFTP("agexe", 150, true);
 	die();
 }elseif($menu == "m"){
-	$patterndebug = true;
 	echo "\n";
 	//print_r($patches);
 	foreach($patches as $id => $patch){
@@ -43,17 +41,19 @@ if($menu == "1"){
 		else
 			echo "$id => $patch\n";
 	}
-	fwrite(STDOUT, "Test which patch: ");
+	echo "Test which patch: ";
 	$choice = trim(fgets(STDIN));
-	$patch = $patches[$choice];
 	if(!isset($patches[$choice]))
 		die();
+	$patch = $patches[$choice];
+	echo "\n";
 	$clients = glob("Clients/Pattern_Test_Clients/{*.exe,*.rgz}", GLOB_BRACE );
 	if(sizeof($clients) == 0)
 		die("Fetch some clients into the test folder first\n");
 	
 	foreach ($clients as $i => $client) {
 		$filename = basename($client);
+		$target = basename($client);
 		//echo "$i => $filename\n";
 		$src = new RObin();
 		$src->load($client,false); // true = show client section/header information
@@ -73,7 +73,7 @@ if($menu == "1"){
 	
 	echo "all => All clients\n";
 	
-	fwrite(STDOUT, "\nGenerate Diff for: ");
+	echo "\nGenerate Diff for: ";
 	$choice = trim(fgets(STDIN));
 	if (!isset($clients[$choice]) && $choice != "all"){
 		die("Bad Choice\n");

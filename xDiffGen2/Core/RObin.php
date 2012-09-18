@@ -52,6 +52,7 @@ class RObin
         if($debug) echo "----\t-----\t-------\t-----\t-------\t------\n";
         // Get section information
         $sectionCount = $this->read($this->PEHeader + 0x6, 2, "S");
+		$sectionInfo = array();
         for($i = 0, $curSection = $this->PEHeader + 0x18 + 0x60 + 0x10 * 0x8; $i < $sectionCount; $i++) {
             // http://www.microsoft.com/whdc/system/platform/firmware/PECOFFdwn.mspx
             $sectionInfo['name'] = $this->read($curSection, 8);
@@ -159,7 +160,6 @@ class RObin
         if (($length < 1) || ($start >= $this->size-$length) || ($finish <= $start)) {
             return false;
         }
-        $pos = 0;
         $offset = $start;
         // Is there a wildcard?
         if (strlen($wildcard) == 1) {
@@ -447,14 +447,14 @@ class RObin
         $iBase = $this->imagebase();
         $section = $this->getSection(".rdata");
         $virtual = $section->vOffset - $section->rOffset;
-        $offset = $this->match("\x00".$str."\x00", "", $section->rOffset, $section->rOffset + $section->rSize) + 1;
+        $offset = $this->match("\x00".$str."\x00", "", $section->rOffset, $section->rOffset + $section->rSize);
         if ($offset === false) {
             return false;
         }
         if($type == "rva")
-            return $offset + $virtual + $iBase;
+            return $offset + 1 + $virtual + $iBase;
         if($type == "raw")
-            return $offset;
+            return $offset + 1;
         return false;
     }
     
@@ -485,7 +485,7 @@ class RObin
     }
     
     // XDIFF
-		public function writeDiffFile($filePath)
+	public function writeDiffFile($filePath)
     {
     	//print_r($this->xDiff);
     	$this->xmlWriter->startElement('patches');

@@ -1,4 +1,4 @@
-<?php
+ï»¿<?php
 // 08.12.2010 - Started to rework some translations (this will be a hell of work) [Shinryo]
 // 10.12.2010 - Okay, won't be so much work as I thought.. All of the translations from the
 //              big array in DiffGen1 is already set in msgstringtable.txt and don't have to be
@@ -16,9 +16,9 @@ function TranslateClientInEnglish($exe){
   $trans = "Translate Delete Time";
   //**********************************
   $codes = array( 
-                  // %d¿ù %dÀÏ %d½Ã %dºÐ %dÃÊ --> Month/Day Hour:Minutes:Seconds
+                  // %dì›” %dì¼ %dì‹œ %dë¶„ %dì´ˆ --> Month/Day Hour:Minutes:Seconds
                   "\x25\x64\xBF\xF9\x20\x25\x64\xC0\xCF\x20\x25\x64\xBD\xC3\x20\x25\x64\xBA\xD0\x20\x25\x64\xC3\xCA\x00",
-                  // %d³â %d¿ù %dÀÏ %d½Ã %dºÐ %dÃÊ --> Year/Month/Day Hour:Minutes:Seconds
+                  // %dë…„ %dì›” %dì¼ %dì‹œ %dë¶„ %dì´ˆ --> Year/Month/Day Hour:Minutes:Seconds
                   "\x25\x64\xB3\xE2\x20\x25\x64\xBF\xF9\x20\x25\x64\xC0\xCF\x20\x25\x64\xBD\xC3\x20\x25\x64\xBA\xD0\x20\x25\x64\xC3\xCA\x20");
                   
   $changes = array(

@@ -5,7 +5,7 @@
         }
         $rag1 = pack("I", $exe->str("1rag1","rva"));
         $code =  "\x68" . $rag1     // push    offset a1rag1   ; "1rag1"
-                ."\x55"             // push    ebp             ; Str
+                ."\xAB"             // push    ebp             ; Str
                 ."\xFF\xAB"         // call    esi ; strstr
                 ."\x83\xAB\xAB"     // add     esp, 8
                 ."\x85\xAB"         // test    eax, eax

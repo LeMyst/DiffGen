@@ -21,17 +21,36 @@
         $exe->replace($offset, array(14 => "\x90\x90"));
         
         $readbyte = $exe->read($offset+18, 4);  // store variable address of ReadFolder
-        $code =  "\x80\x3D" .$readbyte . "\x00" // cmp     Readfolder, 0
-                ."\x57"                         // push    edi
-                ."\xB9\xAB\xAB\xAB\x00"         // mov     ecx, offset unk_84FCAC
-                ."\x56"                         // push    esi
-                ."\x74\x23";                    // jz      short loc_55FDFB
-        $offset = $exe->code($code, "\xAB");
-        if ($offset === false) {
-            echo "Failed in part 2";
-            return false;
-        }
-        $exe->replace($offset, array(14 => "\x90\x90"));
+        //echo $exe->clientdate();
+		if($exe->clientdate() < 20120101){ // not sure of actual date, 
+			$patch_offset = 14;
+			$code =  "\x80\x3D" .$readbyte . "\x00" // cmp     Readfolder, 0
+					."\x57"                         // push    edi
+					."\xB9\xAB\xAB\xAB\x00"         // mov     ecx, offset unk_84FCAC
+					."\x56"                         // push    esi
+					."\x74\x23";                    // jz      short loc_55FDFB
+			$offset = $exe->code($code, "\xAB");
+			if ($offset === false) {
+				echo "Failed in part 2";
+				return false;
+			}
+		} else {
+			$patch_offset = 19;
+			$code =  "\x80\x3D" .$readbyte . "\x00" // cmp     Readfolder, 0
+					."\x53"                         // push    ebx
+					."\x8B\xAB\xAB\xAB"             // mov     ebx, offset unk_84FCAC
+					."\x57"                         // push    edi
+					."\x8B\xAB\xAB\xAB"             //
+					."\x57"
+					."\x53"
+					."\x74\xAB";
+			$offset = $exe->code($code, "\xAB");
+			if ($offset === false) {
+				echo "Failed in part 3";
+				return false;
+			}
+		}
+        $exe->replace($offset, array($patch_offset => "\x90\x90"));
         return true;
     }
 ?>

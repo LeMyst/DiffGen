@@ -390,10 +390,10 @@ namespace xDiffPatcher
 
                     case ChangeType.String:
                         {
-                            string old;
+                            //string old;
 
                             r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                            old = ""; // Who cares :)
+                            //old = ""; // Who cares :)
 
                             string str = (string)c.GetNewValue(patch);
                             byte[] arr = System.Text.Encoding.ASCII.GetBytes(str);

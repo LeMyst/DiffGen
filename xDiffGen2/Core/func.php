@@ -2,7 +2,7 @@
 function Diff(&$exe, $patch) {
 	$tick = microtime(true);
 	if(function_exists($patch)) {
-		global $diff, $fail, $failcount, $passcount, $patterndebug;
+		global $diff, $fail, $failcount, $passcount;
 		echo str_pad($patch, 40, " ") . ": ";
 		
 		$diffMap = call_user_func($patch, true);
@@ -55,7 +55,7 @@ function Diff(&$exe, $patch) {
 function xDiff(&$exe, $patch) {
 	$tick = microtime(true);
 	if(function_exists($patch)) {
-		global $diff, $fail, $failcount, $passcount, $patterndebug;
+		global $fail, $failcount, $passcount;
 		
 		
 		$diffMap = call_user_func($patch, true);
@@ -87,7 +87,7 @@ function xDiff(&$exe, $patch) {
 		
 		// The called function is responsible to return success or failure
 		// and is also responsible for !!detecting replaced byte codes!!
-		if (call_user_func($patch, $exe) === false && !$patterndebug) {
+		if (call_user_func($patch, $exe) === false) {
 		  $failcount++;
 		  echo " ##\r\n";
 		  
@@ -117,9 +117,6 @@ function xDiff(&$exe, $patch) {
 function TestDiff(&$exe, $patch, $filename) {
 	$tick = microtime(true);
 	if(function_exists($patch)) {
-		global $diff, $fail, $failcount, $passcount, $patterndebug;
-		
-		
 		$diffMap = call_user_func($patch, true);
 		
 		if (!is_a($diffMap, 'xPatchBase'))
@@ -130,7 +127,7 @@ function TestDiff(&$exe, $patch, $filename) {
 	  	if (array_key_exists($id, $exe->xDiff))
 	  		die("\nID $id is already in use!\n\n\n");		
 	  		
-	  	$pad = 40;
+	  	$pad = 30;
 	  	if (is_a($diffMap, 'xPatch') && $diffMap->getGroup() > 0)
 	  		$pad -= 2;	
 	  	echo str_pad($filename, $pad, " ") . ": ";
@@ -161,7 +158,7 @@ function TestDiff(&$exe, $patch, $filename) {
 
 function unpack_rgz($rgz){
 	$exe = trim($rgz,"rgz") . "exe";
-	echo "unpacking " . basename($rgz) . "\n\n";
+	echo "unpacking " . basename($rgz) . " => ".basename($rgz)."\n\n";
 	// ungzip
 	$gz = file_get_contents($rgz);
 	$ungz = gzdecode2($gz);
@@ -226,22 +223,24 @@ function GetFTP($client, $limit, $all=false) {
 	ftp_pasv($conn_id, true);
 	ftp_chdir($conn_id, "Patch");
 	$buff = ftp_nlist($conn_id, '');
+	$filelist = array();
 	foreach ($buff as $ftpfile) {
 		if(strpos($ftpfile, $client)){
 			$filelist[] = $ftpfile;
 		}
 	}
-	$count=0;
 	if($all == true) {
 		echo "############ DOWNLOADING.. #############\n";
 		$client_count = sizeof($filelist)-1;
 		for($j=$client_count; $j>=0; $j--) {
-			if($count >= $limit)
-				return;
-			$count++;
-			
 			$locfile = "Clients/Pattern_Test_Clients/$filelist[$j]";
-			echo $locfile. "\n";
+			$exe = substr($locfile, 0, -3) . "exe";
+			if(is_file($exe)){
+				//if(filesize($exe) > 4000000){ // catch 
+					continue;
+				//}
+			}
+			//echo $locfile. "\n";
 			$fs = ftp_size($conn_id, $filelist[$j]); 
 			$file = ftp_nb_get($conn_id, $locfile, $filelist[$j], FTP_BINARY);
 			while($file == FTP_MOREDATA) {
@@ -249,14 +248,14 @@ function GetFTP($client, $limit, $all=false) {
 				$downloaded = filesize($locfile);
 				if ( $downloaded> 0 ){
 					$i = round(($downloaded/$fs)*100, 0);
-					echo "\r\t $i% Downloaded";
+					echo "\r\t$i% " . basename($locfile);
 				}
 				$file = ftp_nb_continue($conn_id); 
 			}
 			if ($file != FTP_FINISHED) {
 				echo "\nThere was an error downloading the file...\n";
 			} else {
-				echo "\rSuccessfully downloaded to $locfile\n";
+				echo "\rSuccessfully downloaded ".basename($locfile)."\n";
 			}
 			$locfile = unpack_rgz($locfile);
 		}
@@ -270,7 +269,7 @@ function GetFTP($client, $limit, $all=false) {
 			echo "$i  : $filelist[$i]\n";
 		}
 	}
-	fwrite(STDOUT, "\nGenerate Diff for: ");
+	echo "\nGenerate Diff for: ";
 	$choice = trim(fgets(STDIN));
 	if(!isset($filelist[$choice])) {
 		die("\nfailure with client choice\n");

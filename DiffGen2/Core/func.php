@@ -69,7 +69,7 @@ function unpack_rgz($rgz){
     unlink($rgz);
     return $exe;
 }
-
+/*
 function gzdecode($data) {
   $g=tempnam('/tmp','ff');
   @file_put_contents($g,$data);
@@ -78,7 +78,7 @@ function gzdecode($data) {
   $d=ob_get_clean();
   return $d;
 }
-
+*/
 function include_directory($dir) {
     global $patches;
     $it = new RecursiveDirectoryIterator($dir);
