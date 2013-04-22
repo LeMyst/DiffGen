@@ -33,7 +33,7 @@
                 ."\x68" . $numaccount           // push    offset aNumaccount ; "NUMACCOUNT"
                 ."\x8B\xF8"                     // mov     edi, eax
                 ."\x8B\x17"                     // mov     edx, [edi]
-                ."\x8B\x82\x90\x00\x00\x00"     // mov     eax, [edx+90h]
+                ."\x8B\x82\x8C\x00\x00\x00"     // mov     eax, [edx+90h]
                 ."\x68\x23\x27\x00\x00";        // push    2723h
         $offseta = $exe->code($code, "\xAB");
         if ($offseta === false) {
@@ -58,9 +58,9 @@
                 // Some clients (this far only 2010-10-05a and 2010-10-07a)
                 // use cmp eax,ebp instead of test eax,eax
                 ."\xAB\xAB"                     // test    eax, eax
-                ."\x0F\xAB\xAB\x00\x00\x00"     // jz      loc_620587 <- remove
+                ."\x0F\xAB\xAB\xAB\x00\x00"     // jz      loc_620587 <- remove
                 ."\x83\xF8\x12"                 // cmp     eax, 12h
-                ."\x0F\x84\xAB\x00\x00\x00";    // jz      loc_620587 <- remove
+                ."\x0F\x84\xAB\xAB\x00\x00";    // jz      loc_620587 <- remove
                 
         $offset = $exe->code($code, "\xAB");
  
@@ -71,6 +71,7 @@
         }
         $exe->replace($offset, array(20 => $repl));
         $exe->replace($offset, array(29 => $repl));
+		$exe->replace($offset, array(38 => $repl));
         
         // Shinryo:
         // The client doesn't return to the old login interface when an error
@@ -121,7 +122,7 @@
             return false;
         }
 
-        $exe->replace($offset, array(0 => $replace));
+        //$exe->replace($offset, array(0 => $replace));
        
         return true;
     }

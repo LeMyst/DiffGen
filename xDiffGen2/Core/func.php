@@ -65,8 +65,10 @@ function xDiff(&$exe, $patch) {
 		
 		$diffName = $diffMap->getName();
 		$id = $diffMap->getID();
-	  	if (array_key_exists($id, $exe->xDiff))
-	  		die("\nID $id is already in use!\n\n\n");		
+	  	if (array_key_exists($id, $exe->xDiff)) {
+	  		echo "\nID $id is already in use for '" . $exe->xDiff[$id]->getName() . "'\n\n\n";
+			die();
+		}
 	  		
 	  	$pad = 40;
 	  	if (is_a($diffMap, 'xPatch') && $diffMap->getGroup() > 0)
@@ -263,10 +265,11 @@ function GetFTP($client, $limit, $all=false) {
 	}
 	for($i=sizeof($filelist)-$limit; $i<sizeof($filelist); $i++) {
 		$locfile = "Clients/" . substr($filelist[$i], 0, -4) . ".exe";
+		$size = ftp_size($conn_id, $filelist[$i]);
 		if (file_exists($locfile)) {
-			echo "$i #: $filelist[$i]\n";
+			echo "$i #: $filelist[$i] - $size\n";
 		} else {
-			echo "$i  : $filelist[$i]\n";
+			echo "$i  : $filelist[$i] - $size\n";
 		}
 	}
 	echo "\nGenerate Diff for: ";

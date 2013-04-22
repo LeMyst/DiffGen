@@ -3,10 +3,15 @@
         global $target;
         
         if ($exe === true) {
-            return new xPatch(55, 'eXtract txt file strings', 'Yom');
+            return new xPatch(62, 'eXtract txt file strings', 'Yom');
         }
 		$code = ".txt\x00";
-		$section = $exe->getSection(".rdata");
+		
+		if($exe->themida)
+            $section = $exe->getSection("sect_0");
+        else
+        	$section = $exe->getSection(".rdata");
+        
         $offsets = $exe->matches($code, "\xAB", $section->rOffset, $section->rOffset + $section->rSize);
         if ($offsets === false) {
             echo "Failed in part 1";

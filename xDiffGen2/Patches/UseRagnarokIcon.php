@@ -5,6 +5,8 @@
 		}
 		$code = "\x72\x00\x00\x00\xAB\x01\x00\x80";
 		$section = $exe->getSection(".data");
+		if($exe->themida)
+            $section = $exe->getSection("sect_0");
 		$offset = $exe->match($code, "\xAB", $section->rOffset);
 		if ($offset === false) {
 			echo "Failed in part 1";

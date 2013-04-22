@@ -26,7 +26,7 @@ echo "Which option shall be done: ";
 $menu = trim(fgets(STDIN));
 
 if($menu == "1"){
-	$targets[] = GetFTP("RagexeRE.rgz", 50);
+	$targets[] = GetFTP("RagexeRE.rgz", 100);
 }elseif($menu == "2"){
 	$targets[] = GetFTP("agexe.rgz", 50);
 }elseif($menu == "f"){

@@ -21,6 +21,7 @@ class RObin
     private $sections;
     private $client_date = 0;
     private $crc = 0;
+    public $themida = false;
     
     // Loads file from $path
     public function load($path,$debug=false)
@@ -56,10 +57,17 @@ class RObin
         for($i = 0, $curSection = $this->PEHeader + 0x18 + 0x60 + 0x10 * 0x8; $i < $sectionCount; $i++) {
             // http://www.microsoft.com/whdc/system/platform/firmware/PECOFFdwn.mspx
             $sectionInfo['name'] = $this->read($curSection, 8);
-            // Also: There's also possibility that a new inserted section name could contain some trash bytes after
+			
+			// Also: There's also possibility that a new inserted section name could contain some trash bytes after
             // the zero terminator. So get rid of them..
-            $sectionInfo['name'] = substr($sectionInfo['name'], 0, strpos($sectionInfo['name'], "\x00"));
-
+            $a = explode("\0", $sectionInfo['name']);
+			$sectionInfo['name'] = trim($a[0]);
+			
+            if(!$sectionInfo['name']){
+                $sectionInfo['name'] = "sect_".$i;
+                $this->themida = true;
+            }
+			
             $sectionInfo['vSize']         = $this->read($curSection+8+0*4, 4, "V");
             $sectionInfo['vOffset']       = $this->read($curSection+8+1*4, 4, "V");
             $sectionInfo['vEnd']          = $sectionInfo['vOffset'] + $sectionInfo['vSize'];
@@ -71,11 +79,11 @@ class RObin
             $sectionInfo['align']         = 0;
             $tab = "\t";
             if($debug) 
-            echo  $sectionInfo['name'] . $tab
-                . dechex($sectionInfo['vSize']) . $tab
-                . dechex($sectionInfo['vOffset']) . $tab
-                . dechex($sectionInfo['rSize']) . $tab
-                . dechex($sectionInfo['rOffset']) . $tab
+            echo  $sectionInfo['name'] . "\t"
+                . dechex($sectionInfo['vSize']) . "\t"
+                . dechex($sectionInfo['vOffset']) . "\t"
+                . dechex($sectionInfo['rSize']) . "\t"
+                . dechex($sectionInfo['rOffset']) . "\t"
                 . dechex($sectionInfo['vrDiff']) . "\n";
             // Convert to object for easier access
             // E.g: $exe->getSection(".rdata")->rOffset...
@@ -88,8 +96,12 @@ class RObin
             }
 
             $curSection += 0x28;
+            if($i > 5)
+                $this->themida = true;
         }
-        
+
+        //print_r($this->sections);
+        //die();
         // Prepare XMLWriter for xDiff
         $this->xmlWriter = new XMLWriter();
         $this->xmlWriter->openMemory();
@@ -422,8 +434,12 @@ class RObin
     // matches.
     public function code($code, $wildcard, $count = 1)
     {
-        //echo "#code()#";
-        $section = $this->getSection(".text");
+
+        if($this->themida)
+            $section = $this->getSection("sect_0");
+        else
+            $section = $this->getSection(".text");
+
         $offsets = $this->matches($code, $wildcard, $section->rOffset, $section->rOffset + $section->rSize);
         //echo var_dump($offsets);
         if (($count != -1) && (count($offsets) != $count)){
@@ -445,7 +461,12 @@ class RObin
     {
         $tick = microtime(true);
         $iBase = $this->imagebase();
-        $section = $this->getSection(".rdata");
+
+        if($this->themida)
+            $section = $this->getSection("sect_0");
+        else
+            $section = $this->getSection(".rdata");
+
         $virtual = $section->vOffset - $section->rOffset;
         $offset = $this->match("\x00".$str."\x00", "", $section->rOffset, $section->rOffset + $section->rSize);
         if ($offset === false) {
@@ -468,7 +489,12 @@ class RObin
     {
         $tick = microtime(true);
         $iBase = $this->imagebase();
-        $section = $this->getSection(".rdata");
+        
+        if($this->themida)
+            $section = $this->getSection("sect_0");
+        else
+            $section = $this->getSection(".rdata");
+
         $virtual = $section->vOffset - $section->rOffset;
         if ($str) {
             // It has to resolve the name or something... can't remember
