@@ -20,6 +20,7 @@ class RObin
     private $image_base = 0;
     private $sections;
     private $client_date = 0;
+	private $linker = 0;
     private $crc = 0;
     public $themida = false;
     
@@ -35,7 +36,7 @@ class RObin
         $this->size = strlen($file);
         
         $this->PEHeader = $this->match("\x50\x45\x00\x00");
-        if($debug) echo "PE Header\t".dechex($this->PEHeader)."h\n";
+        if($debug) echo "PE Header @\t".dechex($this->PEHeader)."h\n";
         
         // If the loaded file isn't a valid PE file, then it's not necessary to continue
         // with the diff process anyway, so just die~ >:)
@@ -48,6 +49,9 @@ class RObin
         $date = $this->read($this->PEHeader+8, 4, 'V');
         $this->client_date = date('Y', $date) * 10000 + date('m', $date) * 100 + date('d', $date);
         if($debug) echo "Client Date\t".$this->client_date."\n";
+		
+		$this->linker = $this->read($this->PEHeader + 0x1a, 2, "S");
+		if($debug) echo "Linker Version\t".$this->linker."\n";
         
         if($debug) echo "\nName\tvSize\tvOffset\trSize\trOffset\tvrDiff\n";
         if($debug) echo "----\t-----\t-------\t-----\t-------\t------\n";
@@ -65,6 +69,7 @@ class RObin
 			
             if(!$sectionInfo['name']){
                 $sectionInfo['name'] = "sect_".$i;
+				// sections names are mangled when themida packed
                 $this->themida = true;
             }
 			
@@ -85,6 +90,9 @@ class RObin
                 . dechex($sectionInfo['rSize']) . "\t"
                 . dechex($sectionInfo['rOffset']) . "\t"
                 . dechex($sectionInfo['vrDiff']) . "\n";
+				//. dechex( $sectionInfo['vSize'] - $sectionInfo['rSize']) . "\t"
+				//. dechex( $sectionInfo['rEnd'] ) . "\n";
+				
             // Convert to object for easier access
             // E.g: $exe->getSection(".rdata")->rOffset...
             $this->sections[$sectionInfo['name']] = new stdClass();
@@ -96,9 +104,10 @@ class RObin
             }
 
             $curSection += 0x28;
-            if($i > 5)
-                $this->themida = true;
+            //if($i > 5)
+                //$this->themida = true;
         }
+		echo "\r\n";
 
         //print_r($this->sections);
         //die();
@@ -107,7 +116,7 @@ class RObin
         $this->xmlWriter->openMemory();
         $this->xmlWriter->setIndent(true);
         $this->xmlWriter->setIndentString("\t");
-				$this->xmlWriter->startDocument('1.0', 'ISO-8859-1');
+		$this->xmlWriter->startDocument('1.0', 'ISO-8859-1');
         $this->xmlWriter->startElement('diff');
         
         $this->xmlWriter->startElement('exe');
@@ -253,6 +262,7 @@ class RObin
     // and filled with zeroes/paddings by the compiler.
     // Whatever is placed after rOffset+vSize, it doesn't matter, because
     // the executable (if not already modified) won't access those data.
+	/*
     public function zeroed($size, $search_section = ".text")
     {
         $zero = false;
@@ -272,6 +282,22 @@ class RObin
         
         return $zero;
     }
+	*/
+	
+	// -= Back to old version =-
+	// Returns an offset where there are $size null bytes.
+	public function zeroed($size)
+	{
+		$zeroed = str_repeat("\x00", $size + 2); // 1 free byte either side
+		$zero = false;
+		$offset = $this->match($zeroed, "\xAB");
+		if ($offset !== false) {
+			$zero = $offset + 1;
+		}
+		return $zero;
+	}
+	
+	
     
     // It was meant to be used for patches that add extra code, where it would
     // replace null bytes (checking if they were really null). Works like replace().

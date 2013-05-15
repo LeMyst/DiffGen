@@ -10,6 +10,14 @@ require_once "Core/func.php";
 $patches = array(); //                                       o
 include_directory("Patches"); // load ALL THE PATCHES ,(o_O)/
 
+// unpack any rgz files in client folder
+$clients = glob("Clients/{*.exe,*.rgz}", GLOB_BRACE );
+foreach($clients AS $target) {
+	if (stristr(basename($target),"rgz")){
+		$target = unpack_rgz($target);
+	}
+}
+
 echo"                                                         ______ \n";
 echo"             _____  __   ___   ___ _______              |      |\n";
 echo"            |     \|__|.'  _|.'  _|     __|.-----.-----.|__    |\n";

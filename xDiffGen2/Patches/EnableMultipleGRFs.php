@@ -26,23 +26,23 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
         }
         
         // Remove rdata.grf string to stop it loading.
-        $offset = $exe->str("rdata.grf","raw");
-        if ($offset === false) {
-            echo "Failed in part 1";
-            return false;
-        }
+        //$offset = $exe->str("rdata.grf","raw");
+        //if ($offset === false) {
+        //    echo "Failed in part 1";
+        //    return false;
+        //}
 
-        $exe->replace($offset, array(0 => "\x00\x00\x00\x00\x00\x00\x00\x00\x00"));
+        //$exe->replace($offset, array(0 => "\x00\x00\x00\x00\x00\x00\x00\x00\x00"));
         $type = 0;
         // Locate call to grf loading function.
         $grf = pack("I", $exe->str("data.grf","rva"));
-        $code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
-                ."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
-                ."\xE8\xAB\xAB\xAB\xAB"             // call    CFileMgr::AddPak()
-                ."\x8B\xAB\xAB\xAB\xAB\x00";        // mov     edx, ds:dword_7AA7CC
+        //$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
+        //        ."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
+        //        ."\xE8\xAB\xAB\xAB\xAB"             // call    CFileMgr::AddPak()
+        //        ."\x8B\xAB\xAB\xAB\xAB\x00";        // mov     edx, ds:dword_7AA7CC
                 
-        $offset = $exe->code($code, "\xAB");
-        if ($offset === false) {
+        //$offset = $exe->code($code, "\xAB");
+        //if ($offset === false) {
 			$type = 1;
 			$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
 					."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
@@ -54,7 +54,7 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
 				echo "Failed in part 2";
 				return false;
 			}
-        }
+        //}
         
         // Save "this" pointer and address of AddPak.
 		if($type = 0){

@@ -149,7 +149,7 @@ function TestDiff(&$exe, $patch, $filename) {
 		// The called function is responsible to return success or failure
 		// and is also responsible for !!detecting replaced byte codes!!
 		if(call_user_func($patch, $exe) !== false){
-			echo "Done in " . round(microtime(true) - $tick, 5) . "s\n";
+			echo "Done in " . round(microtime(true) - $tick, 5) . "s";
 		} else {
 			echo "\n";
 		}
@@ -160,7 +160,7 @@ function TestDiff(&$exe, $patch, $filename) {
 
 function unpack_rgz($rgz){
 	$exe = trim($rgz,"rgz") . "exe";
-	echo "unpacking " . basename($rgz) . " => ".basename($rgz)."\n\n";
+	echo "unpacking " . basename($rgz) . " => ".basename($exe)."\r\n";
 	// ungzip
 	$gz = file_get_contents($rgz);
 	$ungz = gzdecode2($gz);
