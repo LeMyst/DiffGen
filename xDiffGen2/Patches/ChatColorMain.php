@@ -7,7 +7,7 @@ function ChatColorMain($exe) {
 	// To find ZC_Notify_Chat : "68 FF 8D 1D 00";  // PUSH 1D8DFFh (orange)
 	
     $code =  "\x68\xFF\xFF\x00\x00" // push    0FFFFh
-            ."\x8B\x4C\x24\x20\x51"; 
+            ."\xEB\x43\x8B\x56\x04"; 
           
     $offset = $exe->match($code, "\xAB");
 
