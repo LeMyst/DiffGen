@@ -8,7 +8,7 @@
             echo "Failed in part 1";
             return false;
         }
-        $exe->replace($offset, array(0 => "%s [%s]\x00"));
+        $exe->replace($offset, array(0 => "%s (%s)\x00"));
         return true;
     }
 ?>

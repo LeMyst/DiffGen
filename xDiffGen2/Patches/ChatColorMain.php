@@ -7,7 +7,7 @@ function ChatColorMain($exe) {
     $code =  "\x68\xFF\xFF\x00\x00" // push    0FFFFh
             ."\x8D\x54\xAB\xAB"     // lea     edx, [esp+118h+Dst]
             ."\x52"                 // push    edx
-            ."\xEB\x48";            // jmp     short loc_5E1790
+            ."\xEB\x40";            // jmp     
           
     $offset = $exe->match($code, "\xAB");
 

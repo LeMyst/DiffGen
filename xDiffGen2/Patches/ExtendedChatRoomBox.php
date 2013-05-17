@@ -9,7 +9,7 @@
             echo "Failed in part 1";
             return false;
         }
-        $exe->replace($offsets[0], array(3 => "\x58"));  // \xEA
+        $exe->replace($offsets[0], array(3 => "\xEA"));  // \xEA
         return true;
     }
 ?>

@@ -11,8 +11,8 @@
             return false;
         }
         $dword = $exe->read($offset + 5, 4);
-        // echo bin2hex($dword) . "#";
-        $code =  "\x8B\xCD"
+        //echo bin2hex($dword) . "#";
+        $code =  "\x8B\xCF"
                 ."\xE8\xAB\xAB\xAB\xAB"
                 ."\x83\x3D" . $dword . "\x00"
                 ."\x0F\x84\xAB\xAB\xAB\xAB";

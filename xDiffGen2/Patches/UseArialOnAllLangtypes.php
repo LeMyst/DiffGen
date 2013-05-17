@@ -3,7 +3,7 @@
 
     function UseArialOnAllLangtypes($exe) {
         if ($exe === true) {
-            return new xPatch(51, 'Use Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes');
+            return new xPatch(51, 'Ascii & Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes');
         }
         
         /* $code =  "\x75\x22"       // JNE SHORT <current+22>
@@ -23,17 +23,18 @@
         }
         $exe->replace($offset, array(0 => $replace)); */
         
-        $code =  "\x83\xFA\x0A"                 // cmp     edx, 0Ah
-                ."\x0F\x87\xAB\x00\x00\x00"     // ja      loc_40899B
+        /*$code =  "\x83\xFA\x08"                 // cmp     edx, 0Ah
+                ."\x0F\x87\xE6\x00\x00\x00"     // ja      loc_40899B -> Here 0F 87 to EB 10 ?
                 ."\xFF\x24\x95\xAB\xAB\xAB\xAB" // jmp     ds:off_4089E0[edx*4] ; switch jump
-                ."\xA1\xAB\xAB\xAB\xAB"         // mov     eax, Langtype
-                ."\x83\xF8\x06";                // cmp     eax, 6
+                ."\x8A\xAB\xAB\xAB\xAB"         // mov     eax, Langtype
+                ."\xFA\x44\x74";*/                // 
+		$code ="\x75\x5B\x8D\x57\xFF\x83\xFA\x0A\x77\x53";
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
             echo "Failed in part 1";
             return false;
         }
-        $exe->replace($offset, array(3 => "\xEB\x10"));
+        $exe->replace($offset, array(0 => "\x75\x5B\x8D\x57\xFF\x83\xFA\x0A\xEB\x0C"));
         return true;
     }
 ?>

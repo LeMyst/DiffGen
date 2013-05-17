@@ -33,7 +33,7 @@ function FixCameraAnglesRecomm($exe){
 
 function FixCameraAnglesLess($exe){
   if ($exe === true) {
-    return new xPatch(25, 'Fix Camera Angles (less)', 'UI', 23, 'Unlocks the possible camera angles to give more freedom of placement. Gives a somewhat small viewing range (around 30 degress)');
+    return new xPatch(25, 'Fix Camera Recomm (Medium)', 'UI', 23, 'Unlocks the possible camera angles to give more freedom of placement. ');
   }
   
   // Shinro:
@@ -41,8 +41,8 @@ function FixCameraAnglesLess($exe){
   // float values which are used more than once
   // at an offset and use FLD/FSTP to place
   // those in registers.
-  $code =  "\x00\x00\x00\x80\xB5\xF8\xD4\x3E"
-          ."\x00\x00\xA0\x41\x00\x00\x00\x00"; // <----- Value for camera angle
+  $code =  "\xA0\x41\x91\x00\xD9\x5C\x24\x08\x8B" // <----- Value for camera angle (A0 41 91)
+		  ."\x96\xD4\x00\x00\x00\xD9\x42\x44\xDA";
           
   $offset = $exe->match($code, "\xAB");
   if ($offset === false) {
@@ -50,7 +50,7 @@ function FixCameraAnglesLess($exe){
     return false;
   }
   
-  $exe->replace($offset, array(10 => "\xEC"));
+  $exe->replace($offset, array(0 => "\xAE\xE0\xDD"));
   
   return true;
 }

@@ -1,7 +1,7 @@
 <?php
     function IncreaseViewID($exe) {
         if ($exe === true) {
-            return new xPatch(28, 'Increase Headgear ViewID to 2000', 'Add', 0, 'Increases the limit for the headgear ViewIDs to 2000');
+            return new xPatch(28, 'Increase Headgear ViewID to 5000', 'Add', 0, 'Increases the limit for the headgear ViewIDs from 2000 to 5000');
         }
         
         // In case of break:
@@ -9,9 +9,10 @@
         // maximum ViewID.
         
         // Search for both cmp's
-        $oldValue = pack("V", 1000);
-        $code = "\x00\x3D".$oldValue."\x73\xAB\x8D";
-        $newvalue = pack("V", 2000);
+        $oldValue = pack("V", 2000);
+        $code = "\x00\x68".$oldValue."\x8D";
+        $newvalue = pack("V", 5000);
+		//echo bin2hex($code) . "#";
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
         	echo "Failed at part 1";

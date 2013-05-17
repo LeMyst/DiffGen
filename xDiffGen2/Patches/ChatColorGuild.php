@@ -4,7 +4,7 @@ function ChatColorGuild($exe) {
         return new xPatch(57, 'Guild Chat Color', 'Color', 0, 'Changes the Guild Chat color and sets it to the specified value. Default Value is b4ffb4 (a light green color)');
     }
 
-    $code =  "\x6A\x00"                 // push    0
+    $code =  "\x14\x53"                 // 
             ."\x6A\x04"                 // push    4
             ."\x68\xB4\xFF\xB4\x00";    // push    0B4FFB4h
           

@@ -5,7 +5,7 @@ function ChatColorPartyOther($exe) {
     }
 
     $code =  "\x6A\x00"                 // push    0
-            ."\x6A\x03"                 // push    3
+            ."\x6A\x0F"                 // push    15
             ."\x68\xFF\xC8\xC8\x00";    // push    0C8C8FFh (a pinkish color)
 
     $offset = $exe->match($code, "\xAB");
