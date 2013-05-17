@@ -3,11 +3,11 @@
 
     function AllowChatFlood($exe) {
 	    return new xPatchGroup(1, 'Allow Chat Flood', array(
-	    	'AllowChatFloodXLines',
-	    	/*'AllowChatFlood25Lines',
+	    	'AllowChatFloodXLines'/*,
+	    	'AllowChatFlood25Lines',
 	    	'AllowChatFlood50Lines',
-	    	'AllowChatFlood100Lines',*/
-	    	'AllowChatFloodUnlimited'));
+	    	'AllowChatFlood100Lines',
+	    	'AllowChatFloodUnlimited'*/));
     }
     
     function AllowChatFloodXLines($exe) {
