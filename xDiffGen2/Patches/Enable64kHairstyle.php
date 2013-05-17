@@ -1,7 +1,7 @@
 <?php
 function Enable64kHairstyle($exe) {
     if ($exe === true) {
-        return new xPatch(56, 'Enable 64k Hairstyle', 'UI', 0, 'Enable 64k hairstyle instead 27 by default');
+        return new xPatch(68, 'Enable 64k Hairstyle', 'UI', 0, 'Enable 64k hairstyle instead 27 by default');
     }
 	
     $code =  "\xC0\xCE\xB0\xA3\xC1\xB7\x5C\xB8\xD3\xB8\xAE\xC5\xEB"; // After it must have \\%s\\%s_%s.%s
