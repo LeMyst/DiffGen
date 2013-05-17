@@ -3,7 +3,7 @@
 
     function UseArialOnAllLangtypes($exe) {
         if ($exe === true) {
-            return new xPatch(51, 'Ascii & Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes');
+            return new xPatch(51, 'Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes (it s enable ascii by default');
         }
         
         /* $code =  "\x75\x22"       // JNE SHORT <current+22>
