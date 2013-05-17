@@ -517,7 +517,7 @@ class RObin
         $iBase = $this->imagebase();
         
         if($this->themida)
-            $section = $this->getSection("sect_0");
+            $section = $this->getSection("k3dT");
         else
             $section = $this->getSection(".rdata");
 
@@ -525,15 +525,26 @@ class RObin
         if ($str) {
             // It has to resolve the name or something... can't remember
             $offset = $this->match($func . "\x00", "", $section->rOffset, $section->rOffset + $section->rSize);
+			echo dechex($offset) . " - ";
             $code = pack("I", $offset - 2 + $virtual);
+			
+			echo bin2hex($code) . " - ";
         } else {
             $code = $func;
         }
+		
+		if($this->themida)
+            $section = $this->getSection("sect_0");
+        else
+            $section = $this->getSection(".rdata");
+		$virtual = $section->vOffset - $section->rOffset;
         $offset = $this->match($code, "", $section->rOffset, $section->rOffset + $section->rSize);
         if ($offset === false) {
             return false;
         }
-        return $offset + $virtual + $iBase;
+		
+		$temp = $offset + $virtual + $iBase;
+        return $temp;
     }
     
     // XDIFF

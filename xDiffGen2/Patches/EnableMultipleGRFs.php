@@ -46,7 +46,7 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
 			$type = 1;
 			$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
 					."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
-					."\x88\xAB\xAB\xAB\xAB\x00"
+					."\x88\xAB\xAB\xAB\xAB\x00"			// mov     byte_C08AC2, dl
 					."\xE8\xAB\xAB\xAB\xAB";             // call    CFileMgr::AddPak()
 					//."\x8B\xAB\xAB\xAB\xAB\x00";        // mov     edx, ds:dword_7AA7CC
 			$offset = $exe->code($code, "\xAB");
@@ -152,7 +152,9 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
         }
         
         // Create a call to the free space that was found before.     
-        $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+        $exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90"		// push    offset aData_grf ; "data.grf"
+										 ."\x90\x90\x90\x90\x90",		// mov     ecx, offset unk_86ABBC
+									16 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset+16) - 5) ));
 
         // ***********************************************************
         // Create default offsets that will be replaced into the code.

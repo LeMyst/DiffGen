@@ -387,6 +387,11 @@ namespace xDiffPatcher
             }
         }
 
+        private void lstPatches_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            lstPatches.SelectedNode = e.Node;
+        }
+
         private void lstPatches_AfterSelect(object sender, TreeViewEventArgs e)
         {
             if (e.Node != null && e.Node.Tag != null && e.Node.Tag is DiffPatchBase)
@@ -499,6 +504,11 @@ namespace xDiffPatcher
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new AboutBox1().ShowDialog(this);
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            lblModifierInfo.Text = "";
         }
     }
 

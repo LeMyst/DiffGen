@@ -395,7 +395,7 @@ namespace xDiffPatcher
                             r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
                             //old = ""; // Who cares :)
 
-                            string str = (string)c.GetNewValue(patch);
+                            string str = (string)c.GetNewValue(patch) + "\x00";
                             byte[] arr = System.Text.Encoding.ASCII.GetBytes(str);
                             int i = 0;
 
