@@ -102,13 +102,17 @@
 			$value = $exe->read($code-1,1) - (4 * $type);
 			$exe->replace($code, array(-1=>$value));
 		}
+		
+		return true;
 	}
 	
 	function Nullify($exe, $offset, $stage)
 	{
-		$byte = $exe->read($offset,1);
-		if ($byte >= 0x50 && $byte <= 0x57)
+		$byte = $exe->read($offset,1, "c");
+		if ($byte >= 0x50 && $byte <= 0x57){
 			$exe->replace($offset, array(0=>"\x90"));
+			return true;
+		}
 		else
 		{
 			echo "Failed at Part ".$stage;

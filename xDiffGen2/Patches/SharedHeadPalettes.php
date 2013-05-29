@@ -31,12 +31,12 @@
 	function SharedHeadPaletteBase($exe, $type)
 	{
 		//Step 1 - Find Offset of ¸Ó¸®\¸Ó¸®%s%s_%d.pal - Old Format
-		//$offset = $exe->str("\xB8\xD3\xB8\xAE\x5C\xB8\xD3\xB8\xAE\x25\x73\x25\x73\x5F\x25\x64\x2E\x70\x61\x6C","raw");
-		$offset = $exe->str("¸Ó¸®\¸Ó¸®%s%s_%d.pal","raw");
+		$offset = $exe->str("\xB8\xD3\xB8\xAE\x5C\xB8\xD3\xB8\xAE\x25\x73\x25\x73\x5F\x25\x64\x2E\x70\x61\x6C","raw");
+		//$offset = $exe->str("¸Ó¸®\¸Ó¸®%s%s_%d.pal","raw");
 		
 		if(!$offset)				
-			$offset = $exe->str("¸Ó¸®\¸Ó¸®%s_%s_%d.pal","raw"); // If not found check ¸Ó¸®\¸Ó¸®%s_%s_%d.pal - New Format			
-		//	$offset = $exe->str("\xB8\xD3\xB8\xAE\x5C\xB8\xD3\xB8\xAE\x25\x73\x5F\x25\x73\x5F\x25\x64\x2E\x70\x61\x6C","raw"); 
+		//	$offset = $exe->str("¸Ó¸®\¸Ó¸®%s_%s_%d.pal","raw"); // If not found check ¸Ó¸®\¸Ó¸®%s_%s_%d.pal - New Format			
+			$offset = $exe->str("\xB8\xD3\xB8\xAE\x5C\xB8\xD3\xB8\xAE\x25\x73\x5F\x25\x73\x5F\x25\x64\x2E\x70\x61\x6C","raw"); 
 			
 		if(!$offset)
 		{
