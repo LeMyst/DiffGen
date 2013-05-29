@@ -10,7 +10,7 @@
 	
 	function OnlyFirstLoginBackground($exe)
 	{
-		if ($exe == true)
+		if ($exe === true)
 			return new xPatch(86, 'Only First Login Background', 'UI', 85, 'Displays always the first login background.');
 	
 		return OnlyLoginBase($exe,1);
@@ -18,7 +18,7 @@
 	
 	function OnlySecondLoginBackground($exe)
 	{
-		if ($exe == true)
+		if ($exe === true)
 			return new xPatch(87, 'Only Second Login Background', 'UI', 85, 'Displays always the second login background.');
 	
 		return OnlyLoginBase($exe,2);

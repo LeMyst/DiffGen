@@ -1,7 +1,7 @@
 <?php
 	function RemoveSerialDisplay($exe)
 	{
-		if($exe == true)
+		if($exe === true)
 			return new xPatch(84, 'Remove Serial Display', 'UI', 0,
 			'Removes the display of the client serial number in the login window (bottom right corner).');
 		

@@ -10,7 +10,7 @@
 	
 	function SharedBodyPalettesV1($exe)
 	{
-		if($exe == true)
+		if($exe === true)
 		{
 			return new xPatch(80, 'Shared Body Palettes Type1', 'UI', 78, 
 			'Makes the client use a single cloth palette set (body_%s_%d.pal) for all job classes but seperate for both genders');
@@ -20,7 +20,7 @@
 	
 	function SharedBodyPalettesV2($exe)
 	{
-		if($exe == true)
+		if($exe === true)
 		{
 			return new xPatch(79, 'Shared Body Palettes Type2', 'UI', 78, 
 			'Makes the client use a single cloth palette set (body_%d.pal) for all job classes both genders');
@@ -60,7 +60,7 @@
 		{
 			echo "Failed in Part 2";
 			return false;
-		}
+		}	
 		
 		//Step 4 - the offset is pushed to use as arguent to a function but since we now have less arguments we need to NOP the others
 		$isvc9 = ( $exe->func("_encode_pointer") ) ? true : false;

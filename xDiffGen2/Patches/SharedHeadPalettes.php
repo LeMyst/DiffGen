@@ -10,7 +10,7 @@
 	
 	function SharedHeadPalettesV1($exe)
 	{
-		if($exe == true)
+		if($exe === true)
 		{
 			return new xPatch(82, 'Shared Head Palettes Type1', 'UI', 81, 
 			'Makes the client use a single hair palette set (head_%s_%d.pal) for all job classes but seperate for both genders');
@@ -20,7 +20,7 @@
 	
 	function SharedHeadPalettesV2($exe)
 	{
-		if($exe == true)
+		if($exe === true)
 		{
 			return new xPatch(83, 'Shared Head Palettes Type2', 'UI', 81, 
 			'Makes the client use a single hair palette set (head_%d.pal) for all job classes both genders');
