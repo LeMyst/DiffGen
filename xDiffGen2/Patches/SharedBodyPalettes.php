@@ -109,14 +109,13 @@
 	function Nullify($exe, $offset, $stage)
 	{
 		$byte = $exe->read($offset,1, "c");
-		if ($byte >= 0x50 && $byte <= 0x57){
+		if ($byte >= 0x50 && $byte <= 0x57)
 			$exe->replace($offset, array(0=>"\x90"));
-			return true;
-		}
 		else
 		{
 			echo "Failed at Part ".$stage;
 			return false;
 		}
+		return true;
 	}
 ?>
