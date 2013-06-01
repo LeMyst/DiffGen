@@ -22,16 +22,16 @@
             return false;
         }
 
-        $exe->replace($offset, array(0 => "\x75\xEB")); // JNZ -> JMP
+        $exe->replace($offset, array(0 => "\xEB")); // JNZ -> JMP
 		
 		// RemoveHourlyPlaytimeMinder
 		/*
-		  "B8 B17C2195"  // MOV     EAX,95217CB1h
-		  "F7E1"         // MUL     ECX
-		  "8BFA"         // MOV     EDI,EDX
-		  "C1EF 15"      // SHR     EDI,15h
-		  "3BAB"         // CMP     EDI,R32  ; R32 is initialized to 0
-		  "0F8E"         // JLE     ADDR v
+		0   "B8 B17C2195"  // MOV     EAX,95217CB1h
+		5   "F7E1"         // MUL     ECX
+		7   "8BFA"         // MOV     EDI,EDX
+		9   "C1EF 15"      // SHR     EDI,15h
+		12  "3BFD"         // CMP     EDI,R32  ; R32 is initialized to 0
+		14  "0F8E"         // JLE     ADDR v
 		*/
         $code =  "\xB8\xB1\x7C\x21\x95";
         $offset = $exe->code($code, "\xAB");
