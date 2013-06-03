@@ -10,7 +10,7 @@
             return false;
         }
 
-        $exe->replace($offset, array(5 => "\x90\xE9"));
+        $exe->replace($offset, array(7 => "\x90\xE9"));
         return true;
     }
 ?>
