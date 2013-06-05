@@ -1,6 +1,4 @@
 <?php
-// 10.12.2010 - Changed behaviour of this diff to always (in any case) use Arial on all language types. [Shinryo]
-
     function UseChineseFontOnAllLangtypes($exe) {
         if ($exe === true) {
             return new xPatch(89, 'Use Chinese on all Langtype', 'UI', 0, 'Makes MingLiu the default font on all Langtypes');
@@ -20,7 +18,7 @@
             echo "Failed in part 2";
             return false;
         }
-        $exe->replace($offset, array(0 => "\x4D\x69\x6E\x67\x4C\x69\x55\x00"));
+        $exe->replace($offset, array(0 => "\x53\x69\x6D\x53\x75\x6E\x00\x00"));
 		
         return true;
     }
