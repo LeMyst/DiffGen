@@ -4,12 +4,23 @@
             return new xPatch(15, 'Disable HShield', 'Fix', 0, 'Disables HackShield');
         }
         
-        $code =  "\x51"                         // push    ecx
-                ."\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_88A210, 0
-                ."\x74\x04"                     // jz      short loc_58AD2E
-                ."\x33\xC0"                     // xor     eax, eax
-                ."\x59"                         // pop     ecx
-                ."\xC3";                        // retn
+		if ($exe->clientdate() <= 20130605) {
+			$code =  "\x51"                         // push    ecx
+					."\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_88A210, 0
+					."\x74\x04"                     // jz      short loc_58AD2E
+					."\x33\xC0"                     // xor     eax, eax
+					."\x59"                         // pop     ecx
+					."\xC3";                        // retn
+		}
+		else {
+			$code =  "\x51"                         // push    ecx
+					."\x83\x3D\xAB\xAB\xAB\x00\x00" // cmp     dword_C40C94, 0
+					."\x74\x06"                     // jz      short loc_626FD3
+					."\x33\xC0"                     // xor     eax, eax
+					."\x8B\xE5"                     // mov     esp, ebp
+					."\x5D"							// pop     ebp
+					."\xC3";                        // retn		
+		}
         
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
@@ -18,7 +29,10 @@
         }
         
         // Just return 1 without initializing AhnLab :)
-        $exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
+		if ($exe->clientdate() <= 20130605)
+			$exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
+		else
+			$exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
 		
 		$offset = $exe->str("CHackShieldMgr::Monitoring() failed","raw");
         if ($offset !== false) {

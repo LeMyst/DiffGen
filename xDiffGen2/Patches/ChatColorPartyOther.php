@@ -4,9 +4,16 @@ function ChatColorPartyOther($exe) {
         return new xPatch(58, 'Other Party Chat Color', 'Color', 0, 'Changes the Other Party members Chat color and sets it to the specified value. Default value is ffc8c8 (a pinkish color)');
     }
 
-    $code =  "\x14\x53"                 // push    0
-            ."\x6A\x03"                 // push    15
-            ."\x68\xFF\xC8\xC8\x00";    // push    0C8C8FFh (a pinkish color)
+	if ($exe->clientdate() <= 20130605) {
+		$code =  "\x14\x53"                 // push    0
+				."\x6A\x03"                 // push    15
+				."\x68\xFF\xC8\xC8\x00";    // push    0C8C8FFh (a pinkish color)
+	}
+	else {
+		$code =  "\x6A\x00"                 // push    0
+				."\x6A\x03"                 // push    3
+				."\x68\xFF\xC8\xC8\x00";    // push    0C8C8FFh (a pinkish color)	
+	}
 
     $offset = $exe->match($code, "\xAB");
 

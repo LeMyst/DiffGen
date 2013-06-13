@@ -15,7 +15,12 @@
 		  "B1 01"          // MOV     CL,1
 		  "33C0"           // XOR     EAX,EAX
         */
-        $code =  "\x75\x34\x66\x8B\x44\x24\xAB";
+		
+		if ($exe->clientdate() <= 20130605)
+			$code =  "\x75\x34\x66\x8B\x44\x24\xAB";
+		else
+			$code =  "\x75\x33\x66\x8B\x45\xE8\xAB";
+		
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
             echo "Failed in part 1";

@@ -4,6 +4,7 @@
            return new xPatch(50, 'Skip License Screen', 'UI', 0, 'Skip the warning screen and goes directly to the main window with the Service Select.');
         }
         
+		// Behind B9 41 08 00 00
         // Find jump table
         //$ptr = $exe->code("\x18\xAB\x00\x00\x00\x83\xF8\xAB\x0F\x87\xAB\xAB\x00\x00\xFF\x24\x85\xAB\xAB\xAB\x00", "\xAB", 1);
         //if( $ptr === false ) {
@@ -19,16 +20,29 @@
 		//		."\x8D\xB3\xAB\xAB\x00\x00"
 		//		."\x8B\xAB";
 		
-		$code =  "\xE8\xAB\xAB\xAB\x00"
-				."\x81\xC4\x38\x04\x00\x00"
-				."\xC2\x04\x00";
-		
+		if ($exe->clientdate() <= 20130605) {
+			$code =  "\xE8\xAB\xAB\xAB\x00"			//  call    sub_880D68
+					."\x81\xC4\x38\x04\x00\x00"		//  add     esp, 438h
+					."\xC2\x04\x00";				//  retn    4
+		}
+		else {
+			$code =  "\xE8\xAB\xAB\xAB\x00" 		// call    sub_8C6878
+					."\x8B\xE5"						// mov     esp, ebp
+					."\x5D"							// pop     ebp
+					."\xC2\x04\x00"					// retn    4 
+					."\x90"
+					."\xAB\x34\x84\x00";
+		}
         $ptr = $exe->code($code, "\xAB");
         if( $ptr === false ) {
-            echo "Failed in part 2";
+            echo "Failed in part 1";
             return false;
         }
-		$ptr += 17;
+		if ($exe->clientdate() <= 20130605)
+			$ptr += 17;
+		else
+			$ptr += 12;
+			
         print "Ptr: ".dechex($ptr)." ";
         // Read the value where the first entry of the jump table resides.
         // Note: raw and virtual offset aren't the same in VC9 clients!

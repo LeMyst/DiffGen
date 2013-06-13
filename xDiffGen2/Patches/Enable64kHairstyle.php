@@ -24,11 +24,21 @@ function Enable64kHairstyle($exe) {
 	// table. Note, that this will mess up existing hair-style
 	// IDs 0..12. Also the 2nd and 3rd patch block ensures, that
 	// ID 0 (invalid) is mapped to 2, as the table would do.
-		
-    $code =   "\x8B\x4C\x24\xAB"  	// mov     ecx, [esp-50h+arg_84]
-			 ."\x73\x04" 		  	// jnb     short loc_67168D
-			 ."\x8D\x4C\x24\xAB"	// lea     ecx, [esp-50h+arg_84]
-			 ."\x83\xFE\x10";
+	
+	if ($exe->clientdate() <= 20130605) {	
+		$code =   "\x8B\x4C\x24\xAB"  	// mov     ecx, [esp-50h+arg_84]
+				 ."\x73\x04" 		  	// jnb     short loc_67168D
+				 ."\x8D\x4C\x24\xAB"	// lea     ecx, [esp-50h+arg_84]
+				 ."\x83\xFE\x10";		// cmp     eax, 10h
+		$type=0;
+	}
+	else {
+		$code =   "\x8B\x4D\xD4"  		// mov     ecx, [esp-50h+arg_84]
+				 ."\x73\x03" 		  	// jnb     short loc_67168D
+				 ."\x8D\x4D\xD4"		// lea     ecx, [esp-50h+arg_84]
+				 ."\x83\xF8\x10";		// cmp     eax, 10h
+		$type=1;
+	}
 	
     $offset = $exe->match($code, "\xAB");
 
@@ -37,14 +47,32 @@ function Enable64kHairstyle($exe) {
         return false;
     }
 	
-	$exe->replace($offset, array(1 => "\x4D\x00\x90"));			 // -> MOV     ECX,DWORD PTR SS:[EBP]
-	$exe->replace($offset, array(4 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
-	$exe->replace($offset, array(6 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2
+	if($type==0){
+		$exe->replace($offset, array(1 => "\x4D\x00\x90"));			 // -> MOV     ECX,DWORD PTR SS:[EBP]
+		$exe->replace($offset, array(4 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
+		$exe->replace($offset, array(6 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2
+	}
+	else {
+		/* FIX ME HERE
+		$exe->replace($offset, array(1 => "\x4D\x00\x90"));			 // -> MOV     ECX,DWORD PTR SS:[EBP]
+		$exe->replace($offset, array(3 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
+		$exe->replace($offset, array(5 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2	
+		*/
+		
+	}
 	
 	// Void table lookup.
 
-    $code =  "\x8B\x45\x00"  // MOV     EAX,DWORD PTR SS:[EBP]
-			."\x8B\x14\x81"; // MOV     EDX,DWORD PTR DS:[ECX+EAX*4]
+	if ($exe->clientdate() <= 20130605) {
+		$code =  "\x8B\x45\x00"  // MOV     EAX,DWORD PTR SS:[EBP]
+				."\x8B\x14\x81"; // MOV     EDX,DWORD PTR DS:[ECX+EAX*4]
+	}
+	else {
+		$code =  "\x2B\xC6"  		// sub     eax, esi
+				."\x50"				// push    eax
+				."\x52"				// push    edx  -> add before MOV EDX,DWORD PTR DS:[ECX]
+				."\x8D\x4D\xD4"; 	// lea     ecx, [ebp+var_2C]
+	}
 	
     $offset = $exe->match($code, "\xAB");
 
@@ -53,16 +81,24 @@ function Enable64kHairstyle($exe) {
         return false;
     }
 	
-	$exe->replace($offset, array(4 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
+	//$exe->replace($offset, array(4 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
 	
 	// Lift limit that protects table from invalid access. We
 	// keep the < 0 check, since lifting it would not give any
 	// benefits.
-	
-    $code =  "\x7C\x05"  						// JL      SHORT ADDR v
-			."\x83\xF8\xAB" 					// CMP     EAX,X
-			."\x7E\x07"							// JLE     SHORT ADDR v
-			."\xC7\x45\x00\x0D\x00\x00\x00";	// MOV     DWORD PTR SS:[EBP],0Dh
+
+	if ($exe->clientdate() <= 20130605) {	
+		$code =  "\x7C\x05"  						// JL      SHORT ADDR v
+				."\x83\xF8\xAB" 					// CMP     EAX,X
+				."\x7E\x07"							// JLE     SHORT ADDR v
+				."\xC7\x45\x00\x0D\x00\x00\x00";	// MOV     DWORD PTR SS:[EBP],0Dh
+	}
+	else {
+		$code =  "\x7C\x05"  						// JL      SHORT ADDR v
+				."\x83\xF8\xAB" 					// CMP     EAX,X
+				."\x7E\x06"							// JLE     SHORT ADDR v
+				."\xC7\x06\x0D\x00\x00\x00";		// MOV     DWORD PTR SS:[ESI],0Dh	
+	}
 	
     $offset = $exe->match($code, "\xAB");
 

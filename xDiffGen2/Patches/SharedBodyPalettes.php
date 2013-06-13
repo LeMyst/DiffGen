@@ -56,6 +56,7 @@
 		//Step 3 - Find reference to this string (PUSH <OFFSET>)
 		$offsetRVA = $exe->Raw2Rva($offset);
 		$code = $exe->code("\x68".pack("I",$offsetRVA), "");
+		
 		if(!$code)
 		{
 			echo "Failed in Part 2";
@@ -64,7 +65,7 @@
 		
 		//Step 4 - the offset is pushed to use as arguent to a function but since we now have less arguments we need to NOP the others
 		$isvc9 = ( $exe->func("_encode_pointer") ) ? true : false;
-		if ($isvc9)
+		if ($isvc9 || $exe->clientdate() > 20130605)
 		{
 			if($oldStyle)
 			{
@@ -76,10 +77,19 @@
 			}
 			else
 			{
-				switch($type)
-				{
-					case 2: if(!Nullify($exe, $code-5, "Part 4-1 (New Format)")) return false;
-					case 1: if(!Nullify($exe, $code-9, "Part 4-2 (New Format)")) return false;
+				if ($exe->clientdate() <= 20130605){
+					switch($type)
+					{
+						case 2: if(!Nullify($exe, $code-5, "Part 4-1 (New Format)")) return false;
+						case 1: if(!Nullify($exe, $code-9, "Part 4-2 (New Format)")) return false;
+					}
+				}
+				else {
+					switch($type)
+					{
+							case 2: if(!Nullify($exe, $code-4, "Part 4-1 (New Format)")) return false;
+							case 1: if(!Nullify($exe, $code-11, "Part 4-2 (New Format)")) return false;
+					}
 				}
 			}
 		}
@@ -93,11 +103,11 @@
 		}
 		
 		//Step 5 - 	Clean up the Stack Return (we are not pushing two data so we need to pop two less data)
-		$reloffset = ($isvc9 && $oldStyle)? 14 : 13 ;
+		$reloffset = (($isvc9 || $exe->clientdate() > 20130605) && $oldStyle)? 14 : 13 ;
 		$exe->replace($code, array($reloffset=>14 - $type)); //Change ADD ESP, 14h to ADD ESP, 12h (13h for type 1)
 		
 		//Step 6 - Adjust Stack Reference
-		if ($isvc9 && !$oldStyle)
+		if (($isvc9 || $exe->clientdate() > 20130605) && !$oldStyle)
 		{
 			$value = $exe->read($code-1,1) - (4 * $type);
 			$exe->replace($code, array(-1=>$value));

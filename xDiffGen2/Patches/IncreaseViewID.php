@@ -10,28 +10,32 @@
         
         // Search for both cmp's
         $oldValue = pack("V", 2000);
-        $code = "\x00\x68".$oldValue."\x8D";
+		if ($exe->clientdate() <= 20130605)
+			$code = "\x00\x68".$oldValue."\x8D";
+		else
+			$code = "\x52\xBA".$oldValue."\x2B";
         $newvalue = pack("V", 5000);
+		
 		//echo bin2hex($code) . "#";
         $offset = $exe->code($code, "\xAB");
         if ($offset === false) {
         	echo "Failed at part 1";
         	return false;
-				}
+		}
 				
-				$exe->replace($offset, array(2 => $newvalue));
-				$offset += strlen($code);
+		$exe->replace($offset, array(2 => $newvalue));
+		$offset += strlen($code);
 
-				// Right after the first compare there have to 2 more checks with $oldValue one after another.
-				for($i = 0; $i < 2; $i++) {
-					$offset = $exe->match($oldValue, "\xAB", $offset);
-					if ($offset === false) {
-						echo "Failed at part 2 index $index";
-						return false;
-					}
-					$exe->replace($offset, array(0 => $newvalue));
-					$offset += 4;
-				}
+		// Right after the first compare there have to 2 more checks with $oldValue one after another.
+		for($i = 0; $i < 2; $i++) {
+			$offset = $exe->match($oldValue, "\xAB", $offset);
+			if ($offset === false) {
+				echo "Failed at part 2 index $index";
+				return false;
+			}
+			$exe->replace($offset, array(0 => $newvalue));
+			$offset += 4;
+		}
 
         return true;
     }

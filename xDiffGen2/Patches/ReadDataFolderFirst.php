@@ -34,7 +34,7 @@
 				echo "Failed in part 2";
 				return false;
 			}
-		} else {
+		} else if ($exe->clientdate() <= 20130605) {
 			$patch_offset = 19;
 			$code =  "\x80\x3D" .$readbyte . "\x00" // cmp     Readfolder, 0
 					."\x53"                         // push    ebx
@@ -49,6 +49,22 @@
 				echo "Failed in part 3";
 				return false;
 			}
+		}
+		else {
+			$patch_offset = 17;
+			$code =  "\x80\x3D" .$readbyte . "\x00" // cmp     Readfolder, 0
+					."\x53"                         // push    ebx
+					."\x8B\xAB\xAB"             // mov     ebx, offset unk_84FCAC
+					."\x57"                         // push    edi
+					."\x8B\xAB\xAB"             //
+					."\x57"
+					."\x53"
+					."\x74\xAB";
+			$offset = $exe->code($code, "\xAB");
+			if ($offset === false) {
+				echo "Failed in part 3";
+				return false;
+			}		
 		}
         $exe->replace($offset, array($patch_offset => "\x90\x90"));
         return true;

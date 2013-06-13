@@ -24,45 +24,35 @@ The read priority is 0 first to 9 last.
 
 If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.grf, 2=last.grf");
         }
-        
-        // Remove rdata.grf string to stop it loading.
-        //$offset = $exe->str("rdata.grf","raw");
-        //if ($offset === false) {
-        //    echo "Failed in part 1";
-        //    return false;
-        //}
 
-        //$exe->replace($offset, array(0 => "\x00\x00\x00\x00\x00\x00\x00\x00\x00"));
-        $type = 0;
         // Locate call to grf loading function.
         $grf = pack("I", $exe->str("data.grf","rva"));
-        //$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
-        //        ."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
-        //        ."\xE8\xAB\xAB\xAB\xAB"             // call    CFileMgr::AddPak()
-        //        ."\x8B\xAB\xAB\xAB\xAB\x00";        // mov     edx, ds:dword_7AA7CC
-                
-        //$offset = $exe->code($code, "\xAB");
-        //if ($offset === false) {
-			$type = 1;
+
+		if ($exe->clientdate() <= 20130605) {
 			$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
 					."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
 					."\x88\xAB\xAB\xAB\xAB\x00"			// mov     byte_C08AC2, dl
-					."\xE8\xAB\xAB\xAB\xAB";             // call    CFileMgr::AddPak()
-					//."\x8B\xAB\xAB\xAB\xAB\x00";        // mov     edx, ds:dword_7AA7CC
-			$offset = $exe->code($code, "\xAB");
-			if ($offset === false) {
-				echo "Failed in part 2";
-				return false;
-			}
-        //}
+					."\xE8\xAB\xAB\xAB\xAB";            // call    CFileMgr::AddPak()
+		}
+		else {
+			$code =  "\x68" . $grf                      // push    offset aData_grf ; "data.grf"
+					."\xB9\xAB\xAB\xAB\x00"             // mov     ecx, offset unk_86ABBC
+					."\xE8\xAB\xAB\xAB\xAB";			// call    CFileMgr::AddPak()	       	
+		}
+		$offset = $exe->code($code, "\xAB");
+		if ($offset === false) {
+			echo "Failed in part 2";
+			return false;
+		}
         
         // Save "this" pointer and address of AddPak.
-		if($type = 0){
-			$setECX = $exe->read($offset + 5, 5);
-			$AddPak = $exe->Raw2Rva($offset+10) + $exe->read($offset + 11, 4, "I") + 5;
-		} else {
+		if ($exe->clientdate() <= 20130605) {
 			$setECX = $exe->read($offset + 5, 5);
 			$AddPak = $exe->Raw2Rva($offset+16) + $exe->read($offset + 17, 4, "I") + 5;
+		}
+		else {
+			$setECX = $exe->read($offset + 5, 5);
+			$AddPak = $exe->Raw2Rva($offset+10) + $exe->read($offset + 11, 4, "I") + 5;		
 		}
         
         $code =  "\xC8\x80\x00\x00"                                        // enter   80h, 0
@@ -151,10 +141,17 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
             return false;
         }
         
-        // Create a call to the free space that was found before.     
-        $exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90"		// push    offset aData_grf ; "data.grf"
-										 ."\x90\x90\x90\x90\x90",		// mov     ecx, offset unk_86ABBC
-									16 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset+16) - 5) ));
+        // Create a call to the free space that was found before.
+		if ($exe->clientdate() <= 20130605) {		
+			$exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90"		// push    offset aData_grf ; "data.grf"
+											 ."\x90\x90\x90\x90\x90",		// mov     ecx, offset unk_86ABBC
+										16 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset+16) - 5) ));
+		}
+		else {
+			$exe->replace($offset, array(0 => "\x90\x90\x90\x90\x90"		// push    offset aData_grf ; "data.grf"
+											 ."\x90\x90\x90\x90\x90",		// mov     ecx, offset unk_86ABBC
+										10 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset+10) - 5) ));		
+		}
 
         // ***********************************************************
         // Create default offsets that will be replaced into the code.

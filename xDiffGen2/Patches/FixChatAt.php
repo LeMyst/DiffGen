@@ -4,7 +4,10 @@ function FixChatAt($exe) {
         return new xPatch(64, '@ Bug Fix (Recommended)', 'UI', 0, 'Correct the bug to write @ in chat');
     }
 
-    $code =  "\x46\x29\x00\x5F\x5E\x5D\xB0\x01"; // push    0FF00h
+	if ($exe->clientdate() <= 20130605)
+		$code =  "\x46\x29\x00\x5F\x5E\x5D\xB0\x01"; // push    0FF00h
+	else
+		$code =  "\x46\x2D\x00\x5F\x5E\xB0\x01\x5B"; // push    0FF00h
           
     $offset = $exe->match($code, "\xAB");
 
@@ -14,6 +17,7 @@ function FixChatAt($exe) {
     }
 
     $exe->replace($offset, array(2 => "\x01"));
+	
     return true;
 }
 ?>

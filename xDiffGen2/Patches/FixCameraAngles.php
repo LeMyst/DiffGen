@@ -17,7 +17,10 @@ function FixCameraAnglesRecomm($exe){
   // float values which are used more than once
   // at an offset and use FLD/FSTP to place
   // those in registers.
-  $code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  if ($exe->clientdate() <= 20130605)
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  else
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5D\xFC\x8B";
          
   $offset = $exe->match($code, "\xAB");
   
@@ -47,7 +50,10 @@ function FixCameraAnglesLess($exe){
   // float values which are used more than once
   // at an offset and use FLD/FSTP to place
   // those in registers.
-  $code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  if ($exe->clientdate() <= 20130605)
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  else
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5D\xFC\x8B";
          
   $offset = $exe->match($code, "\xAB");
   
@@ -77,7 +83,10 @@ function FixCameraAnglesFull($exe){
   // float values which are used more than once
   // at an offset and use FLD/FSTP to place
   // those in registers.
-  $code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  if ($exe->clientdate() <= 20130605)
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5C\x24\x08";
+  else
+	$code =  "\x74\xAB\xD9\x05\xAB\xAB\xAB\x00\xD9\x5D\xFC\x8B";
          
   $offset = $exe->match($code, "\xAB");
   

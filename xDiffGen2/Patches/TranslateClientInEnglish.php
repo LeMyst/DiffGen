@@ -79,7 +79,10 @@ function TranslateClientInEnglish($exe){
   $trans = "Translate Taekwon Job";
   //**********************************
 
-  $code = "\xBA\x00\x00\xB9\xAB\xAB\xC0\x00\x75\x59";
+  if ($exe->clientdate() <= 20130605)
+	$code = "\xBA\x00\x00\xB9\xAB\xAB\xC0\x00\x75\x59";
+  else
+    $code = "\xC3\x00\x00\xB9\xAB\xAB\xC9\x00\x75\x59";
   $offset = $exe->match($code, "\xAB", 0);
   if ($offset === false) {
     echo "Failed in {$trans} part 1";
