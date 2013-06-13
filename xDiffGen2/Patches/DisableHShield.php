@@ -29,10 +29,7 @@
         }
         
         // Just return 1 without initializing AhnLab :)
-		if ($exe->clientdate() <= 20130605)
-			$exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
-		else
-			$exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90\x90\x90"));
+		$exe->replace($offset, array(1 => "\x31\xC0\x40\x90\x90\x90\x90\x90\x90\x90\x90"));
 		
 		$offset = $exe->str("CHackShieldMgr::Monitoring() failed","raw");
         if ($offset !== false) {

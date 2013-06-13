@@ -27,7 +27,7 @@ function QuakeSkillEffect($exe) {
 
     $exe->replace($offset, array(0 => "\xC2\x0C\x00"));
 	$exe->replace($offset, array(32 => "\xC2\x14\x00"));
-	
+
     return true;
 	
 }
