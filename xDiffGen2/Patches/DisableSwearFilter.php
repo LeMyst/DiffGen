@@ -48,7 +48,7 @@
 				return false;
 			}		
 	
-			//$exe->replace($offset, array(16 => "\x90"));
+			$exe->replace($offsets[0], array(17 => "\x30\xC0\xC2\x04\x00"));
 		}
 
         return true;
