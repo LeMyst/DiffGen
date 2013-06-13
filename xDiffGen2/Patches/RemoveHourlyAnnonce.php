@@ -45,7 +45,10 @@
             return false;
         }
 
-        $exe->replace($offset, array(14 => "\x90\xE9")); // JLE -> NOP and JLE -> JMP
+		if ($exe->clientdate() <= 20130605)
+			$exe->replace($offset, array(14 => "\x90\xE9")); // JLE -> NOP and JLE -> JMP
+		else
+			$exe->replace($offset, array(29 => "\x90\xE9")); // JLE -> NOP and JLE -> JMP
 		
         return true;
     }
