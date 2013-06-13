@@ -14,7 +14,7 @@
 		if ($exe->clientdate() <= 20130605) {
 			$code =  "\x83\x3D\xAB\xAB\xAB\xAB\x0A"    // cmp     Langtype, 10
 					."\x74\xAB"                        // jz      short loc_5CE560
-					."\x83\x7D\x24\x04\x02"            // cmp     [esp+arg_0], 2    ; <-- Patch
+					."\x83\x7C\x24\x04\x02"            // cmp     [esp+arg_0], 2    ; <-- Patch
 					."\x7C\x47"                        // jl      short loc_5CE560
 					."\x6A\x00";                       // push    ebx
 			$type = 0;
