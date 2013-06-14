@@ -65,8 +65,16 @@ function Enable64kHairstyle($exe) {
 				."\x8B\x14\x81"; // MOV     EDX,DWORD PTR DS:[ECX+EAX*4]
 	}
 	else {
-		$code =  "\x8B\x15\xAB\xAB\xAB\x00"  		// MOV     EDX,DWORD PTR SS:[EBP]
+		$code =  "\x75\x19"
+				."\x8B\x0E"
+				."\x8B\x15\xAB\xAB\xAB\x00"  		// MOV     EDX,DWORD PTR SS:[EBP]
 				."\x8B\x14\x8A";					// MOV     EDX,DWORD PTR DS:[EDX+ECX*4]
+		/*
+		$code =  "\x75\x23"
+				."\x8B\x06"
+				."\x8B\x0D\xAB\xAB\xAB\x00"    // MOV     EDX,DWORD PTR SS:[EBP]
+				."\x8B\x14\x81";     // MOV     EDX,DWORD PTR DS:[EDX+ECX*4]
+		*/
 	}
 	
     $offset = $exe->match($code, "\xAB");
@@ -79,9 +87,24 @@ function Enable64kHairstyle($exe) {
 	if ($type==0)
 		$exe->replace($offset, array(4 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
 	else
-		$exe->replace($offset, array(7 => "\xC2\x90")); // -> MOV     EDX,DWORD PTR DS:[EDX]
+		$exe->replace($offset, array(11 => "\x12\x90")); // -> MOV     EDX,DWORD PTR DS:[EDX]
 		
+		
+
+		$code =  "\x75\x23"
+				."\x8B\x06"
+				."\x8B\x0D\xAB\xAB\xAB\x00"    // MOV     EDX,DWORD PTR SS:[EBP]
+				."\x8B\x14\x81";     // MOV     EDX,DWORD PTR DS:[EDX+ECX*4]
+				
+    $offset = $exe->match($code, "\xAB");
+
+    if ($offset === false) {
+        echo "Failed in part 3";
+        return false;
+    }
 	
+	$exe->replace($offset, array(11 => "\x12\x90")); // -> MOV     EDX,DWORD PTR DS:[EDX]
+		
 	// Lift limit that protects table from invalid access. We
 	// keep the < 0 check, since lifting it would not give any
 	// benefits.
