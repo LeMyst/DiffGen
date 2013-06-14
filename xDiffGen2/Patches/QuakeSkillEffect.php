@@ -27,13 +27,13 @@ function QuakeSkillEffect($exe) {
 
 	if ($exe->clientdate() <= 20130605){
 		$exe->replace($offset, array(0 => "\xC2\x0C\x00"));
-		$exe->replace($offset, array(32 => "\xC2\x14\x00"));
 	}
 	else {
 		$exe->replace($offset, array(0 => "\x90\x90\x90"));
 		$exe->replace($offset, array(3 => "\xC2\x0C\x00"));
-		$exe->replace($offset, array(32 => "\xC2\x14\x00"));	
 	}
+	
+	$exe->replace($offset, array(32 => "\xC2\x14\x00"));
 
     return true;
 	

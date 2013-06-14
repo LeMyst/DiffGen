@@ -20,15 +20,15 @@
         }
 		$exe->addInput('$uQuality', XTYPE_STRING, '', 2, 2);
 		
-        $exe->replace($offset, array(1 => "\x84")); // MOV DST operand 8 bit -> 32 bit
-		$exe->replace($offset, array(3 => "\xAC\x00")); // [ESP+70h] -> [ESP+0ACh]
 		if ($exe->clientdate() <= 20130605){
+			$exe->replace($offset, array(1 => "\x84")); // MOV DST operand 8 bit -> 32 bit
+			$exe->replace($offset, array(3 => "\xAC\x00")); // [ESP+70h] -> [ESP+0ACh]
 			$exe->replace($offset, array(7 => '$uQuality')); // uQuality
 			$exe->replace($offset, array(8 => "\x00\x00\x00\x90\x90\x90\x90\x90")); // Filling
 		}
 		else {
-			$exe->replace($offset, array(9 => '$uQuality')); // uQuality
-			$exe->replace($offset, array(10 => "\x00\x00\x00\x90\x90\x90\x90\x90\x90\x90")); // Filling
+			$exe->replace($offset, array(2 => "\x28\xB1")); // [LOCAL.5061] -> [LOCAL.5046]
+			$exe->replace($offset, array(6 => '$uQuality')); // uQuality
 		}
 		
         return true;
