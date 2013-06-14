@@ -3,7 +3,7 @@
 
     function UseArialOnAllLangtypes($exe) {
         if ($exe === true) {
-            return new xPatch(51, 'Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes (it s enable ascii by default');
+            return new xPatch(51, 'Ascii & Arial on All Langtypes', 'UI', 0, 'Makes Arial the default font on all Langtypes (it s enable ascii by default');
         }
 				
 		if ($exe->clientdate() <= 20130605)		
