@@ -53,25 +53,20 @@ function Enable64kHairstyle($exe) {
 		$exe->replace($offset, array(6 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2
 	}
 	else {
-		/* FIX ME HERE
-		$exe->replace($offset, array(1 => "\x4D\x00\x90"));			 // -> MOV     ECX,DWORD PTR SS:[EBP]
+		$exe->replace($offset, array(1 => "\x4D\x00"));				 // -> MOV     ECX,DWORD PTR SS:[EBP]
 		$exe->replace($offset, array(3 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
-		$exe->replace($offset, array(5 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2	
-		*/
-		
+		$exe->replace($offset, array(5 => "\x75\x01\x41")); 	 	 // -> JNZ     SHORT ADDR v & -> INC ECX 2
 	}
-	
+
 	// Void table lookup.
 
-	if ($exe->clientdate() <= 20130605) {
+	if ($type==0) {
 		$code =  "\x8B\x45\x00"  // MOV     EAX,DWORD PTR SS:[EBP]
 				."\x8B\x14\x81"; // MOV     EDX,DWORD PTR DS:[ECX+EAX*4]
 	}
 	else {
-		$code =  "\x2B\xC6"  		// sub     eax, esi
-				."\x50"				// push    eax
-				."\x52"				// push    edx  -> add before MOV EDX,DWORD PTR DS:[ECX]
-				."\x8D\x4D\xD4"; 	// lea     ecx, [ebp+var_2C]
+		$code =  "\x8B\x15\xAB\xAB\xAB\x00"  		// MOV     EDX,DWORD PTR SS:[EBP]
+				."\x8B\x14\x8A";					// MOV     EDX,DWORD PTR DS:[EDX+ECX*4]
 	}
 	
     $offset = $exe->match($code, "\xAB");
@@ -81,13 +76,17 @@ function Enable64kHairstyle($exe) {
         return false;
     }
 	
-	//$exe->replace($offset, array(4 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
+	if ($type==0)
+		$exe->replace($offset, array(4 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
+	else
+		$exe->replace($offset, array(7 => "\xC2\x90")); // -> MOV     EDX,DWORD PTR DS:[EDX]
+		
 	
 	// Lift limit that protects table from invalid access. We
 	// keep the < 0 check, since lifting it would not give any
 	// benefits.
 
-	if ($exe->clientdate() <= 20130605) {	
+	if ($type==0) {	
 		$code =  "\x7C\x05"  						// JL      SHORT ADDR v
 				."\x83\xF8\xAB" 					// CMP     EAX,X
 				."\x7E\x07"							// JLE     SHORT ADDR v
