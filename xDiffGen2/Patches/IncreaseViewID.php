@@ -4,39 +4,34 @@
             return new xPatch(28, 'Increase Headgear ViewID to 5000', 'Add', 0, 'Increases the limit for the headgear ViewIDs from 2000 to 5000');
         }
         
-        // In case of break:
-        // Search for "ReqAccName" and search somewhere around for the
-        // maximum ViewID.
-        
-        // Search for both cmp's
-        $oldValue = pack("V", 2000);
-		if ($exe->clientdate() <= 20130605)
-			$code = "\x00\x68".$oldValue."\x8D";
-		else
-			$code = "\x52\xBA".$oldValue."\x2B";
-        $newvalue = pack("V", 5000);
+		//Step 1 - Find ReqAccName
+		$reqacc = pack("I",$exe->str("ReqAccName"),"rva");
 		
-		//echo bin2hex($code) . "#";
-        $offset = $exe->code($code, "\xAB");
-        if ($offset === false) {
-        	echo "Failed at part 1";
-        	return false;
-		}
-				
-		$exe->replace($offset, array(2 => $newvalue));
-		$offset += strlen($code);
-
-		// Right after the first compare there have to 2 more checks with $oldValue one after another.
-		for($i = 0; $i < 2; $i++) {
-			$offset = $exe->match($oldValue, "\xAB", $offset);
-			if ($offset === false) {
-				echo "Failed at part 2 index $index";
+		//Step 2 - Find where it is pushed - there is only 1 place
+		$reqpush = $exe->code("\x68".$reqacc);
+		
+		//Step 3 - Get Little Endian byte sequence of old value (2000 on 2013 clients) & new value 5000
+		$oldValue = pack("V", 2000);
+		$newValue = pack("V", 5000);
+		
+		//Step 4 - Replace old value in the cmp/push/mov instructions before and after the push - lets start with a relative limit of -100 from the push.
+		if ($exe->clientdate() > 20130605)
+			$count = 3; //there are two cmp and 1 mov instruction
+		else
+			$count = 2; //there is 1 push and 1 cmp instruction
+		
+		$offset = $reqpush - 100;
+		for ($i = 1; $i <= $count; $i++)
+		{
+			$offset = $exe->match($oldValue,"", $offset);
+			if($offset === false)
+			{
+				echo "Failed at Part 4: iteration $i";
 				return false;
 			}
-			$exe->replace($offset, array(0 => $newvalue));
+			$exe->replace($offset, array(0=>$newValue));
 			$offset += 4;
 		}
-
         return true;
     }
 ?>
