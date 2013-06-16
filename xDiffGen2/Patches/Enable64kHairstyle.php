@@ -33,7 +33,8 @@ function Enable64kHairstyle($exe) {
 		$type=0;
 	}
 	else {
-		$code =   "\x8B\x4D\xD4"  		// mov     ecx, [esp-50h+arg_84]
+		$code =   "\x83\x7D\xAB\xAB"	// cmp     [ebp+var_18], 10h 
+				 ."\x8B\x4D\xD4"  		// mov     ecx, [esp-50h+arg_84]
 				 ."\x73\x03" 		  	// jnb     short loc_67168D
 				 ."\x8D\x4D\xD4"		// lea     ecx, [esp-50h+arg_84]
 				 ."\x83\xF8\x10";		// cmp     eax, 10h
@@ -52,11 +53,8 @@ function Enable64kHairstyle($exe) {
 		$exe->replace($offset, array(4 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
 		$exe->replace($offset, array(6 => "\x75\x02\x41\x41")); 	 // -> JNZ     SHORT ADDR v & -> INC     ECX x2
 	}
-	else {
-		$exe->replace($offset, array(1 => "\x4D\x00"));				 // -> MOV     ECX,DWORD PTR SS:[EBP]
-		$exe->replace($offset, array(3 => "\x85\xC9")); 			 // -> TEST    ECX,ECX
-		$exe->replace($offset, array(5 => "\x75\x01\x41")); 	 	 // -> JNZ     SHORT ADDR v & -> INC ECX 2
-	}
+	else
+		$exe->replace($offset, array(0 => "\x8B\x4D\x18\x8B\x09\x85\xC9\x75\x02\x41\x41\x90"));			 // -> MOV     ECX,DWORD PTR SS:[EBP]
 
 	// Void table lookup.
 
