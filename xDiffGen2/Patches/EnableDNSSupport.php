@@ -70,6 +70,9 @@
 
         /************************************************************************/
 		/* Find old ptr.
+		the way is to just find location where the string "address" is pushed
+		and search for A3 AB AB AB 00 
+		you need to extract the last 4 bytes from A3 AB AB AB 00 
 		/************************************************************************/
         
 		if ($exe->clientdate() <= 20130605)
@@ -119,7 +122,7 @@
             return false;
         }
 		
-		$uIPScheme = $exe->str("%d.%d.%d.%d","raw");
+		$uIPScheme = $exe->str("%d.%d.%d.%d","rva");
         if ($uIPScheme === false) {
             echo "Failed in part 6";
             return false;
@@ -136,9 +139,6 @@
 		$codef = str_replace("CA05", pack("V", $uSprintf), $codef);
 		$codef = str_replace("CA06", pack("V", $uOldptr), $codef);
 		$codef = str_replace("CA07", pack("V", $uRVAfreeoffset), $codef);
-		
-		$test = bin2hex(pack("V", $offsetRVA));
-		echo $test;
 		
         // Finally, insert everything.
         $exe->insert($codef, $free);
