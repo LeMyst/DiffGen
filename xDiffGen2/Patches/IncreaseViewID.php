@@ -5,10 +5,10 @@
         }
         
 		//Step 1 - Find ReqAccName
-		$reqacc = pack("I",$exe->str("ReqAccName"),"rva");
-		
+		$reqacc = pack("I",$exe->str("ReqAccName","rva"));
+
 		//Step 2 - Find where it is pushed - there is only 1 place
-		$reqpush = $exe->code("\x68".$reqacc);
+		$reqpush = $exe->code("\x68".$reqacc, "\xAB");
 		
 		//Step 3 - Get Little Endian byte sequence of old value (2000 on 2013 clients) & new value 5000
 		$oldValue = pack("V", 2000);
