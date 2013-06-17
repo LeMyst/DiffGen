@@ -130,7 +130,7 @@
             return false;
         }
 		
-		$offsetRVA = $offsetRVA - $exe->Raw2Rva($free + 2 + 16) - 5;
+		$offsetRVA = $offsetRVA - $exe->Raw2Rva($free) - 5;
 		$uRVAfreeoffset = $exe->Raw2Rva($free + 77);
 		
 		$codef = str_replace("CA00", pack("V", $offsetRVA), $codef);
