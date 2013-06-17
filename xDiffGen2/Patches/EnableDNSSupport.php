@@ -128,14 +128,14 @@
 		$offsetRVA = $offsetRVA - $exe->Raw2Rva($free + 2 + 16) - 5;
 		$uRVAfreeoffset = $exe->Raw2Rva($free);
 		
-		$code = str_replace("CA00", pack("V", $offsetRVA), $codef);
-		$code = str_replace("CA01", pack("V", $uOldptr), $codef);
-		$code = str_replace("CA02", pack("V", $uGethostbyname), $codef);
-		$code = str_replace("CA03", pack("V", $uIPScheme), $codef);
-		$code = str_replace("CA04", pack("V", $uRVAfreeoffset), $codef);
-		$code = str_replace("CA05", pack("V", $uSprintf), $codef);
-		$code = str_replace("CA06", pack("V", $uOldptr), $codef);
-		$code = str_replace("CA07", pack("V", $uRVAfreeoffset), $codef);
+		$codef = str_replace("CA00", pack("V", $offsetRVA), $codef);
+		$codef = str_replace("CA01", pack("V", $uOldptr), $codef);
+		$codef = str_replace("CA02", pack("V", $uGethostbyname), $codef);
+		$codef = str_replace("CA03", pack("V", $uIPScheme), $codef);
+		$codef = str_replace("CA04", pack("V", $uRVAfreeoffset), $codef);
+		$codef = str_replace("CA05", pack("V", $uSprintf), $codef);
+		$codef = str_replace("CA06", pack("V", $uOldptr), $codef);
+		$codef = str_replace("CA07", pack("V", $uRVAfreeoffset), $codef);
 		
 		$test = bin2hex(pack("V", $offsetRVA));
 		echo $test;
