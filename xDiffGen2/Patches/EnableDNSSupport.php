@@ -15,6 +15,7 @@
 		}
 		
         $offsetRVA = $exe->Raw2Rva($offset) + $exe->read($offset + 1, 4, "I") + 5;
+		$addr = pack("I", $exe->str("data.grf","rva"));
         
         $codef =  
 			// Call Unknown Function - Pos = 1
@@ -48,7 +49,8 @@
 			// New Ptr - Pos = 70
 			."\xC7\x05"."CA06"."CA07"					// MOV DWORD PTR DS:[7F8320],OFFSET 008A07C ; ASCII "127.0.0.1"
 			."\x61"										// POPAD
-			."\xC3";									// RETN
+			."\xC3"										// RETN
+			."\x00" . "127.0.0.1";						// 127.0.0.1
 			                    
         // Calculate free space that the code will need.
         $size = strlen($code);
@@ -65,7 +67,7 @@
 		$free += 247 + 4 + 4;
         
         // Create a call to the free space that was found before.     
-        $exe->replace($offset, array(0 =>  "\xE8".pack("I", $exe->Raw2Rva($free))));
+        $exe->replace($offset, array(0 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5 )));
 		$uRvaFreeOffset = $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5 + 2 + 16 ;
 
         /************************************************************************/
@@ -129,7 +131,7 @@
         }
 		
 		$offsetRVA = $offsetRVA - $exe->Raw2Rva($free + 2 + 16) - 5;
-		$uRVAfreeoffset = $exe->Raw2Rva($free);
+		$uRVAfreeoffset = $exe->Raw2Rva($free + 77);
 		
 		$codef = str_replace("CA00", pack("V", $offsetRVA), $codef);
 		$codef = str_replace("CA01", pack("V", $uOldptr), $codef);
