@@ -13,8 +13,11 @@
             echo "Failed in part 1";
             return false;
         }
-		//$offset += 0x1d3;// - 0x1a8 -8;
-		$offset += 0x23;
+		//$offset += 0x1d3;// - 0x1a8 -8
+		if ($exe->clientdate() <= 20130605)
+			$offset += 0x23;
+		else
+			$offset += 0x1D3;
 		
 		echo dechex($offset) . "#";
 		$done = false;
