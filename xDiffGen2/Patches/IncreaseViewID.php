@@ -20,7 +20,7 @@
 		else
 			$count = 2; //there is 1 push and 1 cmp instruction
 		
-		$offset = $reqpush - 100;
+		$offset = $reqpush - 400;
 		for ($i = 1; $i <= $count; $i++)
 		{
 			$offset = $exe->match($oldValue,"", $offset);
