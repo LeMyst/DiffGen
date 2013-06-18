@@ -25,7 +25,10 @@
         }
         
         // Skip JNZ and force reading of questid2display.txt
-        $exe->replace($offset, array(7 => str_repeat("\x90", 2)));
+		if ($exe->clientdate() <= 20130605)
+			$exe->replace($offset, array(7 => str_repeat("\x90", 6)));
+		else
+			$exe->replace($offset, array(7 => str_repeat("\x90", 2)));
         
         return true;
     }

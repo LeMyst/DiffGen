@@ -10,7 +10,7 @@
 		
 		function firstkey($exe) {
 			if ($exe === true) {
-				return new xPatch(92, 'First key', '', 91, 'Change the 1st key for packet encryption.');
+				return new xPatch(92, 'First key', '', 91, 'Change the 1st key for packet encryption. It needs you don\'t check the patch Disable Packet Header Encryption. Don\'t use it if you don\'t know what you are doing. (Not avaible yet on rathena)');
 			}
                		
 				$code =  "\xFF\xFF"
@@ -29,6 +29,12 @@
 				$exe->addInput('$firstkey', XTYPE_STRING, '', 8, 8);
 				
 				$exe->replace($offset, array(9 => '$firstkey')); // first key
+				
+				$key1= $exe->read($offset + 9, 4, "I");
+				$key2= $exe->read($offset + 14, 4, "I");
+				$key3= $exe->read($offset + 19, 4, "I");
+				
+				echo dechex($key1)." - ".dechex($key2)." - ".dechex($key3). "    ";
 		
 				return true;
         }
