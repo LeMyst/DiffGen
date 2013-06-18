@@ -55,11 +55,12 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
         foreach($strings as $index => $string)
           $size += strlen($string);
 
-        $free = $exe->zeroed($size, ".rsrc");
+        $free = $exe->zeroed($size + 247 + 4 + 4 + 90 + 4 + 4, false);
         if ($free === false) {
             echo "Failed in part 1";
             return false;
         }
+		$free += 247 + 4 + 4 + 90 + 4;
         
         // ***********************************************************
         // Create default offsets that will be replaced into the code.
