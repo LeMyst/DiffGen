@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 using System.Text;
 using System.IO;
 using System.Xml;
@@ -45,6 +45,16 @@ namespace xDiffPatcher
         Color
     }
 
+    public struct SectionInfo
+    {
+        public UInt32 peHeader;        
+        public UInt32 imgSize; 
+        public UInt16 sectCount;
+        public UInt32 xDiffStart;
+        public byte[] sectionData;
+        public UInt32 realSize;
+    }
+
     public class DiffFile
     {
         private string m_exeBuildDate = "";
@@ -60,6 +70,8 @@ namespace xDiffPatcher
         private FileInfo m_fileInfo;
 
         private DiffType m_type = 0;
+
+        private SectionInfo m_xDiffSection;
 
         private Dictionary<int, DiffPatchBase> m_xpatches; //for xDiff
         private Dictionary<string, DiffPatch> m_patches; //for diff
@@ -189,6 +201,43 @@ namespace xDiffPatcher
                     this.Version = XDoc.SelectSingleNode("//diff/info/version").InnerText;
                     this.ReleaseDate = XDoc.SelectSingleNode("//diff/info/releasedate").InnerText;
 
+                    //extra addition for adding .xdiff section
+                    m_xDiffSection.peHeader = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/peheader").InnerText, 10);
+                    m_xDiffSection.imgSize = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/imagesize").InnerText, 10);
+                    m_xDiffSection.sectCount = Convert.ToUInt16(XDoc.SelectSingleNode("//diff/override/sectioncount").InnerText, 10);
+                    m_xDiffSection.xDiffStart = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/xdiffstart").InnerText, 10);
+
+                    UInt32 vSize = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/vsize").InnerText, 10);
+                    UInt32 vOffset = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/voffset").InnerText, 10);
+                    UInt32 rSize = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/rsize").InnerText, 10);
+                    UInt32 rOffset = Convert.ToUInt32(XDoc.SelectSingleNode("//diff/override/roffset").InnerText, 10);
+                    m_xDiffSection.realSize = rSize + rOffset;
+
+                    //now create section data 
+                    m_xDiffSection.sectionData = new byte[40];
+                    UInt32 i = 0;
+
+                    // first section name
+                    foreach(byte b in Encoding.ASCII.GetBytes(".xdiff\x00\x00"))
+                    {
+                        m_xDiffSection.sectionData[i] = b;
+                        i++;
+                    }
+                    
+                    //next the offset and sizes
+                    WriteDword(ref m_xDiffSection.sectionData, vSize, 8);
+                    WriteDword(ref m_xDiffSection.sectionData, vOffset, 12);
+                    WriteDword(ref m_xDiffSection.sectionData, rSize, 16);
+                    WriteDword(ref m_xDiffSection.sectionData, rOffset, 20);
+                    
+                    //next the relocation and line numbers info - fill with 0
+                    WriteDword(ref m_xDiffSection.sectionData, 0, 24);
+                    WriteDword(ref m_xDiffSection.sectionData, 0, 28);
+                    WriteDword(ref m_xDiffSection.sectionData, 0, 32);
+                    
+                    //Lastly Characteristics
+                    WriteDword(ref m_xDiffSection.sectionData, 0xE0000060, 36);
+    
                     XmlNode patches = XDoc.SelectSingleNode("//diff/patches");
                     foreach (XmlNode patch in patches.ChildNodes)
                     {
@@ -309,12 +358,10 @@ namespace xDiffPatcher
                 return 2;
             }
 
-
-
             return 0;
         }
 
-        private int ApplyPatch(DiffPatch patch, ref byte[] buf, BinaryReader r)
+        private int ApplyPatch(DiffPatch patch, ref byte[] buf)
         {
             int changed = 0;
 
@@ -331,83 +378,62 @@ namespace xDiffPatcher
                 {
                     case ChangeType.Byte:
                         {
-                            byte old;
+                            byte old = buf[c.Offset];
 
-                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                            old = r.ReadByte();
-                            if (old != (byte)c.Old)
+                            if (old == (byte)c.Old)
                             {
-                                //hm....
-                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (byte)c.Old));
+                                buf[c.Offset] = (byte)c.GetNewValue(patch);
+                                changed++;
                             }
+                            else
+                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (byte)c.Old));
 
-                            //buf[c.Offset] = (byte)c.New_;
-                            buf[c.Offset] = (byte)c.GetNewValue(patch);
-                            changed++;
+                            break;
                         }
-                        break;
 
                     case ChangeType.Word:
                         {
-                            UInt16 old;
+                            UInt16 old = BitConverter.ToUInt16(buf, (int)c.Offset);
 
-                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                            old = r.ReadUInt16();
-                            if (old != (UInt16)c.Old)
+                            if (old == (UInt16)c.Old)
                             {
-                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (ushort)c.Old));
+                                UInt16 val = (UInt16)c.GetNewValue(patch);
+                                buf[c.Offset] = (byte)val;
+                                buf[c.Offset + 1] = (byte)(val >> 8);
+                                changed += 2;
                             }
+                            else
+                                MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (ushort)c.Old));
+
+                            break;
                         }
-
-                        ushort val = (ushort)c.GetNewValue(patch);
-                        buf[c.Offset] = (byte)(val);
-                        buf[c.Offset + 1] = (byte)(val >> 8);
-
-                        changed += 2;
-                        break;
 
                     case ChangeType.Dword:
                         {
-                            UInt32 old;
+                            UInt32 old = BitConverter.ToUInt32(buf, (int)c.Offset);
 
-                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                            old = r.ReadUInt32();
-                            if (old != (UInt32)c.Old)
+                            if (old == (UInt32)c.Old)
+                            {
+                                WriteDword(ref buf, (UInt32)c.GetNewValue(patch), c.Offset);
+                                changed += 4;
+                            }
+                            else
                                 MessageBox.Show(String.Format("Data mismatch at 0x{0:X} (0x{1:X} != 0x{2:X})!", c.Offset, old, (uint)c.Old));
+                            break;
                         }
 
-                        UInt32 val2 = (UInt32)c.GetNewValue(patch);
-                        buf[c.Offset] = (byte)(val2);
-                        buf[c.Offset + 1] = (byte)(val2 >> 8);
-                        buf[c.Offset + 2] = (byte)(val2 >> 16);
-                        buf[c.Offset + 3] = (byte)(val2 >> 24);
-
-                        //(UInt32)buf[c.Offset] = 0x12345678;
-
-
-                        changed += 4;
-                        break;
-
-                    case ChangeType.String:
+                    case ChangeType.String:// used only for displayable string
                         {
-                            //string old;
-
-                            r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                            //old = ""; // Who cares :)
-
-                            string str = (string)c.GetNewValue(patch) + "\x00";
-                            byte[] arr = System.Text.Encoding.ASCII.GetBytes(str);
+                            //currently not checking for old string - if client crashes your screwed
+                            byte[] val = Encoding.ASCII.GetBytes((String)c.GetNewValue(patch) + "\x00");
+                            
                             int i = 0;
-
-                            foreach (byte b in arr)
+                            foreach (byte b in val)
                                 buf[c.Offset + i++] = b;
-
+                            
                             changed += i;
+                            break;
                         }
-                        break;
-
-                    default:
-                        break;
                 }
             }
 
@@ -416,30 +442,52 @@ namespace xDiffPatcher
             return changed;
         }
 
-        public int Patch(string inputFile, string fileName)
+        public int Patch(string inputFile, string targetFile)
         {
             if (!File.Exists(inputFile))
                 return 1;
 
+            if (this.Type == DiffType.None)
+                return 0;
+            
             int start = Environment.TickCount;
+            Int64 l = new FileInfo(inputFile).Length;
+            byte[] buf = new byte[m_xDiffSection.realSize];
 
-            if (this.Type == DiffType.xDiff)
+            Array.Copy(File.ReadAllBytes(inputFile), 0, buf, 0, l);
+
+            // Fill remaining space with null (if its an already patched file the loop would not execute)
+            for (; l < buf.LongLength; l++)
+                buf[l] = 0x00;
+
+            // Modify SizeOfImage in Optional Header
+            UInt32 offset = m_xDiffSection.peHeader + 0x50;
+            UInt32 val = m_xDiffSection.imgSize;
+            WriteDword(ref buf, val, offset);
+            
+            // Modify Section Count
+            offset = m_xDiffSection.peHeader + 6;
+            val = m_xDiffSection.sectCount;
+            buf[offset] = (byte)val;
+            buf[offset + 1] = (byte)(val >> 8);
+            
+            //Insert Section Data
+            offset = m_xDiffSection.xDiffStart;
+            foreach (byte b in m_xDiffSection.sectionData)
             {
-                BinaryReader r = new BinaryReader(new StreamReader(inputFile).BaseStream);
-                BinaryWriter w = new BinaryWriter(new StreamWriter(fileName, false).BaseStream);
+                buf[offset] = b;
+                offset++;
+            }
 
-                int changed = 0;
-
-                byte[] buf = new byte[r.BaseStream.Length];
-                r.Read(buf, 0, buf.Length);
-                //w.Write(buf);
-
+            int changed = 0;
+            if(this.Type == DiffType.xDiff)
+            {   
                 foreach (DiffPatchBase p in xPatches.Values)
                 {
                     int ret;
                     if (p is DiffPatch)
                     {
-                        ret = ApplyPatch((DiffPatch)p, ref buf, r);
+                        ret = ApplyPatch((DiffPatch)p, ref buf);
                         if (ret < 0 && ret == -2)
                             MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
                         if (ret > 0)
@@ -448,34 +496,16 @@ namespace xDiffPatcher
                     else if (p is DiffPatchGroup)
                         foreach (DiffPatch p2 in ((DiffPatchGroup)p).Patches)
                         {
-                            ret = ApplyPatch(p2, ref buf, r);
+                            ret = ApplyPatch(p2, ref buf);
                             if (ret < 0 && ret == -2)
                                 MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
                             if (ret > 0)
                                 changed += ret;
                         }
                 }
-
-                w.Write(buf);
-
-                int stop = Environment.TickCount;
-
-                MessageBox.Show("Finished patching " + changed + "bytes in " + (stop - start) + "ms!");
-
-                r.Close();
-                w.Close();
             }
             else if (this.Type == DiffType.Diff)
-            {
-                BinaryReader r = new BinaryReader(new StreamReader(inputFile).BaseStream);
-                BinaryWriter w = new BinaryWriter(new StreamWriter(fileName, false).BaseStream);
-
-                int changed = 0;
-
-                byte[] buf = new byte[r.BaseStream.Length];
-                r.Read(buf, 0, buf.Length);
-                //w.Write(buf);
-
+            {  
                 foreach (DiffPatch p in Patches.Values)
                 {
                     if (!p.Apply)
@@ -486,41 +516,37 @@ namespace xDiffPatcher
                         switch (c.Type)
                         {
                             case ChangeType.Byte:
-                                byte old;
-
-                                r.BaseStream.Seek(c.Offset, SeekOrigin.Begin);
-                                //w.Seek((int)c.Offset, SeekOrigin.Begin);
-                                old = r.ReadByte();
-                                if (old != (byte)c.Old)
-                                {
-                                    // nich so gut.
-                                    if (true) { }
+                                {   
+                                    byte old = buf[c.Offset];
+                                    if (old == (byte)c.Old)
+                                    {
+                                        buf[c.Offset] = (byte)c.New_;
+                                        changed++;
+                                    }
+                                    //else
+                                    //{
+                                    
+                                    //}
+                                    break;
                                 }
-
-                                //w.Write((byte)c.New_);
-                                buf[c.Offset] = (byte) c.New_;
-                                changed++;
-                                
-                                break;
-
-                            default:
-                                break;
                         }
                     }
                 }
-
-                w.Write(buf);
-
-                int stop = Environment.TickCount;
-
-                MessageBox.Show("Finished patching " + changed + "bytes in " + (stop - start) + "ms!");
-
-                r.Close();
-                w.Close();
             }
-
-
+            if (File.Exists(targetFile)) File.Delete(targetFile);
+            File.WriteAllBytes(targetFile, buf);
+            int stop = Environment.TickCount;            
+            MessageBox.Show("Finished patching " + changed + "bytes in " + (stop - start) + "ms!");
+            
             return 0;
+        }
+
+        private void WriteDword( ref byte[] buffer, UInt32 value, UInt32 offset = 0)
+        {            
+            buffer[offset] = (byte)value;
+            buffer[offset + 1] = (byte)(value >> 8);
+            buffer[offset + 2] = (byte)(value >> 16);
+            buffer[offset + 3] = (byte)(value >> 24);            
         }
     }
 
