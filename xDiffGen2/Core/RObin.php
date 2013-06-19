@@ -56,8 +56,7 @@ class RObin
         if($debug) echo "\nName\tvSize\tvOffset\trSize\trOffset\tvrDiff\n";
         if($debug) echo "----\t-----\t-------\t-----\t-------\t------\n";
         // Get section information
-        $sectionCount = $this->read($this->PEHeader + 0x6, 2, "S");
-		$sectionInfo = array();
+        $sectionCount = $this->read($this->PEHeader + 0x6, 2, "S");		
         for($i = 0, $curSection = $this->PEHeader + 0x18 + 0x60 + 0x10 * 0x8; $i < $sectionCount; $i++) {
             // http://www.microsoft.com/whdc/system/platform/firmware/PECOFFdwn.mspx
             $sectionInfo['name'] = $this->read($curSection, 8);
@@ -80,9 +79,10 @@ class RObin
             $sectionInfo['rOffset']       = $this->read($curSection+8+3*4, 4, "V");
             $sectionInfo['rEnd']          = $sectionInfo['rOffset'] + $sectionInfo['rSize'];
             $sectionInfo['vrDiff']        = $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
+			
             // This is used to indicate if code has been placed after vEnd
             $sectionInfo['align']         = 0;
-            $tab = "\t";
+            
             if($debug) 
             echo  $sectionInfo['name'] . "\t"
                 . dechex($sectionInfo['vSize']) . "\t"
@@ -102,15 +102,52 @@ class RObin
                         $this->sections[$sectionInfo['name']]->$name = $value;
                 }
             }
-
             $curSection += 0x28;
-            //if($i > 5)
-                //$this->themida = true;
         }
-		echo "\r\n";
+		
+		// EDIT: Inserting New Section Information for using in code (actual insertion is yet to be done)
+		// Currently SectionInfo holds the info about last section so we can utilize that.
+		$createxDiff = false;
+		if (!$this->getSection(".xdiff"))
+		{
+			$createxDiff = true;
+			$sectionAlign = $this->read($this->PEHeader + 0x38, 4, "V");
+			$fileAlign = $this->read($this->PEHeader + 0x3C, 4, "V");
+			$sectionInfo['name'] 		= ".xdiff";
+			$sectionInfo['vSize'] 		= $sectionAlign;
+			$sectionInfo['vOffset']		= ceil($sectionInfo['vEnd'] / $sectionAlign ) * $sectionAlign;
+			$sectionInfo['vEnd']		= $sectionInfo['vOffset'] + $sectionInfo['vSize'];		
+			$sectionInfo['rSize']		= 4 * $fileAlign; // 4 * 0x200 = 0x800 => can be anything less than $sectionAlign - but ideally multiple of $fileAlign
+			$sectionInfo['rOffset']		= ceil($sectionInfo['rEnd'] / $fileAlign ) * $fileAlign;
+			$sectionInfo['rEnd']		= $sectionInfo['rOffset'] + $sectionInfo['rSize'];
+			$sectionInfo['vrDiff']		= $sectionInfo['vOffset'] - $sectionInfo['rOffset'];
+			$sectionInfo['align']		= 0;
 
-        //print_r($this->sections);
-        //die();
+			$this->sections[$sectionInfo['name']] = new stdClass();
+			foreach($sectionInfo as $name => $value) {
+				if (!empty($name))
+					$this->sections[$sectionInfo['name']]->$name = $value;
+			}		
+			if($debug) 
+				echo  $sectionInfo['name'] . "\t"
+					. dechex($sectionInfo['vSize']) . "\t"
+					. dechex($sectionInfo['vOffset']) . "\t"
+					. dechex($sectionInfo['rSize']) . "\t"
+					. dechex($sectionInfo['rOffset']) . "\t"
+					. dechex($sectionInfo['vrDiff']) . "\n";
+
+			//Inserting null bytes into the exe for the added section (to facilitate the zeroed & replace functions)
+			$this->exe = str_pad($this->exe, $this->sections['.xdiff']->rEnd - 1, "\x00");
+			$this->size = $this->sections['.xdiff']->rEnd - 1;
+			
+			$sectionCount++;
+		}
+		else
+		{
+			$curSection -= 0x28;
+		}
+		echo "\r\n";
+		
         // Prepare XMLWriter for xDiff
         $this->xmlWriter = new XMLWriter();
         $this->xmlWriter->openMemory();
@@ -133,6 +170,16 @@ class RObin
         $this->xmlWriter->writeElement('releasedate', 'now');
         $this->xmlWriter->endElement(); // info
         
+		$this->xmlWriter->startElement('override');
+		$this->xmlWriter->writeElement('peheader', $this->PEHeader);
+		$this->xmlWriter->writeElement('imagesize', $this->sections['.xdiff']->vEnd);
+		$this->xmlWriter->writeElement('sectioncount', $sectionCount);
+		$this->xmlWriter->writeElement('xdiffstart', $curSection);
+		$this->xmlWriter->writeElement('vsize', $this->sections['.xdiff']->vSize);
+		$this->xmlWriter->writeElement('voffset', $this->sections['.xdiff']->vOffset);
+		$this->xmlWriter->writeElement('rsize', $this->sections['.xdiff']->rSize);
+		$this->xmlWriter->writeElement('roffset', $this->sections['.xdiff']->rOffset);
+		$this->xmlWriter->endElement(); // override
         return true;
     }
 
