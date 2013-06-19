@@ -14,7 +14,7 @@ function ChatColorMain($exe) {
 	}
 	else {
 		$code =  "\x68\xFF\xFF\xFF\x00" 	// push    0FFFFh
-				."\xB9\x98\xAB\xAB\x00"		// lea     edx, [ebp+var_104]
+				."\xB9\xAB\xAB\xAB\x00"		// lea     edx, [ebp+var_104]
 				."\x56"                	 	// push    edx
 				."\x6A\x01";            	// jmp     short loc_5E1790	
 	}

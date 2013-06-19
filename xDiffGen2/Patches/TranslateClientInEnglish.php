@@ -80,15 +80,15 @@ function TranslateClientInEnglish($exe){
   //**********************************
 
   if ($exe->clientdate() <= 20130605)
-	$code = "\xBA\x00\x00\xB9\xAB\xAB\xC0\x00\x75\x59";
+	$code = "\x00\x00\xB9\xAB\xAB\xC0\x00\x75\x59";
   else
-    $code = "\xC3\x00\x00\xB9\xAB\xAB\xC9\x00\x75\x59";
-  $offset = $exe->match($code, "\xAB", 0);
+    $code = "\x00\x00\xB9\xAB\xAB\xC9\x00\x75\x59";
+  $offset = $exe->match($code, "\xAB");
   if ($offset === false) {
     echo "Failed in {$trans} part 1";
     return false;
   }
-  $exe->replace($offset, array(8 => "\xEB"));
+    $exe->replace($offset, array(7 => "\xEB"));
   
   //**********************************
   $trans = "Item Inventory";

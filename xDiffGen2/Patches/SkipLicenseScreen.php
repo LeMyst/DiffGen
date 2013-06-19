@@ -26,22 +26,38 @@
 					."\xC2\x04\x00";				//  retn    4
 		}
 		else {
-			$code =  "\xE8\xAB\xAB\xAB\x00" 		// call    sub_8C6878
+			$code = "\xE8\xAB\xAB\xAB\x00" 		// call    sub_8C6878
 					."\x8B\xE5"						// mov     esp, ebp
 					."\x5D"							// pop     ebp
 					."\xC2\x04\x00"					// retn    4 
 					."\x90"
-					."\xAB\x34\x84\x00";
+					."\xAB\xAB\x84\x00"
+					."\xAB\xAB\x84\x00";
 		}
-        $ptr = $exe->code($code, "\xAB");
-        if( $ptr === false ) {
-            echo "Failed in part 1";
-            return false;
-        }
-		if ($exe->clientdate() <= 20130605)
-			$ptr += 17;
-		else
-			$ptr += 12;
+		
+		if ($exe->clientdate() > 20130605){
+			$offsets = $exe->matches($code, "\xAB");
+			if ($offsets === false) {
+				echo "Failed in part 1b";
+				return false;
+			}
+			if(count($offsets) != 2) {
+				echo "Failed in part 2b";
+				return false;
+			}
+			$ptr = $offsets[1] + 12;
+		}
+		else {
+			$ptr = $exe->code($code, "\xAB");
+			if( $ptr === false ) {
+				echo "Failed in part 1";
+				return false;
+			}
+			if ($exe->clientdate() <= 20130605)
+				$ptr += 17;
+			else
+				$ptr += 12;
+		}
 			
         print "Ptr: ".dechex($ptr)." ";
         // Read the value where the first entry of the jump table resides.
