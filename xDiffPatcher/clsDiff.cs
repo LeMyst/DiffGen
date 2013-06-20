@@ -485,15 +485,15 @@ namespace xDiffPatcher
                 foreach (DiffPatchBase p in xPatches.Values)
                 {
                     int ret;
-                    if (p is DiffPatch)
-                    {
+                    if (p is DiffPatch) //patches inside group are already present in xPatches
+                    {   
                         ret = ApplyPatch((DiffPatch)p, ref buf);
                         if (ret < 0 && ret == -2)
                             MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
                         if (ret > 0)
                             changed += ret;
                     }
-                    else if (p is DiffPatchGroup)
+                    /*else if (p is DiffPatchGroup)
                         foreach (DiffPatch p2 in ((DiffPatchGroup)p).Patches)
                         {
                             ret = ApplyPatch(p2, ref buf);
@@ -501,7 +501,7 @@ namespace xDiffPatcher
                                 MessageBox.Show("Invalid input, could not apply patch '" + p.Name + "'!");
                             if (ret > 0)
                                 changed += ret;
-                        }
+                        }*/
                 }
             }
             else if (this.Type == DiffType.Diff)
