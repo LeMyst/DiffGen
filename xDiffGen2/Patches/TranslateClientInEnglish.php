@@ -270,18 +270,6 @@ function TranslateClientInEnglish($exe){
     return false;
   }
   $exe->replace($offset, array(0 => "\x00\x48\x6f\x6c\x79\x00\x00\x00\x00\x00"));  
-		
-  //**********************************
-  $trans = "Undead";
-  //**********************************
-
-  $code = "\x00\xBE\xF0\xB5\xA5\xB5\xE5";
-  $offset = $exe->match($code, "\xAB", 0);
-  if ($offset === false) {
-    echo "Failed in {$trans} part 1";
-    return false;
-  }
-  $exe->replace($offset, array(0 => "\x00\x55\x6e\x64\x00\x00\x00\x00"));
 
   //**********************************
   $trans = "Neutral";
@@ -690,18 +678,6 @@ function TranslateClientInEnglish($exe){
     return false;
   }
   $exe->replace($offset, array(0 => "\x00\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x20\x47\x75\x69\x64\x61\x6e\x63\x65\x20\x3d\x3d\x3d\x3d\x3d\x3d\x3d\x00\x00\x00\x00\x00"));  
-
-  //**********************************
-  $trans = "Goal";
-  //**********************************
-
-  $code = "\x00\xB8\xF1\xC7\xA5\x20\x20\x20\x3A\x20\x25\x73\x28\x25\x73\x29\x00\xC0\xCF\xB9\xDD\x00\x00\x00\x00";
-  $offset = $exe->match($code, "\xAB", 0);
-  if ($offset === false) {
-    echo "Failed in {$trans} part 1";
-    return false;
-  }
-  $exe->replace($offset, array(0 => "\x00\x47\x6f\x61\x6c\x20\x20\x20\x3a\x20\x25\x73\x28\x25\x73\x29\x47\x65\x6e\x65\x72\x61\x6c\x00\x00"));  
 
   //**********************************
   $trans = "Goal 2";
