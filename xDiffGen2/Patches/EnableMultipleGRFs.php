@@ -132,10 +132,7 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
           $size += strlen($string);
         
         // Find free space to inject our data.ini load function.
-        // Note that for the time beeing those will be probably
-        // return some space in .rsrc, but that's still okay
-        // until our new diff patcher is finished for our own section.
-        $free = $exe->zeroed($size+4, false); // Shinryo: Why does the size have to be 4 bytes bigger?
+        $free = $exe->zeroed($size+4); // Shinryo: Why does the size have to be 4 bytes bigger?
         if ($free === false) {
             echo "Failed in part 3";
             return false;
@@ -201,8 +198,7 @@ If you only have 3 GRF files, you would only need to use: 0=first.grf, 1=second.
         }
         
         // Finally, insert everything.
-        $exe->insert($code.implode("", $strings), $free);
-        
+        $exe->insert($code.implode("", $strings), $size+4, $free);        
         return true;
     }
 ?>

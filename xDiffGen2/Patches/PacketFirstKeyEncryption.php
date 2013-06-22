@@ -28,7 +28,7 @@
 				$key2= $exe->read($offset + 14, 4, "I");
 				$key3= $exe->read($offset + 19, 4, "I");
 				
-				echo dechex($key1)." - ".dechex($key2)." - ".dechex($key3). "    ";
+//				echo dechex($key1)." - ".dechex($key2)." - ".dechex($key3). "    ";
 		
 				return true;
         }

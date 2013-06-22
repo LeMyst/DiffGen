@@ -55,12 +55,12 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
         foreach($strings as $index => $string)
           $size += strlen($string);
 
-        $free = $exe->zeroed($size + 247 + 4 + 4 + 90 + 4 + 4, false);
+        $free = $exe->zeroed($size + 4, false);
         if ($free === false) {
             echo "Failed in part 1";
             return false;
         }
-		$free += 247 + 4 + 4 + 90 + 4;
+		//$free += 247 + 4 + 4 + 90 + 4;
         
         // ***********************************************************
         // Create default offsets that will be replaced into the code.
@@ -156,7 +156,7 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
         }
         
         $freeRva = $exe->Raw2Rva($free);
-        $exe->insert(pack("I", $freeRva), $offset + 2);
+        $exe->replace($offset, array(2 => pack("I", $freeRva)));
         
         if($socketDistanceCall == false) {
           // Offset call to socket() is only available in VC9 clients.
@@ -168,12 +168,11 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
 
           // Replace all calls by offset with a call by distance.
           foreach($offsets as $offset)
-            $exe->insert("\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90", $offset);
+            $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90", $offset));
         }
                 
         // Finally, insert everything.
-        $exe->insert($code.implode("", $strings), $free);
-        
+        $exe->insert($code.implode("", $strings), $size+4, $free);        
         return true;
     }
 ?>

@@ -51,6 +51,7 @@
 			."\x61"										// POPAD
 			."\xC3"										// RETN
 			."\x00" . "127.0.0.1";						// 127.0.0.1
+		
 			                    
         // Calculate free space that the code will need.
         $size = strlen($code);
@@ -59,12 +60,12 @@
         // Note that for the time beeing those will be probably
         // return some space in .rsrc, but that's still okay
         // until our new diff patcher is finished for our own section.
-        $free = $exe->zeroed(247 + 4 + 4 + $size + 4 + 16, false); // Free space of enable multiple grf + space for dns support
+        $free = $exe->zeroed($size + 4 + 16, false); // Free space of enable multiple grf + space for dns support
         if ($free === false) {
             echo "Failed in part 2";
             return false;
         }
-		$free += 247 + 4 + 4;
+		//$free += 247 + 4 + 4;
         
         // Create a call to the free space that was found before.     
         $exe->replace($offset, array(0 =>  "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5 )));
@@ -143,7 +144,7 @@
 		$codef = str_replace("CA07", pack("V", $uRVAfreeoffset), $codef);
 		
         // Finally, insert everything.
-        $exe->insert($codef, $free);
+        $exe->insert($codef, $size + 4 + 16, $free);
         
         return true;
     }

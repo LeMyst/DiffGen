@@ -31,8 +31,8 @@ function FixCameraAnglesRecomm($exe){
   
   $offset+=4;
   
-  $free = $exe->zeroed(4, false);
-  $exe->replace($free, array(0 => "42.00"));
+  $free = $exe->zeroed(5);
+  $exe->insert("42.00", 5, $free);
   
   $free_offset = $exe->Raw2Rva($free);
   $exe->replace($offset, array(0 => $free_offset));
@@ -64,8 +64,8 @@ function FixCameraAnglesLess($exe){
   
   $offset+=4;
   
-  $free = $exe->zeroed(4, false);
-  $exe->replace($free, array(0 => "29.50"));
+  $free = $exe->zeroed(5);
+  $exe->insert("29.50", 5, $free);
   
   $free_offset = $exe->Raw2Rva($free);
   $exe->replace($offset, array(0 => $free_offset));
@@ -97,8 +97,8 @@ function FixCameraAnglesFull($exe){
   
   $offset+=4;
   
-  $free = $exe->zeroed(4, false);
-  $exe->replace($free, array(0 => "65.00"));
+  $free = $exe->zeroed(5);
+  $exe->insert("65.00", 5, $free);
   
   $free_offset = $exe->Raw2Rva($free);
   $exe->replace($offset, array(0 => $free_offset));

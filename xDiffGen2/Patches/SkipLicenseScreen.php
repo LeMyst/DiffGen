@@ -59,7 +59,7 @@
 				$ptr += 12;
 		}
 			
-        print "Ptr: ".dechex($ptr)." ";
+        //print "Ptr: ".dechex($ptr)." ";
         // Read the value where the first entry of the jump table resides.
         // Note: raw and virtual offset aren't the same in VC9 clients!
         // Therefore the difference has to be calculated also.

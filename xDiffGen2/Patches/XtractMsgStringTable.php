@@ -19,7 +19,7 @@
 		else
 			$offset += 0x1D3;
 		
-		echo dechex($offset) . "#";
+		//echo dechex($offset) . "#";
 		$done = false;
 		$id = 0;
 		$fp = fopen("Extracted_data\\MsgStringTables\\" . basename($target, ".exe") . "-msgstringtable.txt", 'w');

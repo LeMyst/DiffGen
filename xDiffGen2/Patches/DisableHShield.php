@@ -72,7 +72,7 @@
         $virtual = $section->vOffset - $section->rOffset;
         $bOffset = $aOffset + $virtual;
 		
-        echo dechex($aOffset) .  "+" . dechex($virtual) . "=" . dechex($bOffset) . " ";
+        // echo dechex($aOffset) .  "+" . dechex($virtual) . "=" . dechex($bOffset) . " ";
         // The name offset comes after the thunk offset.
         // Thunk offset is guessed through wildcard.
 		

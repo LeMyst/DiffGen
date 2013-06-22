@@ -8,8 +8,7 @@ place them in your '.\\data\\texture\\effect' folder.
 
 Enable this to used aurafloat.tga, auraring.bmp and freezing_circle.bmp as aura sprites.
 The default aura files are pikapika2.bmp, blue_ring.tga and freezing_circle.bmp.");
-        }
-        $free = 0x380;
+        }        
 		
 		if ($exe->clientdate() <= 20130605) {
 			$code00 =  "\x68" . pack("I", $exe->str("effect\\ring_blue.tga","rva"))	// PUSH    "effect\ring_blue.tga"
@@ -65,15 +64,20 @@ The default aura files are pikapika2.bmp, blue_ring.tga and freezing_circle.bmp.
             echo "Failed in part 2";
             return false;
         }
+		
+		$code =  "effect\\aurafloat.tga\x00"
+                ."effect\\auraring.bmp\x00\x90";
+		
+		$free = $exe->zeroed(strlen($code));
+		//$free = 0x380;
 		//$offset01b = $offset01 + 1 - $offset00;
+				
+        $exe->replace($offset00, array(1 => $exe->Raw2Rva($free)));
+		//pack("I", ($exe->imagebase() + $free))));
+		$exe->replace($offset01, array(1 => $exe->Raw2Rva($free + 21)));
+		//pack("I", ($exe->imagebase() + $free + 21))));
 		
-        $exe->replace($offset00, array(1 => pack("I", ($exe->imagebase() + $free))));
-		$exe->replace($offset01, array(1 => pack("I", ($exe->imagebase() + $free + 21))));
-		
-        $code =  "effect\aurafloat.tga\x00"
-                ."effect\auraring.bmp\x00\x90";
-        $exe->insert($code, $free);
-		
+        $exe->insert($code, strlen($code), $free);		
         return true;
     }
 ?>
