@@ -143,10 +143,7 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
           }
           
           $code = str_replace($replace, pack("V", $$replace), $code);
-        }
-        
-        // Replace all occurances where a call to socket() is made.
-        $freeRva = $exe->Raw2Rva($free);
+        }       
         
         // A JMP to socket() is found in each client.
         $offset = $exe->code("\xFF\x25".pack('V', $CA00), '', 1);
@@ -154,8 +151,8 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
           echo "Failed in part 6";
           return false;
         }
-		echo $offset."\n";
         
+        // Replace all occurances where a call to socket() is made.
         $freeRva = $exe->Raw2Rva($free);
         $exe->replace($offset, array(2 => pack("I", $freeRva)));
         
@@ -167,9 +164,6 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
               return false;
           }
 
-		  foreach($offsets as $offset)
-			  echo $offset."\n";
-		  echo $free."\n";
           // Replace all calls by offset with a call by distance.
           foreach($offsets as $offset)
             $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90"));
