@@ -154,6 +154,7 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
           echo "Failed in part 6";
           return false;
         }
+		echo $offset."\n";
         
         $freeRva = $exe->Raw2Rva($free);
         $exe->replace($offset, array(2 => pack("I", $freeRva)));
@@ -166,9 +167,12 @@ See http://en.wikipedia.org/wiki/Nagle%27s_algorithm");
               return false;
           }
 
+		  foreach($offsets as $offset)
+			  echo $offset."\n";
+		  echo $free."\n";
           // Replace all calls by offset with a call by distance.
           foreach($offsets as $offset)
-            $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90", $offset));
+            $exe->replace($offset, array(0 => "\xE8".pack("I", $exe->Raw2Rva($free) - $exe->Raw2Rva($offset) - 5)."\x90"));
         }
                 
         // Finally, insert everything.
