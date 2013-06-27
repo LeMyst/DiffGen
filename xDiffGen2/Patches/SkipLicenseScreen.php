@@ -26,7 +26,12 @@
 					."\xC2\x04\x00";				//  retn    4
 		}
 		else {
-			$code = "\xE8\xAB\xAB\xAB\x00" 		// call    sub_8C6878
+			$code =  "\x5F"							// pop     edi
+					."\x5E"							// pop     esi
+					."\x5B"							// pop     ebx
+					."\x8B\x4D\xAB"					// mov     ecx, [ebp+var_10]
+					."\x33\xCD"						// xor     ecx, ebp
+					."\xE8\xAB\xAB\xAB\x00" 		// call    sub_8C6878
 					."\x8B\xE5"						// mov     esp, ebp
 					."\x5D"							// pop     ebp
 					."\xC2\x04\x00"					// retn    4 
@@ -45,7 +50,7 @@
 				echo "Failed in part 2b";
 				return false;
 			}
-			$ptr = $offsets[1] + 12;
+			$ptr = $offsets[1] + 20;
 		}
 		else {
 			$ptr = $exe->code($code, "\xAB");

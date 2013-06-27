@@ -29,7 +29,7 @@
 			$exe->replace($offsets[1], array(5 => "\xE9\xE4\x00\x00\x00\x90")); //
 		}
 		else {
-			$exe->replace($offsets[0], array(5 => "\xE9\x5C\x01\x00\x00\x90")); // jmp     loc_80F81E & nop
+			$exe->replace($offsets[0], array(5 => "\xE9\x5C\x01\x00\x00\x90")); // jmp     loc_80F81E & nop (15C)
 			$exe->replace($offsets[1], array(5 => "\xE9\x5C\x01\x00\x00\x90")); //		
 		}
 		
