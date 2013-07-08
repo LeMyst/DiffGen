@@ -31,12 +31,8 @@
 					
 			$location = $exe->match($code, "\xAB", $finish - 0x200, $finish);
 			
-			//Step 5 : Prep pattern for replace
-			$diff = $exe->read($location + 7, 4, "I");
-			$code = "\xE9" . pack("I", $diff + 1) . "\x90";
-			
-			//Step 6 : Replace pattern
-			$exe->replace($location, array(5 => $code));
+			//Step 5 : replace jz with jmp
+			$exe->replace($location, array(5 => "\x90\xE9"));
 		}		
 	}
 ?>
