@@ -50,7 +50,7 @@ function _fixangle($exe, $newvalue){
 	$free = $exe->zeroed(4);
 	$exe->insert($newvalue, 4, $free);
 	
-	$exe->replace($offset, array(4 => $exe->Raw2Rva($free)));
+	$exe->replace($offset, array(4 => pack("I", $exe->Raw2Rva($free))));
   
   return true;
 }
