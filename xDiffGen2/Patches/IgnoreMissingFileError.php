@@ -18,7 +18,7 @@
 		if ($exe->clientdate() <= 20130605)
 			$exe->replace($offset, array(5 => "\x31\xC0\xC3\x90"));
 		else
-			$exe->replace($offset, array(5 => "\x31\xC0\xC3"));
+			$exe->replace($offset, array(5 => "\x31\xC0\x5D\xC3"));
 		
         return true;
     }

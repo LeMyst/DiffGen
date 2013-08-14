@@ -46,9 +46,9 @@
 		
 		//Step 2 - Replace String with head%.s%.s_%d.pal or head%.s_%s_%d.pal based on type
 		if($type == 1)
-			$exe->replace($offset,array(0=>"head%.s_%s_%d.pal"));
+			$exe->replace($offset,array(0=>"head%.s_%s_%d.pal\x00"));
 		else
-			$exe->replace($offset,array(0=>"head%.s%.s_%d.pal"));
+			$exe->replace($offset,array(0=>"head%.s%.s_%d.pal\x00"));
 	}
 	
 ?>

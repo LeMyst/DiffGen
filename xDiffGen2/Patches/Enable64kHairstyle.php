@@ -91,7 +91,7 @@ function Enable64kHairstyle($exe) {
 	if($type==1){
 		$code =  "\x75\x23"
 					."\x8B\x06"
-					."\x8B\x0D\xAB\xAB\xAB\x00"    // MOV     EDX,DWORD PTR SS:[EBP]
+					."\x8B\x0D\xAB\xAB\xAB\x00"    // MOV     ECX,DWORD PTR SS:[EBP]
 					."\x8B\x14\x81";     // MOV     EDX,DWORD PTR DS:[EDX+ECX*4]
 					
 		$offset = $exe->match($code, "\xAB");
@@ -101,7 +101,7 @@ function Enable64kHairstyle($exe) {
 			return false;
 		}
 		
-		$exe->replace($offset, array(11 => "\x12\x90")); // -> MOV     EDX,DWORD PTR DS:[EDX]
+		$exe->replace($offset, array(11 => "\x11\x90")); // -> MOV     EDX,DWORD PTR DS:[ECX]
 	}
 		
 	// Lift limit that protects table from invalid access. We

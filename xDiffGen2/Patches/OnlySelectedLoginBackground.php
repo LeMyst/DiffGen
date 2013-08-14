@@ -27,8 +27,8 @@
 	function OnlyLoginBase($exe, $type)
 	{
 		$prefix = "\xC0\xAF\xC0\xFA\xC0\xCE\xC5\xCD\xC6\xE4\xC0\xCC\xBD\xBA\x5C";
-		$first = 'T2_' . "\xB9\xE8\xB0\xE6" . '%d-%d.bmp' . "\x00";
-		$second = 'T_' . "\xB9\xE8\xB0\xE6" . '%d-%d.bmp' ."\x00\x00";
+		$first = 'T_' . "\xB9\xE8\xB0\xE6" . '%d-%d.bmp' ."\x00\x00";
+		$second = 'T2_' . "\xB9\xE8\xB0\xE6" . '%d-%d.bmp' . "\x00";
 		
 		//Step 1 - Find one of the strings based on type
 		if ($type == 2)
