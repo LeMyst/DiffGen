@@ -46,12 +46,12 @@
 			case "\x77":
 			case "\x7D":
 			{// Short Jump
-				$exe->replace($offset, array(1 => $finish - $offset - 2));
+				$exe->replace($offset, array(1 => pack("c",$finish - $offset - 2)));
 				break;
 			}
 			case "\x0F":
 			{// Long Jump
-				$exe->replace($offset, array(2 => $finish - $offset - 6));
+				$exe->replace($offset, array(2 => pack("i",$finish - $offset - 6)));
 				break;
 			}
 			default:

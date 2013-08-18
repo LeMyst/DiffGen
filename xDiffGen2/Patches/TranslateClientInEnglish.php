@@ -78,18 +78,42 @@ function TranslateClientInEnglish($exe){
   //**********************************
   $trans = "Translate Taekwon Job";
   //**********************************
-
-  if ($exe->clientdate() <= 20130605)
-	$code = "\x00\x00\xB9\xAB\xAB\xC0\x00\x75\x59";
-  else
-    $code = "\x00\x00\xB9\xAB\xAB\xC9\x00\x75\x59";
-  $offset = $exe->match($code, "\xAB");
-  if ($offset === false) {
+  $code = "america";  
+  $offset = $exe->str($code, "rva");  
+  if ($offset === false) 
+  {
     echo "Failed in {$trans} part 1";
     return false;
   }
-    $exe->replace($offset, array(7 => "\xEB"));
   
+  $offset = $exe->code("\x68". pack("I", $offset),"");
+  if ($offset === false) 
+  {
+    echo "Failed in {$trans} part 2";
+    return false;
+  }
+  
+  $code = "\xC7\x05\xAB\xAB\xAB\xAB\x01\x00\x00\x00";
+  $offset = $exe->match($code, "\xAB", $offset + 5);
+  if ($offset === false) 
+  {
+    echo "Failed in {$trans} part 3";
+    return false;
+  }  
+  
+  $lt = $exe->read($offset+3, 4);
+  $code =   "\x83\x3D".$lt."\x00"		//cmp Langtype, 0
+			."\xB9\xAB\xAB\xAB\xAB"		//mov ecx, <some offset> dont care which
+			."\x75\x59";			
+  $offset = $exe->code($code, "\xAB");
+  if ($offset === false) 
+  {
+    echo "Failed in {$trans} part 4";
+    return false;
+  }
+  
+  $exe->replace($offset, array(12 => "\xEB"));
+
   //**********************************
   $trans = "Item Inventory";
   //**********************************
