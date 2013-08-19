@@ -101,7 +101,7 @@ function TranslateClientInEnglish($exe){
     return false;
   }  
   
-  $lt = $exe->read($offset+3, 4);
+  $lt = $exe->read($offset+2, 4);
   $code =   "\x83\x3D".$lt."\x00"		//cmp Langtype, 0
 			."\xB9\xAB\xAB\xAB\xAB"		//mov ecx, <some offset> dont care which
 			."\x75\x59";			
